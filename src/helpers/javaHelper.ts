@@ -1,0 +1,131 @@
+import { isOneOf } from '../utils';
+
+export const javaMapTypes = [
+  'java.util.Map',
+  'java.util.NavigableMap',
+  'java.util.SortedMap',
+  'java.util.AbstractMap',
+  'java.util.Dictionary',
+  'java.util.HashMap',
+  'java.util.Hashtable',
+  'java.util.IdentityHashMap',
+  'java.util.LinkedHashMap',
+  'java.util.TreeMap',
+  'java.util.Properties',
+  'java.util.WeakHashMap',
+] as const;
+
+export const javaListTypes = [
+  'java.util.Collection',
+  'java.util.List',
+  'java.util.Deque',
+  'java.util.Iterator',
+  'java.util.ListIterator',
+  'java.util.Set',
+  'java.util.NavigableSet',
+  'java.util.Queue',
+  'java.util.SortedSet',
+  'java.util.AbstractCollection',
+  'java.util.AbstractList',
+  'java.util.AbstractQueue',
+  'java.util.AbstractSequentialList',
+  'java.util.AbstractSet',
+  'java.util.ArrayDeque',
+  'java.util.ArrayList',
+  'java.util.HashSet',
+  'java.util.LinkedHashSet',
+  'java.util.LinkedList',
+  'java.util.PriorityQueue',
+  'java.util.Stack',
+  'java.util.TreeSet',
+  'java.util.Vector',
+] as const;
+
+export const isJavaPrimitiveTypes = [
+  'byte',
+  'char',
+  'short',
+  'int',
+  'long',
+  'float',
+  'double',
+  'void',
+  'boolean',
+] as const;
+
+export const isJavaStringTypes = [
+  'java.lang.String',
+  'java.lang.StringBuffer',
+  'java.time.LocalDateTime',
+  'java.time.LocalDate',
+  'java.time.LocalTime',
+  'java.lang.Class',
+  'java.net.URL',
+  'java.net.URI',
+  'java.io.File',
+  'char',
+] as const;
+
+export const isJavaFloatTypes = [
+  'double',
+  'float',
+  'java.lang.Double',
+  'java.lang.Float',
+  'java.lang.Number',
+  'java.math.BigDecimal',
+] as const;
+
+export const isJavaIntegerTypes = [
+  'byte',
+  'short',
+  'int',
+  'java.lang.Integer',
+  'java.lang.Short',
+  'java.lang.Byte',
+] as const;
+
+export const isJavaLongTypes = [
+  'long',
+  'java.sql.Date',
+  'java.util.Date',
+  'java.sql.Timestamp',
+  'java.lang.Long',
+  'java.math.BigInteger',
+] as const;
+
+export const isJavaUnknownTypes = [
+  'java.lang.Object',
+  'com.alibaba.fastjson.JSONObject',
+  'org.springframework.http.ResponseEntity',
+  'org.springframework.web.multipart.MultipartFile',
+  'org.springframework.web.servlet.ModelAndView',
+  'any',
+] as const;
+
+export const isJavaBooleanTypes = ['boolean', 'java.lang.Boolean'] as const;
+
+export const isJavaVoidTypes = ['void', 'java.lang.Void'] as const;
+
+export const isJavaPrimitive = isOneOf(isJavaPrimitiveTypes);
+export const isJavaList = isOneOf(javaListTypes);
+export const isJavaMap = isOneOf(javaMapTypes);
+export const isJavaString = isOneOf(isJavaStringTypes);
+export const isJavaFloat = isOneOf(isJavaFloatTypes);
+export const isJavaInteger = isOneOf(isJavaIntegerTypes);
+export const isJavaLong = isOneOf(isJavaLongTypes);
+export const isJavaBoolean = isOneOf(isJavaBooleanTypes);
+export const isJavaVoid = isOneOf(isJavaVoidTypes);
+export const isJavaUnknown = isOneOf(isJavaUnknownTypes);
+export const isJavaNumber = (v: unknown) => isJavaInteger(v) || isJavaLong(v) || isJavaFloat(v);
+export const isJavaNonClass = (v: unknown) =>
+  isJavaString(v) ||
+  isJavaNumber(v) ||
+  isJavaBoolean(v) ||
+  isJavaList(v) ||
+  isJavaMap(v) ||
+  isJavaVoid(v) ||
+  isJavaUnknown(v);
+
+export const camelToSnake = (s: string) => {
+  return s.replace(/[A-Z]/g, (i) => `_${i.toLowerCase()}`);
+};
