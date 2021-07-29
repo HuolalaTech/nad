@@ -1,0 +1,12 @@
+node_modules
+dist
+.*
+*.tgz
+*.log
+!.gitignore
+!.eslintrc.js
+!.vscode
+!.prettierignore
+!.prettierrc
+!.husky
+!.npmrc
