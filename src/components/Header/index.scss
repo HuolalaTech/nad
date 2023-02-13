@@ -1,0 +1,27 @@
+.Header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  height: 46px;
+  gap: 20px;
+  .logo {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 20px;
+    letter-spacing: -0.18em;
+    color: rgba(0, 0, 0, 0.7);
+    img {
+      width: 1em;
+      height: 1em;
+      margin-right: 5px;
+    }
+  }
+}
+
+.Header__item {
+  color: inherit !important;
+  transition: none;
+}

@@ -1,0 +1,50 @@
+.NadDefsView {
+  --gap: 20px;
+
+  box-sizing: border-box;
+  line-height: 1.5;
+  font-size: 14px;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+
+  > .ant-alert {
+    margin: var(--gap);
+    flex: 1;
+  }
+
+  > aside {
+    box-sizing: border-box;
+    height: 100%;
+    flex-basis: 360px;
+    overflow: auto;
+    padding: var(--gap);
+    .tools {
+      display: flex;
+      margin: -10px -20px 0 -20px;
+      padding: 0 20px 5px 20px;
+    }
+    .square {
+      width: 24px;
+      display: inline-block;
+      cursor: pointer;
+    }
+  }
+
+  > main {
+    box-sizing: border-box;
+    padding: var(--gap);
+    font-family: monospace;
+    height: 100%;
+    overflow: auto;
+    flex: 1;
+    .header {
+      display: flex;
+      gap: 1ch;
+      position: absolute;
+      right: calc(var(--gap) * 2);
+      top: var(--gap);
+    }
+  }
+}
