@@ -1,4 +1,4 @@
-export * from './Builder';
+export * from './Root';
 export * from './Annotated';
 export * from './Parameter';
 export * from './Enum';
@@ -6,7 +6,7 @@ export * from './Module';
 export * from './Class';
 export * from './DefBase';
 export * from './EnumConstant';
-export * from './Builder';
+export * from './Root';
 export * from './UniqueName';
 export * from './annotations';
 export * from './Type';

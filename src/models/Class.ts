@@ -1,13 +1,13 @@
 import { Member } from './Member';
 import { Type } from './Type';
 import { toArray, toString } from '../utils';
-import type { Builder } from './Builder';
+import type { Root } from './Root';
 import { DefBase } from './DefBase';
 
 export class Class extends DefBase {
   readonly typeParameters;
   readonly defName;
-  constructor(raw: unknown, builder: Builder) {
+  constructor(raw: unknown, builder: Root) {
     super(raw, builder);
     this.typeParameters = toArray(this.raw?.typeParameters, (i) => toString(i));
     this.defName = this.simpleName;

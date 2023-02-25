@@ -1,5 +1,5 @@
 import { toString } from '../utils';
-import type { Builder } from './Builder';
+import type { Root } from './Root';
 import { Annotated } from './Annotated';
 import { Type } from './Type';
 
@@ -10,7 +10,7 @@ const ignoredTypes = new Set([
 ]);
 
 export class Parameter extends Annotated {
-  static create(raw: unknown, builder: Builder) {
+  static create(raw: unknown, builder: Root) {
     const { type } = Object(raw);
     if (typeof type === 'string' && ignoredTypes.has(type.replace(/<.*/, ''))) return null;
     return new Parameter(raw, builder);
@@ -19,7 +19,7 @@ export class Parameter extends Annotated {
   public readonly builder;
   public readonly required;
   public readonly actions;
-  constructor(raw: unknown, builder: Builder) {
+  constructor(raw: unknown, builder: Root) {
     super(raw);
     this.builder = builder;
     this.type = Type.create(toString(this.raw.type), builder);

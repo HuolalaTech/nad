@@ -1,6 +1,6 @@
 import { CodeGen } from './CodeGen';
-import type { Builder } from '../builder/Builder';
-import type { Route } from '../builder/Route';
+import type { Root } from '../models/Root';
+import type { Route } from '../models/Route';
 import { checkSuper, ss, t2s } from '../helpers/ocHelper';
 
 interface Options {
@@ -134,7 +134,7 @@ export class CodeGenForOc extends CodeGen {
       this.write('');
     }
   }
-  constructor(private builder: Builder, private options: Options) {
+  constructor(private builder: Root, private options: Options) {
     super();
     if (!options.noHead) {
       this.write('/**');

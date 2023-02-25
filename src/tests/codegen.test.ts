@@ -1,7 +1,6 @@
-import { Builder } from '../builder';
-import { CodeGenForTs } from '../codegen/CodeGenForTs';
+import { Builder } from '../Builder';
 
-const config = { base: 'test' };
+const config = { base: 'test', target: 'ts' } as const;
 
 const classes = [
   {
@@ -36,9 +35,8 @@ test('addRequestParam', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addRequestParam('id', id)`);
+  const { code } = new Builder({ target: 'ts', base: '', defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addRequestParam('id', id)`);
 });
 
 test('addRequestParam renamed', () => {
@@ -58,9 +56,8 @@ test('addRequestParam renamed', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addRequestParam('hehe', id)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addRequestParam('hehe', id)`);
 });
 
 test('addPathVariable', () => {
@@ -80,9 +77,8 @@ test('addPathVariable', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addPathVariable('id', id)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addPathVariable('id', id)`);
 });
 
 test('addPathVariable renamed', () => {
@@ -102,9 +98,8 @@ test('addPathVariable renamed', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addPathVariable('hehe', id)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addPathVariable('hehe', id)`);
 });
 
 test('addRequestBody', () => {
@@ -124,9 +119,8 @@ test('addRequestBody', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addRequestBody(people)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addRequestBody(people)`);
 });
 
 test('addNormalParam', () => {
@@ -145,9 +139,8 @@ test('addNormalParam', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addNormalParam(people)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addNormalParam(people)`);
 });
 
 test('addMultipartFile', () => {
@@ -166,9 +159,8 @@ test('addMultipartFile', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`.addMultipartFile('myFile', myFile)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`.addMultipartFile('myFile', myFile)`);
 });
 
 test('addMultipartFile renamed', () => {
@@ -188,10 +180,9 @@ test('addMultipartFile renamed', () => {
     annotations: [],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`async (myFile: MultipartFile,`);
-  expect(snip).toContain(`.addMultipartFile('hehe', myFile)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`async (myFile: MultipartFile,`);
+  expect(code).toContain(`.addMultipartFile('hehe', myFile)`);
 });
 
 test('default optional parameters', () => {
@@ -212,9 +203,8 @@ test('default optional parameters', () => {
     ],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`async (a1?: Long, a2?: Long, settings?: Partial<Settings>)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`async (a1?: Long, a2?: Long, settings?: Partial<Settings>)`);
 });
 
 test('required parameters at first', () => {
@@ -236,9 +226,8 @@ test('required parameters at first', () => {
     ],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`async (a1: Long, a2?: Long, settings?: Partial<Settings>)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`async (a1: Long, a2?: Long, settings?: Partial<Settings>)`);
 });
 
 test('required parameters at second', () => {
@@ -260,7 +249,6 @@ test('required parameters at second', () => {
     ],
     returnType: 'java.lang.Long',
   };
-  const builder = new Builder({ routes: [foo], classes });
-  const snip = new CodeGenForTs(builder, config).toString();
-  expect(snip).toContain(`async (a1: Long | null, a2: Long, settings?: Partial<Settings>)`);
+  const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
+  expect(code).toContain(`async (a1: Long | null, a2: Long, settings?: Partial<Settings>)`);
 });

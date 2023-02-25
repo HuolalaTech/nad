@@ -1,7 +1,7 @@
 import { neverReachHere } from '../utils';
-import type { BuilderOptions } from '../builder/Builder';
-import { Class } from '../builder/Class';
-import type { Type } from '../builder/Type';
+import type { BuilderOptions } from '../models/Root';
+import { Class } from '../models/Class';
+import type { Type } from '../models/Type';
 
 // Convert value to safe string in code
 export const ss = (s: string | number) => {

@@ -1,7 +1,7 @@
 import { CodeGen } from './CodeGen';
 import { ss, t2s } from '../helpers/tsHelper';
-import type { Builder } from '../builder/Builder';
-import type { Route } from '../builder/Route';
+import type { Root } from '../models/Root';
+import type { Route } from '../models/Route';
 
 interface Options {
   base: string;
@@ -116,7 +116,7 @@ export class CodeGenForTs extends CodeGen {
       this.write('');
     }
   }
-  constructor(private builder: Builder, private options: Options) {
+  constructor(private builder: Root, private options: Options) {
     super();
     if (!options.noHead) {
       this.write('/* 该文件由 Nad CLI 生成，请勿手改 */');

@@ -1,12 +1,12 @@
 import { toArray } from '../utils';
-import type { Builder } from './Builder';
+import type { Root } from './Root';
 import { DefBase } from './DefBase';
 import { EnumConstant } from './EnumConstant';
 
 export class Enum extends DefBase {
   readonly constants;
   readonly valueType;
-  constructor(raw: unknown, builder: Builder) {
+  constructor(raw: unknown, builder: Root) {
     super(raw, builder);
     this.constants = toArray(this.raw.constants, (i) => new EnumConstant(i, this));
     this.valueType = this.initValueType();

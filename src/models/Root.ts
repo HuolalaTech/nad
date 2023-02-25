@@ -20,7 +20,7 @@ export interface RawDefs {
   enums?: unknown[];
 }
 
-export class Builder {
+export class Root {
   private readonly rawClasses;
   private readonly rawEnums;
   private readonly classes: Record<string, Class>;

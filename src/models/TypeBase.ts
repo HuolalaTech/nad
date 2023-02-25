@@ -1,8 +1,8 @@
 import type { Class } from './Class';
-import type { Builder } from './Builder';
+import type { Root } from './Root';
 import { neverReachHere } from '../utils';
 
-export type TypeOwner = Class | Builder;
+export type TypeOwner = Class | Root;
 
 const wm = new WeakMap<object, TypeOwner>();
 
