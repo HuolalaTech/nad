@@ -104,7 +104,7 @@ export class NadInvoker<T> {
     const { headers, timeout } = settings || {};
     return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then(
       ({ data, statusCode }) => {
-        if (statusCode === 200) return data;
+        if (statusCode >= 200 && statusCode < 300) return data;
         throw new HttpError(statusCode);
       },
     );
