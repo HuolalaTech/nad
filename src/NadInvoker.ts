@@ -11,24 +11,23 @@ export interface Settings {
 type MultipartFile = Blob | File | string;
 
 export class NadInvoker<T> {
-  private method: string;
-  private rawUrl: string;
-  private settings?: Partial<Settings>;
+  public base;
+  public rawUrl: string;
+  public method: string;
+  public settings?: Partial<Settings>;
+  public body?: unknown;
 
-  private body?: unknown;
-  private requestParams: Record<string, unknown>;
-  private pathVariables: Record<string, unknown>;
-  private files: Record<string, MultipartFile>;
-
-  private base;
+  protected readonly requestParams: Record<string, unknown>;
+  protected readonly pathVariables: Record<string, unknown>;
+  protected readonly files: Record<string, MultipartFile>;
 
   constructor(base: string) {
     this.base = base;
+    this.rawUrl = '/';
+    this.method = 'GET';
     this.pathVariables = Object.create(null);
     this.requestParams = Object.create(null);
     this.files = Object.create(null);
-    this.rawUrl = '/';
-    this.method = 'GET';
   }
 
   public open(method: string, rawUrl: string, settings?: Partial<Settings>) {
@@ -69,7 +68,7 @@ export class NadInvoker<T> {
     return this;
   }
 
-  private buildQs() {
+  protected buildQs() {
     const { requestParams } = this;
     return Object.keys(requestParams)
       .map((name) =>
@@ -81,7 +80,7 @@ export class NadInvoker<T> {
       .join('&');
   }
 
-  private buildUrl() {
+  protected buildUrl() {
     const { rawUrl, settings } = this;
     const path = rawUrl.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(this.pathVariables[key])));
     const qs = this.buildQs();
