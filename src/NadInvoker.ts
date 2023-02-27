@@ -20,6 +20,7 @@ export class NadInvoker<T> {
   protected readonly requestParams: Record<string, unknown>;
   protected readonly pathVariables: Record<string, unknown>;
   protected readonly files: Record<string, MultipartFile>;
+  protected readonly extensions: Record<string, unknown>;
 
   constructor(base: string) {
     this.base = base;
@@ -28,6 +29,7 @@ export class NadInvoker<T> {
     this.pathVariables = Object.create(null);
     this.requestParams = Object.create(null);
     this.files = Object.create(null);
+    this.extensions = Object.create(null);
   }
 
   public open(method: string, rawUrl: string, settings?: Partial<Settings>) {
@@ -68,6 +70,12 @@ export class NadInvoker<T> {
     return this;
   }
 
+  public addExtension(key: string, value: unknown) {
+    if (key in this.extensions) return this;
+    this.extensions[key] = value;
+    return this;
+  }
+
   protected buildQs() {
     const { requestParams } = this;
     return Object.keys(requestParams)
@@ -91,12 +99,14 @@ export class NadInvoker<T> {
   }
 
   public execute() {
-    const { method, settings, body, files } = this;
+    const { method, settings, body, files, extensions } = this;
     const url = this.buildUrl();
     const { headers, timeout } = settings || {};
-    return request<T>({ method, url, timeout, headers, data: Object(body), files }).then(({ data, statusCode }) => {
-      if (statusCode === 200) return data;
-      throw new HttpError(statusCode);
-    });
+    return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then(
+      ({ data, statusCode }) => {
+        if (statusCode === 200) return data;
+        throw new HttpError(statusCode);
+      },
+    );
   }
 }
