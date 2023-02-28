@@ -22,7 +22,7 @@ export class NadInvoker<T> {
   protected readonly files: Record<string, MultipartFile>;
   protected readonly extensions: Record<string, unknown>;
 
-  constructor(base: string) {
+  constructor(base?: string) {
     this.base = base;
     this.rawUrl = '/';
     this.method = 'GET';
