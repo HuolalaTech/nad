@@ -1,13 +1,14 @@
 {
   "name": "@huolala-tech/nad-runtime",
   "description": "The runtime lib of NAD project",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/esm/index.d.ts",
   "scripts": {
     "test": "jest",
     "lint": "eslint src --fix",
+    "prepublishOnly": "rollup -c",
     "build": "rollup -c",
     "start": "rollup -c -w",
     "prettier": "prettier --write \"**/*.{js,ts,json}\"",

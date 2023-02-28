@@ -1,3 +1,8 @@
+## 0.0.3
+
+- Change base to optional
+- Update @huolala-tech/request
+
 ## 0.0.2
 
 - Update dependencies
