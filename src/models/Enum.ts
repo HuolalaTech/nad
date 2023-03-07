@@ -4,12 +4,14 @@ import { DefBase } from './DefBase';
 import { EnumConstant } from './EnumConstant';
 
 export class Enum extends DefBase {
-  readonly constants;
-  readonly valueType;
+  public readonly constants;
+  public readonly valueType;
+  public readonly description;
   constructor(raw: unknown, builder: Root) {
     super(raw, builder);
     this.constants = toArray(this.raw.constants, (i) => new EnumConstant(i, this));
     this.valueType = this.initValueType();
+    this.description = this.annotations.swagger.getApiModel()?.description;
   }
   private initValueType() {
     // All enum values should be of the same type, either of 'string' or 'number'.

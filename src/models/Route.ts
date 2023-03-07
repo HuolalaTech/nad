@@ -29,7 +29,7 @@ export class Route extends Annotated {
     this.patterns = toArray(this.raw?.patterns, (i) => toString(i));
     this.returnType = Type.create(toString(this.raw?.returnType), this.builder);
     this.parameters = toArray(this.raw?.parameters, (i) => Parameter.create(i, this.builder)).filter(notEmpty);
-    this.description = this.annotations.getApiOperation()?.value || '';
+    this.description = this.annotations.swagger.getApiOperation()?.description || '';
   }
 
   get method() {

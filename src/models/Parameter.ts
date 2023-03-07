@@ -19,13 +19,15 @@ export class Parameter extends Annotated {
   public readonly builder;
   public readonly required;
   public readonly actions;
+  public readonly description;
   constructor(raw: unknown, builder: Root) {
     super(raw);
     this.builder = builder;
     this.type = Type.create(toString(this.raw.type), builder);
-    const pv = this.annotations.getPathVariable();
-    const rp = this.annotations.getRequestParam();
-    const rb = this.annotations.getRequestBody();
+    this.description = this.annotations.swagger.getApiParam()?.description || '';
+    const pv = this.annotations.web.getPathVariable();
+    const rp = this.annotations.web.getRequestParam();
+    const rb = this.annotations.web.getRequestBody();
     this.required = rp?.required || pv?.required || rb?.required ? ('' as const) : ('?' as const);
     this.actions = [] as [string, ...string[]][];
     const isFile = this.type.name === 'org.springframework.web.multipart.MultipartFile';

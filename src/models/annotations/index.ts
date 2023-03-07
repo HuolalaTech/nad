@@ -1,28 +1,14 @@
 import { notEmpty } from '../../utils';
-import { PathVariable } from './PathVariable';
-import { RequestBody } from './RequestBody';
-import { RequestParam } from './RequestParam';
+import { JsonAnnotations } from './JsonAnnotations';
+
+import { SwaggerAnnotations } from './SwaggerAnnotations';
+import { WebAnnotations } from './WebAnnocations';
 
 export interface ApiDocField {
   description: string;
   name: string;
   required: boolean;
   example: string;
-}
-
-export interface JsonProperty {
-  value: string;
-  required: boolean;
-  index: number;
-}
-
-export interface JsonIgnore {
-  value: boolean;
-}
-
-export interface JSONField {
-  name: string;
-  serialize: boolean;
 }
 
 export interface NotNull {
@@ -39,43 +25,28 @@ export interface Min {
   message: string;
 }
 
-export interface ApiOperation {
-  value: string;
-  notes: string;
-  tags: string[];
-}
-
 export class Annotations {
   private readonly raw;
   constructor(raw: unknown | unknown[]) {
     this.raw = raw instanceof Array ? raw : [];
   }
 
-  getRequestBody() {
-    return RequestBody.create(this.find('org.springframework.web.bind.annotation.RequestBody'));
-  }
-  getRequestParam() {
-    return RequestParam.create(this.find('org.springframework.web.bind.annotation.RequestParam'));
-  }
-  getPathVariable() {
-    return PathVariable.create(this.find('org.springframework.web.bind.annotation.PathVariable'));
+  get web() {
+    const value = new WebAnnotations(this);
+    Object.defineProperty(this, 'web', { value, configurable: true });
+    return value;
   }
 
-  getApiOperation() {
-    return this.find<ApiOperation>('io.swagger.annotations.ApiOperation');
+  get swagger() {
+    const value = new SwaggerAnnotations(this);
+    Object.defineProperty(this, 'swagger', { value, configurable: true });
+    return value;
   }
 
-  getJSONField() {
-    return this.find<JSONField>('com.alibaba.fastjson.annotation.JSONField');
-  }
-  getJsonProperty() {
-    return this.find<JsonProperty>('com.fasterxml.jackson.annotation.JsonProperty');
-  }
-  getJsonIgnore() {
-    return this.find<JsonIgnore>('com.fasterxml.jackson.annotation.JsonIgnore');
-  }
-  getApiDocField() {
-    return this.find<ApiDocField>('cn.lalaframework.easyopen.doc.annotation.ApiDocField');
+  get json() {
+    const value = new JsonAnnotations(this);
+    Object.defineProperty(this, 'json', { value, configurable: true });
+    return value;
   }
 
   getNotNull() {

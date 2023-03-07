@@ -84,6 +84,11 @@ export class CodeGenForTs extends CodeGen {
   }
   private writeEnums() {
     for (const e of this.builder.enumList) {
+      if (e.description) {
+        this.writeComment(() => {
+          this.write(e.description);
+        });
+      }
       this.write(`export enum ${e.simpleName} {`);
       this.writeBlock(() => {
         for (const v of e.constants) {
@@ -98,7 +103,7 @@ export class CodeGenForTs extends CodeGen {
   private writeClasses() {
     for (const c of this.builder.declarationList) {
       this.writeComment(() => {
-        this.write(c.simpleName);
+        this.write(c.description || c.simpleName);
         this.write(`@iface ${c.name}`);
       });
       let { defName } = c;
@@ -109,6 +114,11 @@ export class CodeGenForTs extends CodeGen {
       this.write(`export interface ${defName} {`);
       this.writeBlock(() => {
         for (const m of c.members) {
+          if (m.description) {
+            this.writeComment(() => {
+              this.write(m.description);
+            });
+          }
           this.write(`${m.name}: ${t2s(m.type)};`);
         }
       });

@@ -5,12 +5,14 @@ import type { Root } from './Root';
 import { DefBase } from './DefBase';
 
 export class Class extends DefBase {
-  readonly typeParameters;
-  readonly defName;
+  public readonly typeParameters;
+  public readonly defName;
+  public readonly description;
   constructor(raw: unknown, builder: Root) {
     super(raw, builder);
     this.typeParameters = toArray(this.raw?.typeParameters, (i) => toString(i));
     this.defName = this.simpleName;
+    this.description = this.annotations.swagger.getApiModel()?.description;
     if (this.typeParameters.length) {
       const pars = this.typeParameters.join(', ');
       this.defName += `<${pars}>`;
