@@ -119,7 +119,8 @@ export class CodeGenForTs extends CodeGen {
               this.write(m.description);
             });
           }
-          this.write(`${m.name}: ${t2s(m.type)};`);
+          const optional = m.annotations.hasNonNull() ? '' : '?';
+          this.write(`${m.name}${optional}: ${t2s(m.type)};`);
         }
       });
       this.write('}');
