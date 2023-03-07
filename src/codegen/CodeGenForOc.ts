@@ -88,7 +88,7 @@ export class CodeGenForOc extends CodeGen {
   private writeEnumDefs() {
     for (const c of this.builder.enumList) {
       this.writeComment(() => {
-        this.write(c.simpleName);
+        this.write(c.description || c.simpleName);
         this.write(`@JavaClass ${c.name}`);
       });
       const enumTypeMapping: Record<string, string> = { string: 'NSString', number: 'NSNumber' };
@@ -112,7 +112,7 @@ export class CodeGenForOc extends CodeGen {
     this.writeEnumDefs();
     for (const c of list) {
       this.writeComment(() => {
-        this.write(c.simpleName);
+        this.write(c.description || c.simpleName);
         this.write(`@JavaClass ${c.name}`);
       });
       let superName = 'NSObject';
@@ -128,6 +128,11 @@ export class CodeGenForOc extends CodeGen {
           flags.push('assign');
         }
         const star = m.type.isGenericVariable ? '' : '*';
+        if (m.description) {
+          this.writeComment(() => {
+            this.write(m.description);
+          });
+        }
         this.write(`@property (${flags.join(', ')}) ${ocType} ${star}${fieldName};`);
       }
       this.write('@end');
