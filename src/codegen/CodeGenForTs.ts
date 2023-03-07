@@ -44,7 +44,7 @@ export class CodeGenForTs extends CodeGen {
         this.write(a.description);
       });
     }
-    this.write(`export const ${a.uniqName} = async (${pars.join(', ')}) => {`);
+    this.write(`async ${a.uniqName}(${pars.join(', ')}) {`);
     this.writeBlock(() => {
       this.write(`return new NadInvoker<${t2s(a.returnType)}>(BASE)`);
       this.writeBlock(() => {
@@ -61,7 +61,7 @@ export class CodeGenForTs extends CodeGen {
         this.write(`.execute();`);
       });
     });
-    this.write('};');
+    this.write('},');
   }
   private writeModules() {
     for (const m of this.builder.routes) {
@@ -69,11 +69,11 @@ export class CodeGenForTs extends CodeGen {
         this.write(m.description || m.moduleName);
         this.write(`@iface ${m.name}`);
       });
-      this.write(`export namespace ${m.moduleName} {`);
+      this.write(`export const ${m.moduleName} = {`);
       this.writeBlock(() => {
         for (const a of m.apis) this.writeApi(a);
       });
-      this.write('}', '');
+      this.write('};', '');
     }
   }
   private writeCommonDefs() {

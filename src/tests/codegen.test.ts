@@ -181,7 +181,7 @@ test('addMultipartFile renamed', () => {
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
-  expect(code).toContain(`async (myFile: MultipartFile,`);
+  expect(code).toContain(`async foo(myFile: MultipartFile,`);
   expect(code).toContain(`.addMultipartFile('hehe', myFile)`);
 });
 
@@ -204,7 +204,7 @@ test('default optional parameters', () => {
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
-  expect(code).toContain(`async (a1?: Long, a2?: Long, settings?: Partial<Settings>)`);
+  expect(code).toContain(`async foo(a1?: Long, a2?: Long, settings?: Partial<Settings>)`);
 });
 
 test('required parameters at first', () => {
@@ -227,7 +227,7 @@ test('required parameters at first', () => {
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
-  expect(code).toContain(`async (a1: Long, a2?: Long, settings?: Partial<Settings>)`);
+  expect(code).toContain(`async foo(a1: Long, a2?: Long, settings?: Partial<Settings>)`);
 });
 
 test('required parameters at second', () => {
@@ -250,5 +250,5 @@ test('required parameters at second', () => {
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
-  expect(code).toContain(`async (a1: Long | null, a2: Long, settings?: Partial<Settings>)`);
+  expect(code).toContain(`async foo(a1: Long | null, a2: Long, settings?: Partial<Settings>)`);
 });
