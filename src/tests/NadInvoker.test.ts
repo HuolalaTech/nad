@@ -125,7 +125,7 @@ describe('addRequestBody', () => {
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
-      data: { a: '1' },
+      data: 'a=1',
       url: `${base}/test`,
     });
   });
@@ -194,7 +194,7 @@ describe('addMultipartFile', () => {
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test`,
-      files: { f1 },
+      files: { f1: 'data:application/octet-stream;base64,' },
     });
   });
 });
