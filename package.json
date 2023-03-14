@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-builder",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Convert Nad Java definition AST to client code",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -19,6 +19,7 @@
     "start": "rollup -c --watch",
     "build": "rollup -c",
     "prepare": "husky install",
+    "prepublishOnly": "rollup -c",
     "prettier": "prettier --write \"**/*.{js,ts,json}\""
   },
   "author": "YanagiEiichi <576398868@qq.com>",
