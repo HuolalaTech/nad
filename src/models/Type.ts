@@ -16,8 +16,10 @@ import {
   isJavaVoid,
   isJavaUnknown,
 } from '../helpers/javaHelper';
+import { SyntaxReader } from './SyntaxReader';
 
 const clzCache = new WeakMap<Type, DefBase | null>();
+const JAVA_OBJECT = 'java.lang.Object';
 
 export class Type extends TypeBase<Type> {
   private getClz() {
@@ -93,61 +95,31 @@ export class Type extends TypeBase<Type> {
     return isJavaUnknown(this.name);
   }
 
-  static create(typeName: string, owner: TypeOwner) {
-    const input = typeName || 'java.lang.Object';
-    try {
-      const stack: Type[] = [];
-      let index = 0;
-      stack[index] = new this(owner);
-      for (let i = 0; i < input.length; i++) {
-        switch (input[i]) {
-          case '<':
-            stack[++index] = new this(owner);
-            stack[index - 1].parameters.push(stack[index]);
-            break;
-          case '>':
-            index--;
-            // "ThreadLocal<T>"" is equals "T"
-            // "Optional<T>"" is equals "T"
-            if (stack[index].name === 'java.lang.ThreadLocal' || stack[index].name === 'java.util.Optional') {
-              const [T] = stack[index].parameters;
-              if (index - 1 >= 0) {
-                const found = stack[index - 1].parameters.indexOf(stack[index]);
-                if (found !== -1) stack[index - 1].parameters[found] = T;
-              }
-              stack[index] = T;
-            }
-            break;
-          case ',':
-            stack[index] = new this(owner);
-            stack[index - 1].parameters.push(stack[index]);
-            break;
-          case '\n':
-          case ' ':
-            break;
-          case '[':
-            break;
-          case ']':
-            // The java type "char[]" serialized as a string.
-            if (stack[index].name === 'char' || stack[index].name === 'byte') {
-              stack[index].name = 'java.lang.String';
-            } else {
-              stack[index] = new this(owner, 'java.util.List', [stack[index]]);
-              if (index) stack[index - 1].parameters.splice(-1, 1, stack[index]);
-            }
-            break;
-          case '?':
-            stack[index].name = 'java.lang.Object';
-            break;
-          default:
-            stack[index].name += input[i];
-        }
+  public static create(typeName: string, owner: TypeOwner) {
+    const sr = new SyntaxReader(typeName || JAVA_OBJECT);
+    const next = () => {
+      sr.read(/\s*/g);
+      const name = sr.read(/[\w$.?]*/g);
+      const parameters: Type[] = [];
+      if (sr.read('<')) {
+        do {
+          parameters.push(next());
+        } while (sr.read(','));
+        sr.read('>'); // need assert
       }
-      const type = stack[0];
-      type.getClz();
-      return type;
-    } catch (error) {
-      throw new SyntaxError(`Faild to create GenericType with input '${input}'`);
-    }
+      const cr = () => {
+        if (name === 'java.lang.ThreadLocal' || name === 'java.util.Optional') return parameters[0];
+        if (name === '?' || name === '') return new this(owner, JAVA_OBJECT, []);
+        return new this(owner, name, parameters);
+      };
+      if (sr.read('[]')) {
+        if (name == 'char' || name === 'byte') {
+          return new this(owner, 'java.lang.String', []);
+        }
+        return new this(owner, 'java.util.List', [cr()]);
+      }
+      return cr();
+    };
+    return next();
   }
 }

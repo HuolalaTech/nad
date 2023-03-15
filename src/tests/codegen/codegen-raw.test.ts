@@ -1,5 +1,5 @@
-import { Root } from '../models';
-import { Builder } from '../Builder';
+import { Root } from '../../models';
+import { Builder } from '../../Builder';
 
 const classes = [
   {

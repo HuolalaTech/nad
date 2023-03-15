@@ -1,5 +1,5 @@
-import { Enum } from '../models';
-import { Builder } from '../Builder';
+import { Enum } from '../../models';
+import { Builder } from '../../Builder';
 
 const classes = [
   {

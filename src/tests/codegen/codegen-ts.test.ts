@@ -1,4 +1,4 @@
-import { Builder } from '../Builder';
+import { Builder } from '../../Builder';
 
 const config = { base: 'test', target: 'ts' } as const;
 

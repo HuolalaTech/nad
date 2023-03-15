@@ -7,10 +7,10 @@ export type TypeOwner = Class | Root;
 const wm = new WeakMap<object, TypeOwner>();
 
 export class TypeBase<T extends TypeBase<T>> {
-  public name;
-  public parameters;
+  public readonly name;
+  public readonly parameters;
 
-  constructor(owner: TypeOwner, name = '', parameters: T[] = []) {
+  constructor(owner: TypeOwner, name = '', parameters: readonly T[] = []) {
     this.name = name;
     this.parameters = parameters;
     wm.set(this, owner);
