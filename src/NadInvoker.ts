@@ -119,11 +119,10 @@ export class NadInvoker<T> {
     const { timeout } = settings || {};
     const headers = { ...this.headers, ...settings?.headers };
     // NOTE: Do not use async/await in this libraray, as it may generate some iterator polyfill code in ES5.
-    return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then(
-      ({ data, statusCode }) => {
-        if (statusCode >= 200 && statusCode < 300) return data;
-        throw new HttpError(statusCode);
-      },
-    );
+    return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then((res) => {
+      const { data, statusCode } = res;
+      if (statusCode >= 200 && statusCode < 300) return data;
+      throw new HttpError(res);
+    });
   }
 }

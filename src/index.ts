@@ -1,5 +1,7 @@
 import { NadInvoker } from './NadInvoker';
-import type { Settings } from './NadInvoker';
+
+export * from './NadInvoker';
+export * from './errors';
 
 // Find the globalThis object across browsers and miniprogram platforms.
 const globalThis =
@@ -18,6 +20,3 @@ if (globalThis) {
     });
   }
 }
-
-export { NadInvoker };
-export type { Settings };

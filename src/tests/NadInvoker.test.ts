@@ -1,5 +1,4 @@
-import { HttpError } from '../errors/HttpError';
-import { NadInvoker } from '../NadInvoker';
+import { NadInvoker, HttpError } from '..';
 import './libs/mock-xhr';
 
 const base = 'http://localhost';
@@ -22,9 +21,18 @@ describe('basic', () => {
   });
 
   test('http error', async () => {
-    const res = new NadInvoker(base).open('POST', '/test').addHeader('status-code', '500').execute();
+    const res = new NadInvoker(base)
+      .open('POST', '/test')
+      .addHeader('response-body', '{"reason":"xswl"}')
+      .addHeader('status-code', '500')
+      .execute();
     expect(res).rejects.toBeInstanceOf(HttpError);
-    expect(res).rejects.toMatchObject({ status: 500, name: 'HttpError' });
+    expect(res).rejects.toMatchObject({
+      statusCode: 500,
+      name: 'HttpError',
+      headers: { server: 'mock' },
+      data: { reason: 'xswl' },
+    });
   });
 
   test('base in settings', async () => {

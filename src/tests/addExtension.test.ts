@@ -1,4 +1,4 @@
-import { NadInvoker } from '../NadInvoker';
+import { NadInvoker } from '..';
 import { interceptors } from '@huolala-tech/request';
 
 import './libs/mock-xhr';
