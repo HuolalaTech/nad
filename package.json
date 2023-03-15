@@ -26,12 +26,12 @@
   "license": "MIT",
   "dependencies": {
     "@huolala-tech/custom-error": "^0.0.1",
-    "@huolala-tech/nad-runtime": "^0.0.4"
+    "@huolala-tech/nad-runtime": "^0.0.5"
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.21.0",
     "@rollup/plugin-babel": "^6.0.3",
-    "@types/jest": "^29.4.1",
+    "@types/jest": "^29.4.2",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.36.0",

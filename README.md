@@ -1,4 +1,4 @@
-# nad-builder
+# nad-builder · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-builder)](LICENSE.txt)
 
 Convert Nad Java definition AST to client code.
 
