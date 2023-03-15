@@ -12,7 +12,7 @@ type MultipartFile = Blob | File | string;
 
 export class NadInvoker<T> {
   public base;
-  public rawUrl: string;
+  public rawPath: string;
   public method: string;
   public settings?: Partial<Settings>;
   public body?: unknown;
@@ -25,7 +25,7 @@ export class NadInvoker<T> {
 
   constructor(base?: string) {
     this.base = base;
-    this.rawUrl = '/';
+    this.rawPath = '/';
     this.method = 'GET';
     this.pathVariables = Object.create(null);
     this.requestParams = Object.create(null);
@@ -34,9 +34,9 @@ export class NadInvoker<T> {
     this.extensions = Object.create(null);
   }
 
-  public open(method: string, rawUrl: string, settings?: Partial<Settings>) {
+  public open(method: string, rawPath: string, settings?: Partial<Settings>) {
     this.method = method;
-    this.rawUrl = rawUrl;
+    this.rawPath = rawPath;
     this.settings = settings;
     return this;
   }
@@ -92,6 +92,9 @@ export class NadInvoker<T> {
     return Object.keys(requestParams)
       .map((name) =>
         []
+          // The requestParams[name] may or may not be an array, [].concat ensures it is always an array.
+          // For array value, the query string builder should separate it and append each item one by one.
+          // For example, if the requestParams is { a: [ 1, 2, 3 ] }, the qs should be "a=1&a=2&a=3".
           .concat(requestParams[name] as unknown as never)
           .map((v) => `${encodeURIComponent(name)}=${encodeURIComponent(v)}`)
           .join('&'),
@@ -100,8 +103,9 @@ export class NadInvoker<T> {
   }
 
   protected buildUrl() {
-    const { rawUrl, settings } = this;
-    const path = rawUrl.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(this.pathVariables[key])));
+    const { rawPath, settings } = this;
+    // Find all {...} expression in the path, and replace them with values from pathVariables.
+    const path = rawPath.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(this.pathVariables[key])));
     const qs = this.buildQs();
     const base = settings?.base ?? this.base ?? '';
     let url = joinPath(base, path);
@@ -114,6 +118,7 @@ export class NadInvoker<T> {
     const url = this.buildUrl();
     const { timeout } = settings || {};
     const headers = { ...this.headers, ...settings?.headers };
+    // NOTE: Do not use async/await in this libraray, as it may generate some iterator polyfill code in ES5.
     return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then(
       ({ data, statusCode }) => {
         if (statusCode >= 200 && statusCode < 300) return data;

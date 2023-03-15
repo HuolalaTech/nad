@@ -95,7 +95,7 @@ describe('addRequestParam', () => {
     });
   });
 
-  test('string in qs', async () => {
+  test('number in qs', async () => {
     const res = await new NadInvoker(base).open('POST', '/test').addRequestParam('id', 123).execute();
     expect(res).toMatchObject({
       method: 'POST',
@@ -127,6 +127,19 @@ describe('addRequestParam', () => {
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test?id=123`,
+    });
+  });
+
+  test('array in qs', async () => {
+    const res = await new NadInvoker(base)
+      .open('POST', '/test')
+      .addRequestParam('before', 'before')
+      .addRequestParam('a', [1, 2, 3])
+      .addRequestParam('after', 'after')
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test?before=before&a=1&a=2&a=3&after=after`,
     });
   });
 });
