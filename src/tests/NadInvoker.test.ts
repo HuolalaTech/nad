@@ -1,3 +1,4 @@
+import { HttpError } from '../errors/HttpError';
 import { NadInvoker } from '../NadInvoker';
 import './libs/mock-xhr';
 
@@ -17,6 +18,28 @@ describe('basic', () => {
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test`,
+    });
+  });
+
+  test('http error', async () => {
+    const res = new NadInvoker(base).open('POST', '/test').addHeader('status-code', '500').execute();
+    expect(res).rejects.toBeInstanceOf(HttpError);
+    expect(res).rejects.toMatchObject({ status: 500, name: 'HttpError' });
+  });
+
+  test('base in settings', async () => {
+    const res = await new NadInvoker().open('POST', '/test', { base: base }).execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test`,
+    });
+  });
+
+  test('no base provided', async () => {
+    const res = await new NadInvoker().open('POST', '/test').execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `/test`,
     });
   });
 });
@@ -58,7 +81,7 @@ describe('addPathVariable', () => {
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
-      url: `${base}/test/123`,
+      url: `${base}/test/456`,
     });
   });
 });
@@ -170,7 +193,7 @@ describe('addNormalParam', () => {
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
-      url: `${base}/test?a=1&c=3&b=2`,
+      url: `${base}/test?a=1&c=4&b=2`,
     });
   });
   test('undefined value', async () => {
@@ -195,6 +218,20 @@ describe('addMultipartFile', () => {
       method: 'POST',
       url: `${base}/test`,
       files: { f1: 'data:application/octet-stream;base64,' },
+    });
+  });
+
+  test('delete object', async () => {
+    const f1 = new File([], 'xx.txt');
+    const res = await new NadInvoker(base)
+      .open('POST', '/test')
+      .addMultipartFile('f1', f1)
+      .addMultipartFile('f1', null)
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test`,
+      files: {},
     });
   });
 });

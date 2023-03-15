@@ -1,5 +1,5 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  coveragePathIgnorePatterns: ['/src/tests/'],
+  coveragePathIgnorePatterns: ['/src/tests/', '/src/errors/'],
 };
