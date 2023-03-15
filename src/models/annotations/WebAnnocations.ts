@@ -1,29 +1,29 @@
 import { Annotations } from '.';
-import { toBoolean } from '../../utils';
+import { u2b } from '../../utils';
 import { AnnotationBase } from './AnnotationBase';
-import { toString } from '../../utils';
+import { u2s } from '../../utils';
 
 export class ValueAliasName extends AnnotationBase<string> {
   get value(): string {
-    return toString(this.raw.name || this.raw.value);
+    return u2s(this.raw.name || this.raw.value);
   }
 }
 
 export class RequestParam extends ValueAliasName {
   get required() {
-    return toBoolean(this.raw.required, true);
+    return u2b(this.raw.required, true);
   }
 }
 
 export class PathVariable extends ValueAliasName {
   get required() {
-    return toBoolean(this.raw.required, true);
+    return u2b(this.raw.required, true);
   }
 }
 
 export class RequestBody extends ValueAliasName {
   get required() {
-    return toBoolean(this.raw.required, true);
+    return u2b(this.raw.required, true);
   }
 }
 

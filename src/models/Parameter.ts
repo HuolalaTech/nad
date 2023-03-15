@@ -1,4 +1,4 @@
-import { toString } from '../utils';
+import { u2s } from '../utils';
 import type { Root } from './Root';
 import { Annotated } from './Annotated';
 import { Type } from './Type';
@@ -23,7 +23,7 @@ export class Parameter extends Annotated {
   constructor(raw: unknown, builder: Root) {
     super(raw);
     this.builder = builder;
-    this.type = Type.create(toString(this.raw.type), builder);
+    this.type = Type.create(u2s(this.raw.type), builder);
     this.description = this.annotations.swagger.getApiParam()?.description || '';
     const pv = this.annotations.web.getPathVariable();
     const rp = this.annotations.web.getRequestParam();

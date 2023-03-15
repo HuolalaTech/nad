@@ -1,5 +1,5 @@
 import { Route } from './Route';
-import { toArray } from '../utils';
+import { u2a } from '../utils';
 import type { Root } from './Root';
 import { UniqueName } from './UniqueName';
 
@@ -14,7 +14,7 @@ export class Module {
       this.builder.fixModuleName(this.name.match(/[^.]+$/)?.[0].replace(/\$\$.*/, '') || '$'),
       this.builder.uniqueNameSeparator,
     );
-    this.apis = toArray(list, (i) => new Route(i, this));
+    this.apis = u2a(list, (i) => new Route(i, this));
     this.description = ''; // toString(this.raw?.description);
   }
 }

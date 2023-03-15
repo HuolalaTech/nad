@@ -1,4 +1,4 @@
-import { toString } from '../utils';
+import { u2s } from '../utils';
 import type { Enum } from './Enum';
 
 export class EnumConstant {
@@ -10,7 +10,7 @@ export class EnumConstant {
   constructor(raw: unknown, owner: Enum) {
     const { name, value, properties } = Object(raw);
     this.owner = owner;
-    this.name = toString(name);
+    this.name = u2s(name);
     this.rawValue = value;
     this.properties = Object(properties);
     const entries = Object.entries(this.properties);

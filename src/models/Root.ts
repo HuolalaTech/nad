@@ -1,7 +1,7 @@
 import { Module } from './Module';
 import { Class } from './Class';
 import { computeIfAbsent } from '../utils';
-import { toArray, toString } from '../utils';
+import { u2a, u2s } from '../utils';
 import { Enum } from './Enum';
 import type { DefBase } from './DefBase';
 
@@ -38,8 +38,8 @@ export class Root {
   public readonly fixPropertyName;
 
   constructor(raw: RawDefs, options: BuilderOptions = {}) {
-    this.rawClasses = new Map(toArray(raw?.classes, (i) => [toString(Object(i).name), i]));
-    this.rawEnums = new Map(toArray(raw?.enums, (i) => [toString(Object(i).name), i]));
+    this.rawClasses = new Map(u2a(raw?.classes, (i) => [u2s(Object(i).name), i]));
+    this.rawEnums = new Map(u2a(raw?.enums, (i) => [u2s(Object(i).name), i]));
     this.classes = {};
     this.enums = {};
 
@@ -53,7 +53,7 @@ export class Root {
 
     this.unknownTypes = new Set<string>();
 
-    const groups = toArray(raw?.routes || [])
+    const groups = u2a(raw?.routes || [])
       .filter((rawRoute) => {
         if (!options.apis) return true;
         const { bean, name } = Object(rawRoute);

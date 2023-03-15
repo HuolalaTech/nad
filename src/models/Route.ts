@@ -2,7 +2,7 @@ import { Annotated } from './Annotated';
 import type { Module } from './Module';
 import { Type } from './Type';
 import { notEmpty } from '../utils';
-import { toArray, toString } from '../utils';
+import { u2a, u2s } from '../utils';
 import { UniqueName } from './UniqueName';
 import { Parameter } from './Parameter';
 
@@ -25,10 +25,10 @@ export class Route extends Annotated {
       this.builder.fixApiName(this.name),
       this.builder.uniqueNameSeparator,
     );
-    this.methods = toArray(this.raw?.methods, (i) => toString(i));
-    this.patterns = toArray(this.raw?.patterns, (i) => toString(i));
-    this.returnType = Type.create(toString(this.raw?.returnType), this.builder);
-    this.parameters = toArray(this.raw?.parameters, (i) => Parameter.create(i, this.builder)).filter(notEmpty);
+    this.methods = u2a(this.raw?.methods, u2s);
+    this.patterns = u2a(this.raw?.patterns, u2s);
+    this.returnType = Type.create(u2s(this.raw?.returnType), this.builder);
+    this.parameters = u2a(this.raw?.parameters, (i) => Parameter.create(i, this.builder)).filter(notEmpty);
     this.description = this.annotations.swagger.getApiOperation()?.description || '';
   }
 

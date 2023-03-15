@@ -1,79 +1,80 @@
+import { u2s } from '../../utils';
 import { Annotations } from '.';
 import { AnnotationBase } from './AnnotationBase';
 
 export class Api extends AnnotationBase<string> {
-  get tags() {
-    return this.raw.tags as string[];
-  }
-  get hidden() {
-    return this.raw.hidden as boolean;
-  }
+  // get tags() {
+  //   return u2a(this.raw.tags, u2s);
+  // }
+  // get hidden() {
+  //   return u2b(this.raw.hidden);
+  // }
 }
 
 export class ApiOperation extends AnnotationBase<string> {
-  get description(): string {
-    return this.value || '';
+  get description() {
+    return u2s(this.value);
   }
-  get notes() {
-    return this.raw.notes as string;
-  }
-  get tags() {
-    return this.raw.tags as string[];
-  }
-  get hidden() {
-    return this.raw.hidden as boolean;
-  }
+  // get notes() {
+  //   return u2s(this.raw.notes);
+  // }
+  // get tags() {
+  //   return u2a(this.raw.tags, u2s);
+  // }
+  // get hidden() {
+  //   return u2b(this.raw.hidden);
+  // }
 }
 
 export class ApiModel extends AnnotationBase<string> {
   get description(): string {
-    return this.raw.description || this.raw.value || '';
+    return u2s(this.raw.description) || this.value;
   }
 }
 
 export class ApiModelProperty extends AnnotationBase<string> {
   get name() {
-    return this.raw.name as string;
+    return u2s(this.raw.name);
   }
-  get description(): string {
-    return this.raw.value || this.raw.name || '';
+  get description() {
+    return this.value || this.name;
   }
-  get required() {
-    return this.raw.required as boolean;
-  }
-  get readOnly() {
-    return this.raw.readOnly as boolean;
-  }
-  get hidden() {
-    return this.raw.hidden as boolean;
-  }
-  get position() {
-    return this.raw.position as number;
-  }
-  get allowEmptyValue() {
-    return this.raw.allowEmptyValue as boolean;
-  }
+  // get required() {
+  //   return u2b(this.raw.required);
+  // }
+  // get readOnly() {
+  //   return u2b(this.raw.readOnly);
+  // }
+  // get hidden() {
+  //   return u2b(this.raw.hidden);
+  // }
+  // get position() {
+  //   return u2n(this.raw.position);
+  // }
+  // get allowEmptyValue() {
+  //   return u2b(this.raw.allowEmptyValue);
+  // }
 }
 
 export class ApiParam extends AnnotationBase<string> {
   get name() {
-    return this.raw.name as string;
+    return u2s(this.raw.name);
   }
   get description(): string {
-    return this.raw.description || this.raw.name || '';
+    return u2s(this.raw.description) || this.name;
   }
-  get required() {
-    return this.raw.required as boolean;
-  }
-  get readOnly() {
-    return this.raw.readOnly as boolean;
-  }
-  get hidden() {
-    return this.raw.hidden as boolean;
-  }
-  get allowMultiple() {
-    return this.raw.allowMultiple as boolean;
-  }
+  // get required() {
+  //   return u2b(this.raw.required);
+  // }
+  // get readOnly() {
+  //   return u2b(this.raw.readOnly);
+  // }
+  // get hidden() {
+  //   return u2b(this.raw.hidden);
+  // }
+  // get allowMultiple() {
+  //   return u2b(this.raw.allowMultiple);
+  // }
 }
 
 export class SwaggerAnnotations {

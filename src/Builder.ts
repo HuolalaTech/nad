@@ -2,6 +2,7 @@ import { RawDefs, Root } from './models';
 import { CodeGenForOc, CodeGenForTs } from './codegen';
 import { ocBuilderOptions } from './helpers/ocHelper';
 import { tsBuilderOptions } from './helpers/tsHelper';
+import { neverReachHere } from './utils';
 
 export const supportedTargets = ['ts', 'oc', 'raw'] as const;
 export type SupportedTarget = (typeof supportedTargets)[number];
@@ -45,7 +46,7 @@ export class Builder {
       value = new Root(defs, { ...tsBuilderOptions, apis });
     } else if (target === 'raw') {
       value = new Root(defs, { apis: undefined });
-    } else throw new TypeError(`Invalid target "${target}"`);
+    } else throw neverReachHere(target, `Invalid target "${target}"`);
     Object.defineProperty(this, 'root', { configurable: true, value });
     return value;
   }
@@ -54,15 +55,15 @@ export class Builder {
    * It's generated lazily, only when it is actually used.
    */
   get code() {
-    const { root, target, base, defs, runtimePkgName } = this;
+    const { target, base, defs, runtimePkgName } = this;
     let value;
     if (target === 'oc') {
-      value = new CodeGenForOc(root, { base }).toString();
+      value = new CodeGenForOc(this.root, { base }).toString();
     } else if (target === 'ts') {
-      value = new CodeGenForTs(root, { base, runtimePkgName }).toString();
+      value = new CodeGenForTs(this.root, { base, runtimePkgName }).toString();
     } else if (target === 'raw') {
       value = JSON.stringify(defs, null, 2);
-    } else throw new TypeError(`Invalid target "${target}"`);
+    } else throw neverReachHere(target, `Invalid target "${target}"`);
     Object.defineProperty(this, 'code', { configurable: true, value });
     return value;
   }

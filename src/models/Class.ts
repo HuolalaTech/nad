@@ -1,6 +1,6 @@
 import { Member } from './Member';
 import { Type } from './Type';
-import { toArray, toString } from '../utils';
+import { u2a, u2s } from '../utils';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
 
@@ -10,7 +10,7 @@ export class Class extends DefBase {
   public readonly description;
   constructor(raw: unknown, builder: Root) {
     super(raw, builder);
-    this.typeParameters = toArray(this.raw?.typeParameters, (i) => toString(i));
+    this.typeParameters = u2a(this.raw?.typeParameters, (i) => u2s(i));
     this.defName = this.simpleName;
     this.description = this.annotations.swagger.getApiModel()?.description;
     if (this.typeParameters.length) {
@@ -24,13 +24,13 @@ export class Class extends DefBase {
      * Generic type parameters.
      * For example, the value of typeParameters is [ "T", "M" ] for `class Foo<T, M> {}`
      */
-    const value = toArray(this.raw?.members, (i) => new Member(i, this));
+    const value = u2a(this.raw?.members, (i) => new Member(i, this));
     Object.defineProperty(this, 'members', { configurable: true, value });
     return value;
   }
 
   get superclass() {
-    const value = this.raw?.superclass ? Type.create(toString(this.raw.superclass), this) : null;
+    const value = this.raw?.superclass ? Type.create(u2s(this.raw.superclass), this) : null;
     Object.defineProperty(this, 'superclass', { configurable: true, value });
     return value;
   }

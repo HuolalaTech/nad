@@ -1,31 +1,18 @@
 import { NeverReachHere } from './exceptions';
 
-export const toBoolean = (v: unknown, defaults: boolean) => {
-  if (typeof v === 'boolean') return v;
-  return defaults;
-};
+export const u2b = (v: unknown, d = false) => (typeof v === 'boolean' ? v : d);
 
-export function toString(str: unknown): string;
-export function toString<T>(str: unknown, defaults: T): string | T;
-export function toString<T>(str: unknown, defaults?: T): unknown {
-  if (typeof str === 'string') return str;
-  if (defaults === undefined) return '';
-  return defaults;
-}
-
-export const toNumber = (num: unknown, defaults = 0) => {
-  if (typeof num === 'number') return num;
-  return defaults;
-};
+export const u2s = <T>(u: T) => (typeof u === 'string' ? u : '') as T extends string ? T : string;
+export const u2n = <T>(u: T) => (typeof u === 'number' ? u : 0) as T extends number ? T : number;
 
 type MapCallback<A, R> = (value: A extends (infer U)[] ? U : unknown, index: number, array: A) => R;
 
-export function toArray(a: unknown): unknown[];
-export function toArray<T>(a: unknown, callbackfn: MapCallback<unknown[], T>): T[];
-export function toArray<A>(a: A): A extends readonly unknown[] ? A : unknown[];
-export function toArray<A, T>(a: A, callbackfn: MapCallback<A, T>): T[];
-export function toArray<T>(a: unknown, callbackfn: MapCallback<unknown, T>): T[];
-export function toArray<A>(a: unknown | A, callbackfn?: MapCallback<unknown[] | A, unknown>) {
+export function u2a(a: unknown): unknown[];
+export function u2a<T>(a: unknown, callbackfn: MapCallback<unknown[], T>): T[];
+export function u2a<A>(a: A): A extends readonly unknown[] ? A : unknown[];
+export function u2a<A, T>(a: A, callbackfn: MapCallback<A, T>): T[];
+export function u2a<T>(a: unknown, callbackfn: MapCallback<unknown, T>): T[];
+export function u2a<A>(a: unknown | A, callbackfn?: MapCallback<unknown[] | A, unknown>) {
   if (a instanceof Array) {
     if (callbackfn) return a.map(callbackfn);
     return a;
@@ -35,9 +22,10 @@ export function toArray<A>(a: unknown | A, callbackfn?: MapCallback<unknown[] | 
 
 export function neverReachHere(): Error;
 export function neverReachHere(u: never): Error;
+export function neverReachHere(u: never, message: string): Error;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function neverReachHere(u?: never) {
-  return new NeverReachHere();
+export function neverReachHere(u?: never, message?: string) {
+  return new NeverReachHere(message);
 }
 
 export const notEmpty = <T>(w: T): w is NonNullable<T> => w !== null && w !== undefined;

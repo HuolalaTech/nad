@@ -58,7 +58,7 @@ export class CodeGenForOc extends CodeGen {
       for (const p of a.parameters) {
         for (const [m, ...args] of p.actions) {
           if (args.length) {
-            gen.write(`[req ${m}:(${args.map(ss).join(', ')} value:${p.name}];`);
+            gen.write(`[req ${m}:${args.map(ss).join(', ')} value:${p.name}];`);
           } else {
             gen.write(`[req ${m}:${p.name}];`);
           }

@@ -1,5 +1,5 @@
 import { Annotations } from './annotations';
-import { toArray, toString } from '../utils';
+import { u2a, u2s } from '../utils';
 
 export class Annotated {
   readonly name;
@@ -7,7 +7,7 @@ export class Annotated {
   protected readonly raw: Record<string, unknown>;
   constructor(raw: unknown) {
     this.raw = Object(raw);
-    this.name = toString(this.raw.name);
-    this.annotations = new Annotations(toArray(this.raw.annotations));
+    this.name = u2s(this.raw.name);
+    this.annotations = new Annotations(u2a(this.raw.annotations));
   }
 }

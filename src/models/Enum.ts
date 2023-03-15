@@ -1,4 +1,4 @@
-import { toArray } from '../utils';
+import { u2a } from '../utils';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
 import { EnumConstant } from './EnumConstant';
@@ -9,7 +9,7 @@ export class Enum extends DefBase {
   public readonly description;
   constructor(raw: unknown, builder: Root) {
     super(raw, builder);
-    this.constants = toArray(this.raw.constants, (i) => new EnumConstant(i, this));
+    this.constants = u2a(this.raw.constants, (i) => new EnumConstant(i, this));
     this.valueType = this.initValueType();
     this.description = this.annotations.swagger.getApiModel()?.description;
   }
