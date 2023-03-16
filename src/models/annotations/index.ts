@@ -57,7 +57,17 @@ export class Annotations {
   // }
 
   hasNonNull() {
-    return !!this.find<NotNull>('.NonNull', true);
+    // lombok.NonNul
+    // org.springframework.lang.NonNull
+    if (this.find<NotNull>('.NonNull', true)) return true;
+
+    // javax.annotation.Nonnull;
+    if (this.find<NotNull>('.Nonnull', true)) return true;
+
+    // javax.validation.constraints.NotNull
+    if (this.find<NotNull>('.NotNull', true)) return true;
+
+    return false;
   }
 
   private readonly cache: Record<string, unknown> = Object.create(null);
