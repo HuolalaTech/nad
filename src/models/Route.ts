@@ -25,10 +25,10 @@ export class Route extends Annotated {
       this.builder.fixApiName(this.name),
       this.builder.uniqueNameSeparator,
     );
-    this.methods = u2a(this.raw?.methods, u2s);
-    this.patterns = u2a(this.raw?.patterns, u2s);
-    this.returnType = Type.create(u2s(this.raw?.returnType), this.builder);
-    this.parameters = u2a(this.raw?.parameters, (i) => Parameter.create(i, this.builder)).filter(notEmpty);
+    this.methods = u2a(this.raw.methods, u2s);
+    this.patterns = u2a(this.raw.patterns, u2s);
+    this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
+    this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this.builder)).filter(notEmpty);
     this.description = this.annotations.swagger.getApiOperation()?.description || '';
   }
 

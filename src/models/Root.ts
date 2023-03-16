@@ -3,7 +3,6 @@ import { Class } from './Class';
 import { computeIfAbsent, u2o } from '../utils';
 import { u2a, u2s } from '../utils';
 import { Enum } from './Enum';
-import type { DefBase } from './DefBase';
 
 export interface BuilderOptions {
   uniqueNameSeparator?: string;
@@ -88,7 +87,7 @@ export class Root {
     return this.routes.reduce((s, i) => s + i.apis.length, 0);
   }
 
-  getDefByName(name: string): DefBase | null {
+  public getDefByName(name: string): Enum | Class | null {
     const { classes, rawClasses, enums, rawEnums } = this;
     if (name in classes) return classes[name];
     if (name in enums) return enums[name];
@@ -109,11 +108,15 @@ export class Root {
     return null;
   }
 
-  getClassBySimpleName(name: string): Class | null {
-    return this.declarationList.find((clz) => clz.simpleName === name) || null;
+  public getDefBySimpleName(name: string): Enum | Class | null {
+    return (
+      this.declarationList.find((def) => def.simpleName === name) ||
+      this.enumList.find((def) => def.simpleName === name) ||
+      null
+    );
   }
 
-  isEnum(name: string) {
+  public isEnum(name: string) {
     return this.rawEnums.has(name);
   }
 }
