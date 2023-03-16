@@ -10,12 +10,14 @@ const clzCache = new WeakMap<Type, DefBase | null>();
 const JAVA_OBJECT = 'java.lang.Object';
 
 export class Type extends TypeBase<Type> {
+  private getClz() {
+    this.parameters.forEach((i) => i.getClz());
+    if (isJavaNonClass(this.name) || this.isGenericVariable) return null;
+    return this.builder.getDefByName(this.name);
+  }
+
   public get clz(): DefBase | null {
-    return computeIfAbsent(clzCache, this, () => {
-      this.parameters.forEach((i) => i.clz);
-      if (isJavaNonClass(this.name) || this.isGenericVariable) return null;
-      return this.builder.getDefByName(this.name);
-    });
+    return computeIfAbsent(clzCache, this, (n) => n.getClz());
   }
 
   toString() {
