@@ -1,3 +1,8 @@
+## 0.0.6
+
+- Update dependencies
+- Fix Type.clz
+
 ## 0.0.5
 
 - Add more codegen test cases
