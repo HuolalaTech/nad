@@ -1,9 +1,10 @@
+import { u2o } from '../../utils';
 import { Annotations } from '.';
 
 export class AnnotationBase<V> {
   protected raw;
   constructor(raw: Record<string, unknown>) {
-    this.raw = Object(raw);
+    this.raw = u2o(raw);
   }
 
   public get value() {

@@ -1,4 +1,4 @@
-import { notEmpty } from '../../utils';
+import { notEmpty, u2o } from '../../utils';
 import { JsonAnnotations } from './JsonAnnotations';
 
 import { SwaggerAnnotations } from './SwaggerAnnotations';
@@ -83,7 +83,7 @@ export class Annotations {
     for (const { type, attributes } of this.gen(raw)) {
       if (type.startsWith(prefix)) {
         const name = type.slice(prefix.length);
-        const value = Object(attributes) as Record<string, unknown>;
+        const value = u2o(attributes);
         yield { name, value };
       }
     }
@@ -92,7 +92,7 @@ export class Annotations {
   static find(raw: unknown[], name: string, endsWith = false) {
     for (const { type, attributes } of this.gen(raw)) {
       if (endsWith ? type.endsWith(name) : type === name) {
-        return Object(attributes) as Record<string, unknown>;
+        return u2o(attributes);
       }
     }
     return null;
@@ -102,7 +102,7 @@ export class Annotations {
     if (raw instanceof Array) {
       for (const i of raw) {
         if (!i) continue;
-        const { type, attributes } = Object(i);
+        const { type, attributes } = u2o(i);
         if (typeof type !== 'string') continue;
         yield { type, attributes };
       }

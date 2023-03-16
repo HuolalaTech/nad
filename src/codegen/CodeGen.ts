@@ -1,5 +1,7 @@
+import { u2o } from '../utils';
+
 const isIterable = (what: unknown): what is Iterable<unknown> => {
-  return !!what && typeof Object(what)[Symbol.iterator] === 'function';
+  return !!what && typeof u2o(what)[Symbol.iterator] === 'function';
 };
 
 export class CodeGen {

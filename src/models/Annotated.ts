@@ -1,12 +1,12 @@
 import { Annotations } from './annotations';
-import { u2a, u2s } from '../utils';
+import { u2a, u2o, u2s } from '../utils';
 
 export class Annotated {
   readonly name;
   readonly annotations;
-  protected readonly raw: Record<string, unknown>;
+  protected readonly raw;
   constructor(raw: unknown) {
-    this.raw = Object(raw);
+    this.raw = u2o(raw);
     this.name = u2s(this.raw.name);
     this.annotations = new Annotations(u2a(this.raw.annotations));
   }

@@ -2,6 +2,8 @@ import { NeverReachHere } from './exceptions';
 
 export const u2b = (v: unknown, d = false) => (typeof v === 'boolean' ? v : d);
 
+export const u2o = (v: unknown): Record<PropertyKey, unknown> => Object(v);
+
 export const u2s = <T>(u: T) => (typeof u === 'string' ? u : '') as T extends string ? T : string;
 export const u2n = <T>(u: T) => (typeof u === 'number' ? u : 0) as T extends number ? T : number;
 

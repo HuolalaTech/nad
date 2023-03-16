@@ -1,4 +1,4 @@
-import { u2s } from '../utils';
+import { u2o, u2s } from '../utils';
 import type { Root } from './Root';
 import { Annotated } from './Annotated';
 import { Type } from './Type';
@@ -12,7 +12,7 @@ const ignoredTypes = new Set([
 
 export class Parameter extends Annotated {
   static create(raw: unknown, builder: Root) {
-    const { type } = Object(raw);
+    const { type } = u2o(raw);
     if (typeof type === 'string' && ignoredTypes.has(type.replace(/<.*/, ''))) return null;
     return new Parameter(raw, builder);
   }

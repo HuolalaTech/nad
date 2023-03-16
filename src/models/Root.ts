@@ -1,6 +1,6 @@
 import { Module } from './Module';
 import { Class } from './Class';
-import { computeIfAbsent } from '../utils';
+import { computeIfAbsent, u2o } from '../utils';
 import { u2a, u2s } from '../utils';
 import { Enum } from './Enum';
 import type { DefBase } from './DefBase';
@@ -38,12 +38,12 @@ export class Root {
   public readonly fixPropertyName;
 
   constructor(raw: RawDefs, options: BuilderOptions = {}) {
-    this.rawClasses = new Map(u2a(raw?.classes, (i) => [u2s(Object(i).name), i]));
-    this.rawEnums = new Map(u2a(raw?.enums, (i) => [u2s(Object(i).name), i]));
-    this.classes = {};
-    this.enums = {};
+    this.rawClasses = new Map(u2a(raw.classes, (i) => [u2s(u2o(i).name), i]));
+    this.rawEnums = new Map(u2a(raw.enums, (i) => [u2s(u2o(i).name), i]));
+    this.classes = Object.create(null);
+    this.enums = Object.create(null);
 
-    this.commonDefs = {};
+    this.commonDefs = Object.create(null);
     this.uniqueNameSeparator = options.uniqueNameSeparator;
 
     this.fixClassName = options.fixClassName || ((s: string) => s.replace(/\$.*/, ''));
@@ -53,15 +53,15 @@ export class Root {
 
     this.unknownTypes = new Set<string>();
 
-    const groups = u2a(raw?.routes || [])
+    const groups = u2a(raw.routes || [])
       .filter((rawRoute) => {
         if (!options.apis) return true;
-        const { bean, name } = Object(rawRoute);
+        const { bean, name } = u2o(rawRoute);
         const kw = `${bean}.${name}`;
         return options.apis.some((i) => kw.includes(i));
       })
       .reduce((map: Map<string, unknown[]>, i) => {
-        const { bean } = Object(i);
+        const { bean } = u2o(i);
         if (typeof bean === 'string') {
           computeIfAbsent(map, bean, () => [] as unknown[]).push(i);
         }
