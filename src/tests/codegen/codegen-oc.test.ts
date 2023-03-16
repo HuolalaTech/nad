@@ -1,4 +1,6 @@
 import { Builder } from '../../Builder';
+import { User } from '../defs/User';
+import { UserType } from '../defs/UserType';
 
 const config = { base: 'test', target: 'oc' } as const;
 
@@ -17,6 +19,7 @@ const classes = [
     ],
     superclass: 'java.lang.Object',
   },
+  User,
 ];
 
 test('addRequestParam', () => {
@@ -96,7 +99,7 @@ test('addPathVariable renamed', () => {
       },
     ],
     annotations: [],
-    returnType: 'java.lang.Long',
+    returnType: 'test.User',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
   expect(code).toContain(`[req addPathVariable:@"hehe" value:id];`);
@@ -205,4 +208,32 @@ test('default optional parameters', () => {
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
   expect(code).toContain(`- (NSNumber*)foo:(NSNumber*)a1 a2:(NSNumber*)a2 {`);
+});
+
+test('map', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    parameters: [],
+    returnType: 'java.util.Map<test.UserType, java.lang.Long>',
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [], enums: [UserType] },
+  });
+  expect(code).toContain(`- (NSDictionary*)`);
+});
+
+test('class in list', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    parameters: [],
+    returnType: 'java.util.List<test.User>',
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [User], enums: [UserType] },
+  });
+  expect(code).toContain(`- (NSArray<User*>*)`);
 });

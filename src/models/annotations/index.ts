@@ -1,4 +1,4 @@
-import { notEmpty, u2o } from '../../utils';
+import { u2o } from '../../utils';
 import { JsonAnnotations } from './JsonAnnotations';
 
 import { SwaggerAnnotations } from './SwaggerAnnotations';
@@ -49,16 +49,12 @@ export class Annotations {
     return value;
   }
 
-  getNotNull() {
-    return this.find<NotNull>('javax.validation.constraints.NotNull');
-  }
-
-  getMax() {
-    return this.find<Max>('javax.validation.constraints.Max');
-  }
-  getMin() {
-    return this.find<Min>('javax.validation.constraints.Min');
-  }
+  // getMax() {
+  //   return this.find<Max>('javax.validation.constraints.Max');
+  // }
+  // getMin() {
+  //   return this.find<Min>('javax.validation.constraints.Min');
+  // }
 
   hasNonNull() {
     return !!this.find<NotNull>('.NonNull', true);
@@ -72,21 +68,6 @@ export class Annotations {
     const result = Annotations.find(this.raw, name, endsWith) as T;
     cache[ck] = result;
     return result;
-  }
-
-  public toString() {
-    return Array.from(Annotations.gen(this.raw), (i) => i.type).join(', ');
-  }
-
-  // TODO: list more javax.validation.constraints.*
-  static *listPrefix(raw: unknown[], prefix: string) {
-    for (const { type, attributes } of this.gen(raw)) {
-      if (type.startsWith(prefix)) {
-        const name = type.slice(prefix.length);
-        const value = u2o(attributes);
-        yield { name, value };
-      }
-    }
   }
 
   static find(raw: unknown[], name: string, endsWith = false) {
@@ -107,17 +88,5 @@ export class Annotations {
         yield { type, attributes };
       }
     }
-  }
-
-  static create(raw: unknown) {
-    return new Annotations(raw);
-  }
-
-  static merge(...a: (Annotations | undefined)[]) {
-    const raw = a
-      .filter(notEmpty)
-      .map((i) => i.raw)
-      .flat();
-    return new Annotations(raw);
   }
 }

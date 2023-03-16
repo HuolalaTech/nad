@@ -25,8 +25,6 @@ test('addRequestParam', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     headers: [],
     parameters: [
       {
@@ -45,8 +43,6 @@ test('addRequestParam renamed', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     headers: [],
     parameters: [
       {
@@ -66,8 +62,6 @@ test('addPathVariable', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo/{id}'],
     headers: [],
     parameters: [
       {
@@ -87,8 +81,6 @@ test('addPathVariable renamed', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo/{id}'],
     headers: [],
     parameters: [
       {
@@ -114,8 +106,6 @@ test('addRequestBody', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     headers: [],
     parameters: [
       {
@@ -135,8 +125,6 @@ test('addNormalParam', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     headers: [],
     parameters: [
       {
@@ -155,8 +143,6 @@ test('addMultipartFile', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     headers: [],
     parameters: [
       {
@@ -175,8 +161,6 @@ test('addMultipartFile renamed', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     headers: [],
     parameters: [
       {
@@ -203,8 +187,6 @@ test('default optional parameters', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [
       {
         name: 'a1',
@@ -225,8 +207,6 @@ test('required parameters at first', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [
       {
         name: 'a1',
@@ -248,8 +228,6 @@ test('required parameters at second', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [
       {
         name: 'a1',
@@ -271,8 +249,6 @@ test('enum as map key', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [],
     returnType: 'java.util.Map<test.UserType, java.lang.Long>',
   };
@@ -287,8 +263,6 @@ test('class as map key', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [],
     returnType: 'java.util.Map<test.User, java.lang.Long>',
   };
@@ -303,8 +277,6 @@ test('long as map key', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [],
     returnType: 'java.util.Map<java.lang.Long, java.lang.Long>',
   };
@@ -319,8 +291,6 @@ test('HttpEntity', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
     parameters: [
       {
         name: 'foo',
@@ -333,4 +303,46 @@ test('HttpEntity', () => {
     defs: { routes: [foo], classes: [], enums: [] },
   });
   expect(code).toContain(`async foo(settings?:`);
+});
+
+test('BigDecimal and BigInteger', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    parameters: [
+      {
+        name: 'a',
+        type: 'java.math.BigDecimal',
+      },
+      {
+        name: 'b',
+        type: 'java.math.BigInteger',
+      },
+    ],
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [], enums: [] },
+  });
+  expect(code).toContain(`async foo(a?: BigDecimal, b?: BigInteger, settings?: Partial<Settings>) {`);
+});
+
+test('void and boolean', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    parameters: [
+      {
+        name: 'a',
+        type: 'boolean',
+      },
+    ],
+    returnType: 'void',
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [], enums: [] },
+  });
+  expect(code).toContain(`async foo(a?: boolean, settings?: Partial<Settings>) {`);
+  expect(code).toContain(`new NadInvoker<void>`);
 });
