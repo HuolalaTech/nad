@@ -1,3 +1,8 @@
+## 0.0.7
+
+- Remove TypeBase class
+- Fix Type constructor
+
 ## 0.0.6
 
 - Update dependencies
