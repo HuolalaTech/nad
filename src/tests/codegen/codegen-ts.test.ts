@@ -96,12 +96,18 @@ test('addPathVariable renamed', () => {
         type: 'java.lang.Long',
         annotations: [{ type: 'org.springframework.web.bind.annotation.PathVariable', attributes: { value: 'hehe' } }],
       },
+      {
+        name: 'name',
+        type: 'java.lang.String',
+        annotations: [{ type: 'org.springframework.web.bind.annotation.PathVariable' }],
+      },
     ],
     annotations: [],
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
   expect(code).toContain(`.addPathVariable('hehe', id)`);
+  expect(code).toContain(`.addPathVariable('name', name)`);
 });
 
 test('addRequestBody', () => {
@@ -174,17 +180,23 @@ test('addMultipartFile renamed', () => {
     headers: [],
     parameters: [
       {
-        name: 'myFile',
+        name: 'myFileA',
         type: 'org.springframework.web.multipart.MultipartFile',
         annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: { value: 'hehe' } }],
+      },
+      {
+        name: 'myFileB',
+        type: 'org.springframework.web.multipart.MultipartFile',
+        annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: {} }],
       },
     ],
     annotations: [],
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
-  expect(code).toContain(`async foo(myFile: MultipartFile,`);
-  expect(code).toContain(`.addMultipartFile('hehe', myFile)`);
+  expect(code).toContain(`async foo(myFileA: MultipartFile, myFileB: MultipartFile,`);
+  expect(code).toContain(`.addMultipartFile('hehe', myFileA)`);
+  expect(code).toContain(`.addMultipartFile('myFileB', myFileB)`);
 });
 
 test('default optional parameters', () => {
@@ -301,4 +313,24 @@ test('long as map key', () => {
     defs: { routes: [foo], classes: [User], enums: [UserType] },
   });
   expect(code).toContain(`new NadInvoker<Record<Long, Long>>`);
+});
+
+test('HttpEntity', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    methods: ['POST'],
+    patterns: ['/foo'],
+    parameters: [
+      {
+        name: 'foo',
+        type: 'org.springframework.http.HttpEntity<String>',
+      },
+    ],
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [], enums: [] },
+  });
+  expect(code).toContain(`async foo(settings?:`);
 });

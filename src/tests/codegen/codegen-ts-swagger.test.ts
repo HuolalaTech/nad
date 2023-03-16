@@ -9,13 +9,14 @@ const foo = {
   methods: ['POST'],
   patterns: ['/foo'],
   headers: [],
+  annotations: [{ type: 'io.swagger.annotations.ApiOperation', attributes: { value: 'Demo API' } }],
   parameters: [
     {
       name: 'id',
       type: 'java.lang.Long',
+      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { description: 'User ID' } }],
     },
   ],
-  annotations: [{ type: 'io.swagger.annotations.ApiOperation', attributes: { value: 'Demo' } }],
   returnType: 'test.User',
 };
 
@@ -31,8 +32,9 @@ test('addRequestParam', () => {
   const clz = root.getDefByName('test.UserType');
   expect(clz).toBeInstanceOf(Enum);
 
+  expect(code).toContain(`* @param id User ID`);
   expect(code).toContain(`* demo`);
-  expect(code).toContain(`* Demo`);
+  expect(code).toContain(`* Demo API`);
   expect(code).toContain(`* Age`);
   expect(code).toContain(`* Name`);
   expect(code).toContain(`export enum UserType`);

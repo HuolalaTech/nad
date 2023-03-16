@@ -39,11 +39,12 @@ export class CodeGenForOc extends CodeGen {
       gen.write(`@interface ${m.moduleName} : NSObject`);
       gen.write(`@property (nonatomic, copy) NSString *appId;`);
       for (const a of m.apis) {
-        if (a.description) {
-          gen.writeComment(() => {
-            gen.write(a.description);
-          });
-        }
+        gen.writeComment(() => {
+          gen.write(a.description || a.name);
+          for (const p of a.parameters) {
+            if (p.description) gen.write(`@param ${p.name} ${p.description}`);
+          }
+        });
         gen.write(`${this.buildApiDeclaration(a)};`);
       }
       gen.write('@end', '');

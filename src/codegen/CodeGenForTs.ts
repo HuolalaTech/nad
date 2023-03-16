@@ -39,11 +39,12 @@ export class CodeGenForTs extends CodeGen {
   }
   private writeApi(a: Route) {
     const pars = this.getPars(a);
-    if (a.description) {
-      this.writeComment(() => {
-        this.write(a.description);
-      });
-    }
+    this.writeComment(() => {
+      this.write(a.description || a.name);
+      for (const p of a.parameters) {
+        if (p.description) this.write(`@param ${p.name} ${p.description}`);
+      }
+    });
     this.write(`async ${a.uniqName}(${pars.join(', ')}) {`);
     this.writeBlock(() => {
       this.write(`return new NadInvoker<${t2s(a.returnType)}>(BASE)`);
