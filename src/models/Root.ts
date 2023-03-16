@@ -112,4 +112,8 @@ export class Root {
   getClassBySimpleName(name: string): Class | null {
     return this.declarationList.find((clz) => clz.simpleName === name) || null;
   }
+
+  isEnum(name: string) {
+    return this.rawEnums.has(name);
+  }
 }

@@ -10,7 +10,7 @@ export class TypeBase<T extends TypeBase<T>> {
   public readonly name;
   public readonly parameters;
 
-  constructor(owner: TypeOwner, name = '', parameters: readonly T[] = []) {
+  constructor(owner: TypeOwner, name: string, parameters: readonly T[]) {
     this.name = name;
     this.parameters = parameters;
     wm.set(this, owner);
@@ -18,6 +18,7 @@ export class TypeBase<T extends TypeBase<T>> {
 
   get owner() {
     const owner = wm.get(this);
+    /* istanbul ignore next */
     if (!owner) throw neverReachHere();
     return owner;
   }
@@ -36,6 +37,6 @@ export class TypeBase<T extends TypeBase<T>> {
   }
 
   get isEnum() {
-    return this.name === 'java.lang.Enum';
+    return this.builder.isEnum(this.name);
   }
 }

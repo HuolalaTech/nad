@@ -1,4 +1,6 @@
 import { Builder } from '../../Builder';
+import { User } from '../defs/User';
+import { UserType } from '../defs/UserType';
 
 const config = { base: 'test', target: 'ts' } as const;
 
@@ -251,4 +253,52 @@ test('required parameters at second', () => {
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
   expect(code).toContain(`async foo(a1: Long | null, a2: Long, settings?: Partial<Settings>)`);
+});
+
+test('enum as map key', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    methods: ['POST'],
+    patterns: ['/foo'],
+    parameters: [],
+    returnType: 'java.util.Map<test.UserType, java.lang.Long>',
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [], enums: [UserType] },
+  });
+  expect(code).toContain(`new NadInvoker<Record<UserType, Long>>`);
+});
+
+test('class as map key', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    methods: ['POST'],
+    patterns: ['/foo'],
+    parameters: [],
+    returnType: 'java.util.Map<test.User, java.lang.Long>',
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [User], enums: [UserType] },
+  });
+  expect(code).toContain(`new NadInvoker<Record<any, Long>>`);
+});
+
+test('long as map key', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    methods: ['POST'],
+    patterns: ['/foo'],
+    parameters: [],
+    returnType: 'java.util.Map<java.lang.Long, java.lang.Long>',
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [User], enums: [UserType] },
+  });
+  expect(code).toContain(`new NadInvoker<Record<Long, Long>>`);
 });
