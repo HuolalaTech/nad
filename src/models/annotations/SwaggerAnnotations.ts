@@ -1,4 +1,4 @@
-import { u2s } from '../../utils';
+import { u2b, u2s } from '../../utils';
 import { Annotations } from '.';
 import { AnnotationBase } from './AnnotationBase';
 
@@ -39,14 +39,14 @@ export class ApiModelProperty extends AnnotationBase<string> {
   get description() {
     return this.value || this.name;
   }
-  // get required() {
-  //   return u2b(this.raw.required);
-  // }
+  get hidden() {
+    return u2b(this.raw.hidden);
+  }
+  get required() {
+    return u2b(this.raw.required);
+  }
   // get readOnly() {
   //   return u2b(this.raw.readOnly);
-  // }
-  // get hidden() {
-  //   return u2b(this.raw.hidden);
   // }
   // get position() {
   //   return u2n(this.raw.position);
