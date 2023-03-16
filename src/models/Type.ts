@@ -1,23 +1,19 @@
 import type { TypeOwner } from './TypeBase';
 import { TypeBase } from './TypeBase';
-
-import type { DefBase } from './DefBase';
-import { computeIfAbsent } from '../utils';
 import { isJavaNonClass } from '../helpers/javaHelper';
 import { SyntaxReader } from './SyntaxReader';
 
-const clzCache = new WeakMap<Type, DefBase | null>();
 const JAVA_OBJECT = 'java.lang.Object';
 
 export class Type extends TypeBase<Type> {
-  private getClz() {
-    this.parameters.forEach((i) => i.getClz());
-    if (isJavaNonClass(this.name) || this.isGenericVariable) return null;
-    return this.builder.getDefByName(this.name);
-  }
-
-  public get clz(): DefBase | null {
-    return computeIfAbsent(clzCache, this, (n) => n.getClz());
+  public clz;
+  constructor(owner: TypeOwner, name: string, parameters: readonly Type[]) {
+    super(owner, name, parameters);
+    if (isJavaNonClass(this.name) || this.isGenericVariable) {
+      this.clz = null;
+    } else {
+      this.clz = this.builder.getDefByName(this.name);
+    }
   }
 
   toString() {

@@ -346,3 +346,27 @@ test('void and boolean', () => {
   expect(code).toContain(`async foo(a?: boolean, settings?: Partial<Settings>) {`);
   expect(code).toContain(`new NadInvoker<void>`);
 });
+
+test('ref circle', () => {
+  const foo = {
+    name: 'foo',
+    bean: 'test.Demo',
+    parameters: [],
+    returnType: 'test.A',
+  };
+  const a = {
+    name: 'test.A',
+    members: [{ name: 'b', type: 'test.B' }],
+  };
+  const b = {
+    name: 'test.B',
+    members: [{ name: 'a', type: 'test.A' }],
+  };
+  const { code } = new Builder({
+    ...config,
+    defs: { routes: [foo], classes: [a, b], enums: [] },
+  });
+  expect(code).toContain(`new NadInvoker<A>`);
+  expect(code).toContain(`interface A {`);
+  expect(code).toContain(`interface B {`);
+});
