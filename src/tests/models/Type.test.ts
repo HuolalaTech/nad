@@ -77,3 +77,40 @@ test('empty', () => {
   expect(type).toBeInstanceOf(Type);
   expect(type).toMatchObject({ name: 'java.lang.Object', parameters: [] });
 });
+
+test('toString', () => {
+  const type = Type.create('?', root);
+  expect(() => {
+    type.toString();
+  }).toThrowError();
+});
+
+test('replace', () => {
+  const type = Type.create('java.util.Map<K, V>', root);
+  expect(type).toBeInstanceOf(Type);
+  expect(type).toMatchObject({
+    name: 'java.util.Map',
+    parameters: [
+      { name: 'K', parameters: [] },
+      { name: 'V', parameters: [] },
+    ],
+  });
+  const newType = type.replace(
+    new Map([
+      ['K', Type.create('java.lang.String', root)],
+      ['V', Type.create('java.lang.Long', root)],
+    ]),
+  );
+  expect(newType).toMatchObject({
+    name: 'java.util.Map',
+    parameters: [
+      { name: 'java.lang.String', parameters: [] },
+      { name: 'java.lang.Long', parameters: [] },
+    ],
+  });
+});
+
+test('get clz', () => {
+  const type = Type.create('java.util.Map<K, V>', root);
+  expect(type.clz).toBeNull();
+});

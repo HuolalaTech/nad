@@ -2,6 +2,7 @@ import { u2s } from '../utils';
 import type { Root } from './Root';
 import { Annotated } from './Annotated';
 import { Type } from './Type';
+import { isJavaNonClass } from '../helpers/javaHelper';
 
 const ignoredTypes = new Set([
   'javax.servlet.http.HttpServletRequest',
@@ -40,7 +41,7 @@ export class Parameter extends Annotated {
         this.actions.push(['addRequestParam', rp.value || this.name]);
       }
     } else if (!pv && !rb) {
-      if (this.type.isNonClass) {
+      if (isJavaNonClass(this.type.name)) {
         if (isFile) {
           this.actions.push(['addMultipartFile', this.name]);
         } else {

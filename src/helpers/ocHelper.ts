@@ -2,6 +2,15 @@ import { neverReachHere } from '../utils';
 import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';
+import {
+  isJavaBoolean,
+  isJavaList,
+  isJavaMap,
+  isJavaNumber,
+  isJavaString,
+  isJavaUnknown,
+  isJavaVoid,
+} from './javaHelper';
 
 // Convert value to safe string in code
 export const ss = (s: string | number) => {
@@ -26,19 +35,19 @@ export const t2s = (type: Type): string => {
 
   if (isGenericVariable) return name;
 
-  if (type.isString) return 'NSString';
-  if (type.isNumber) return 'NSNumber';
-  if (type.isBoolean) return 'NSNumber';
-  if (type.isList) {
+  if (isJavaString(name)) return 'NSString';
+  if (isJavaNumber(name)) return 'NSNumber';
+  if (isJavaBoolean(name)) return 'NSNumber';
+  if (isJavaUnknown(name)) return 'NSObject';
+  if (isJavaVoid(name)) return 'void';
+  if (isJavaList(name)) {
     const first = type.parameters[0];
     if (!first) return `NSArray<NSObject*>`;
     let t = t2s(first);
     if (!first.isGenericVariable) t = `${t}*`;
     return `NSArray<${t}>`;
   }
-  if (type.isMap) return `NSDictionary`;
-  if (type.isUnknown) return 'NSObject';
-  if (type.isVoid) return 'void';
+  if (isJavaMap(name)) return `NSDictionary`;
 
   const { clz, parameters } = type;
   if (!clz) return 'NSObject';
@@ -50,7 +59,7 @@ export const t2s = (type: Type): string => {
       const pars = typeParameters
         .map((_, i: number) => {
           const t = parameters[i];
-          if (t && !t.isVoid) {
+          if (t && !isJavaVoid(t.name)) {
             return t2s(t) + (t.isGenericVariable ? '' : '*');
           }
           return 'NSObject*';

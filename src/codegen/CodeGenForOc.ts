@@ -2,6 +2,7 @@ import { CodeGen } from './CodeGen';
 import type { Root } from '../models/Root';
 import type { Route } from '../models/Route';
 import { checkSuper, ss, t2s } from '../helpers/ocHelper';
+import { isJavaVoid } from '../helpers/javaHelper';
 
 interface Options {
   base: string;
@@ -11,7 +12,7 @@ interface Options {
 export class CodeGenForOc extends CodeGen {
   private buildReturnType(a: Route) {
     const t = a.returnType;
-    if (t.isGenericVariable || t.isVoid) {
+    if (t.isGenericVariable || isJavaVoid(t.name)) {
       return t2s(t);
     }
     return `${t2s(t)}*`;

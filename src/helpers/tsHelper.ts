@@ -2,6 +2,16 @@ import { neverReachHere } from '../utils';
 import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';
+import {
+  isJavaBoolean,
+  isJavaList,
+  isJavaLong,
+  isJavaMap,
+  isJavaNumber,
+  isJavaString,
+  isJavaUnknown,
+  isJavaVoid,
+} from './javaHelper';
 
 // Convert value to safe string in code
 export const ss = (s: string | number) => {
@@ -21,10 +31,6 @@ export const t2s = (type: Type): string => {
   if (isGenericVariable) return name;
 
   switch (name) {
-    case 'long':
-    case 'java.lang.Long':
-      builder.commonDefs.Long = 'string | number';
-      return 'Long';
     case 'java.math.BigDecimal':
       builder.commonDefs.BigDecimal = 'string | number';
       return 'BigDecimal';
@@ -36,22 +42,25 @@ export const t2s = (type: Type): string => {
       return 'MultipartFile';
     default:
   }
-
-  if (type.isString) return 'string';
-  if (type.isNumber) return 'number';
-  if (type.isBoolean) return 'boolean';
-  if (type.isVoid) return 'void';
-  if (type.isUnknown) return 'any';
-  if (type.isMap) {
+  if (isJavaLong(name)) {
+    builder.commonDefs.Long = 'string | number';
+    return 'Long';
+  }
+  if (isJavaNumber(name)) return 'number';
+  if (isJavaString(name)) return 'string';
+  if (isJavaBoolean(name)) return 'boolean';
+  if (isJavaVoid(name)) return 'void';
+  if (isJavaUnknown(name)) return 'any';
+  if (isJavaMap(name)) {
     const [first, second] = parameters;
     let keyType = 'any';
-    if (first && (first.isString || first.isNumber || first.isEnum)) {
+    if (first && (isJavaString(first.name) || isJavaNumber(first.name) || first.isEnum)) {
       keyType = t2s(first);
     }
     return `Record<${keyType}, ${t2s(second) || 'any'}>`;
   }
 
-  if (type.isList) {
+  if (isJavaList(type)) {
     return `${t2s(parameters[0]) || 'any'}[]`;
   }
 

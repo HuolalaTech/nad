@@ -3,33 +3,19 @@ import { TypeBase } from './TypeBase';
 
 import type { DefBase } from './DefBase';
 import { computeIfAbsent } from '../utils';
-import {
-  isJavaNumber,
-  isJavaString,
-  isJavaLong,
-  isJavaInteger,
-  isJavaFloat,
-  isJavaBoolean,
-  isJavaMap,
-  isJavaList,
-  isJavaNonClass,
-  isJavaVoid,
-  isJavaUnknown,
-} from '../helpers/javaHelper';
+import { isJavaNonClass } from '../helpers/javaHelper';
 import { SyntaxReader } from './SyntaxReader';
 
 const clzCache = new WeakMap<Type, DefBase | null>();
 const JAVA_OBJECT = 'java.lang.Object';
 
 export class Type extends TypeBase<Type> {
-  private getClz() {
-    this.parameters.forEach((i) => i.getClz());
-    if (isJavaNonClass(this.name) || this.isGenericVariable) return null;
-    return this.builder.getDefByName(this.name);
-  }
-
-  get clz(): DefBase | null {
-    return computeIfAbsent(clzCache, this, (n) => n.getClz());
+  public get clz(): DefBase | null {
+    return computeIfAbsent(clzCache, this, () => {
+      this.parameters.forEach((i) => i.clz);
+      if (isJavaNonClass(this.name) || this.isGenericVariable) return null;
+      return this.builder.getDefByName(this.name);
+    });
   }
 
   toString() {
@@ -49,50 +35,6 @@ export class Type extends TypeBase<Type> {
       type,
       parameters.map((n) => n.replace(map)),
     );
-  }
-
-  get isNumber() {
-    return isJavaNumber(this.name);
-  }
-
-  get isString() {
-    return isJavaString(this.name);
-  }
-
-  get isLong() {
-    return isJavaLong(this.name);
-  }
-
-  get isInteger() {
-    return isJavaInteger(this.name);
-  }
-
-  get isFloat() {
-    return isJavaFloat(this.name);
-  }
-
-  get isBoolean() {
-    return isJavaBoolean(this.name);
-  }
-
-  get isMap() {
-    return isJavaMap(this.name);
-  }
-
-  get isList() {
-    return isJavaList(this.name);
-  }
-
-  get isNonClass() {
-    return isJavaNonClass(this.name);
-  }
-
-  get isVoid() {
-    return isJavaVoid(this.name);
-  }
-
-  get isUnknown() {
-    return isJavaUnknown(this.name);
   }
 
   public static create(typeName: string, owner: TypeOwner) {
