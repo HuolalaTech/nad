@@ -1,19 +1,53 @@
-import type { TypeOwner } from './TypeBase';
-import { TypeBase } from './TypeBase';
 import { isJavaNonClass } from '../helpers/javaHelper';
 import { SyntaxReader } from './SyntaxReader';
+import { neverReachHere } from '../utils';
+import type { Class } from './Class';
+import type { Root } from './Root';
+
+export type TypeOwner = Class | Root;
 
 const JAVA_OBJECT = 'java.lang.Object';
 
-export class Type extends TypeBase<Type> {
-  public clz;
+const wm = new WeakMap<object, TypeOwner>();
+
+export class Type {
+  public readonly name;
+  public readonly parameters;
+  public readonly clz;
+
   constructor(owner: TypeOwner, name: string, parameters: readonly Type[]) {
-    super(owner, name, parameters);
-    if (isJavaNonClass(this.name) || this.isGenericVariable) {
+    wm.set(this, owner);
+    this.name = name;
+    this.parameters = parameters;
+    if (isJavaNonClass(name) || this.isGenericVariable) {
       this.clz = null;
     } else {
-      this.clz = this.builder.getDefByName(this.name);
+      this.clz = this.builder.getDefByName(name);
     }
+  }
+
+  get owner() {
+    const owner = wm.get(this);
+    /* istanbul ignore next */
+    if (!owner) throw neverReachHere();
+    return owner;
+  }
+
+  get builder() {
+    const { owner } = this;
+    if ('builder' in owner) return owner.builder;
+    return owner;
+  }
+
+  get isGenericVariable() {
+    if ('typeParameters' in this.owner) {
+      return this.owner.typeParameters.includes(this.name);
+    }
+    return false;
+  }
+
+  get isEnum() {
+    return this.builder.isEnum(this.name);
   }
 
   toString() {
