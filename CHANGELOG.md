@@ -1,3 +1,7 @@
+## 0.0.8
+
+- Support more NotNull conditions
+
 ## 0.0.7
 
 - Remove TypeBase class
