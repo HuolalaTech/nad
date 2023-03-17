@@ -93,14 +93,13 @@ export const isJavaLongTypes = [
   'java.math.BigInteger',
 ] as const;
 
-export const isJavaUnknownTypes = [
-  'java.lang.Object',
-  'com.alibaba.fastjson.JSONObject',
-  'org.springframework.http.ResponseEntity',
-  'org.springframework.web.multipart.MultipartFile',
-  'org.springframework.web.servlet.ModelAndView',
-  'any',
-] as const;
+const javaUnknownTypePrefixes = [
+  'java.',
+  'javax.',
+  'org.springframework.',
+  'com.alibaba.fastjson.',
+  'com.fasterxml.jackson.',
+];
 
 export const isJavaBooleanTypes = ['boolean', 'java.lang.Boolean'] as const;
 
@@ -115,9 +114,11 @@ export const isJavaInteger = isOneOf(isJavaIntegerTypes);
 export const isJavaLong = isOneOf(isJavaLongTypes);
 export const isJavaBoolean = isOneOf(isJavaBooleanTypes);
 export const isJavaVoid = isOneOf(isJavaVoidTypes);
-export const isJavaUnknown = isOneOf(isJavaUnknownTypes);
-export const isJavaNumber = (v: unknown) => isJavaInteger(v) || isJavaLong(v) || isJavaFloat(v);
-export const isJavaNonClass = (v: unknown) =>
+export const isJavaNumber = (v: string) => isJavaInteger(v) || isJavaLong(v) || isJavaFloat(v);
+
+export const isJavaUnknown = (v: string) => javaUnknownTypePrefixes.some((preifx) => v.startsWith(preifx));
+
+export const isJavaNonClass = (v: string) =>
   isJavaString(v) ||
   isJavaNumber(v) ||
   isJavaBoolean(v) ||

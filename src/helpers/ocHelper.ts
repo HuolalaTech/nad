@@ -38,7 +38,6 @@ export const t2s = (type: Type): string => {
   if (isJavaString(name)) return 'NSString';
   if (isJavaNumber(name)) return 'NSNumber';
   if (isJavaBoolean(name)) return 'NSNumber';
-  if (isJavaUnknown(name)) return 'NSObject';
   if (isJavaVoid(name)) return 'void';
   if (isJavaList(name)) {
     const first = type.parameters[0];
@@ -48,6 +47,7 @@ export const t2s = (type: Type): string => {
     return `NSArray<${t}>`;
   }
   if (isJavaMap(name)) return `NSDictionary`;
+  if (isJavaUnknown(name)) return 'NSObject';
 
   const { clz, parameters } = type;
   if (!clz) return 'NSObject';

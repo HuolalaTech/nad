@@ -50,7 +50,6 @@ export const t2s = (type: Type): string => {
   if (isJavaString(name)) return 'string';
   if (isJavaBoolean(name)) return 'boolean';
   if (isJavaVoid(name)) return 'void';
-  if (isJavaUnknown(name)) return 'any';
   if (isJavaMap(name)) {
     const [first, second] = parameters;
     let keyType = 'any';
@@ -59,10 +58,10 @@ export const t2s = (type: Type): string => {
     }
     return `Record<${keyType}, ${t2s(second) || 'any'}>`;
   }
-
-  if (isJavaList(type)) {
+  if (isJavaList(name)) {
     return `${t2s(parameters[0]) || 'any'}[]`;
   }
+  if (isJavaUnknown(name)) return 'any';
 
   const { clz } = type;
   if (!clz) return 'any';

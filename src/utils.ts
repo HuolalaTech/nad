@@ -34,7 +34,7 @@ export const notEmpty = <T>(w: T): w is NonNullable<T> => w !== null && w !== un
 
 export const isOneOf =
   <T extends string>(a: readonly T[]) =>
-  (u: unknown): u is T =>
+  (u: string): u is T =>
     a.indexOf(u as T) !== -1;
 
 type AnyMap<K, V> = K extends object ? Map<K, V> | WeakMap<K, V> : Map<K, V>;
