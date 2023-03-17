@@ -12,10 +12,15 @@ import java.util.stream.Collectors;
 public class NadClass extends NadDef {
     @NonNull
     private final List<String> typeParameters;
+
     @NonNull
     private final List<NadMember> members;
+
     @Nullable
     private final String superclass;
+
+    @NonNull
+    private final List<String> interfaces;
 
     public NadClass(Class<?> clz) {
         super(clz);
@@ -23,7 +28,9 @@ public class NadClass extends NadDef {
             TypeCollector.collect(type);
             return type.getTypeName();
         }).collect(Collectors.toList());
+
         members = new NadMembersBuilder(clz).build();
+
         Type genericSuperclass = clz.getGenericSuperclass();
         if (genericSuperclass == null) {
             superclass = null;
@@ -31,6 +38,11 @@ public class NadClass extends NadDef {
             TypeCollector.collect(genericSuperclass);
             superclass = genericSuperclass.getTypeName();
         }
+
+        interfaces = Arrays.stream(clz.getGenericInterfaces()).map(type -> {
+            TypeCollector.collect(type);
+            return type.getTypeName();
+        }).collect(Collectors.toList());
     }
 
     @Nullable
@@ -46,5 +58,10 @@ public class NadClass extends NadDef {
     @NonNull
     public List<String> getTypeParameters() {
         return typeParameters;
+    }
+
+    @NonNull
+    public List<String> getInterfaces() {
+        return interfaces;
     }
 }

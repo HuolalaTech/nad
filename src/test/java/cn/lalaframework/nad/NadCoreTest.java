@@ -6,9 +6,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 @SpringBootTest(classes = TestApplication.class)
 class NadCoreTest {
@@ -16,22 +19,11 @@ class NadCoreTest {
     private NadCore core;
 
     @Test
-    void getModules() {
-        NadResult res = core.create();
-        Assertions.assertNotNull(res);
-        NadModule my = res.getModules().stream()
-                .filter(i -> i.getName().equals(MyController.class.getName()))
-                .findAny().orElse(null);
-        Assertions.assertNotNull(my);
-        Assertions.assertEquals(1, my.getAnnotations().size());
-    }
-
-    @Test
     void getRoutes() {
         NadResult res = core.create();
         Assertions.assertNotNull(res);
         NadRoute route = res.getRoutes().stream()
-                .filter(i -> "getUser" .equals(i.getName())).findAny().orElse(null);
+                .filter(i -> "getUser".equals(i.getName())).findAny().orElse(null);
         Assertions.assertNotNull(route);
         List<String> patterns = route.getPatterns();
         Assertions.assertEquals(1, patterns.size());
@@ -50,12 +42,16 @@ class NadCoreTest {
     void getClasses() {
         NadResult res = core.create();
         Assertions.assertNotNull(res);
-        NadClass nc = res.getClasses().stream()
+        NadClass userClass = res.getClasses().stream()
                 .filter(i -> User.class.getTypeName().equals(i.getName()))
                 .findAny().orElse(null);
-        Assertions.assertNotNull(nc);
-        List<NadMember> members = nc.getMembers();
+        Assertions.assertNotNull(userClass);
+        List<NadMember> members = userClass.getMembers();
         Assertions.assertEquals(2, members.size());
+        String iface = userClass.getInterfaces().stream()
+                .filter(i -> i.equals(Serializable.class.getName()))
+                .findAny().orElse(null);
+        Assertions.assertNotNull(iface);
     }
 
     @Test
@@ -76,5 +72,19 @@ class NadCoreTest {
         Assertions.assertEquals(Role.DEV.name(), constants.get(1).getName());
         Assertions.assertEquals(Role.DEV.getDescription(), constants.get(1).getProperties().get("description"));
         Assertions.assertEquals(Role.DEV.getCode(), constants.get(1).getProperties().get("code"));
+    }
+
+    @Test
+    void getModules() {
+        NadResult res = core.create();
+        Assertions.assertNotNull(res);
+        NadModule my = res.getModules().stream()
+                .filter(i -> i.getName().equals(MyController.class.getName()))
+                .findAny().orElse(null);
+        Assertions.assertNotNull(my);
+        NadAnnotation rc = my.getAnnotations().stream()
+                .filter(i -> i.getType().equals(RestController.class.getName()))
+                .findAny().orElse(null);
+        Assertions.assertNotNull(rc);
     }
 }
