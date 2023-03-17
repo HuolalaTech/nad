@@ -13,17 +13,17 @@ const defs = {
 
 test('route groups', () => {
   const root = new Root(defs);
-  expect(root.routes).toMatchObject([
+  expect(root.modules).toMatchObject([
     {
       name: 'test.RootControllerA',
-      apis: [
+      routes: [
         { name: 'foo1', uniqName: 'foo1', method: 'GET', pattern: '/aa' },
         { name: 'foo2', uniqName: 'foo2', method: 'POST', pattern: '/first' },
       ],
     },
     {
       name: 'test.RootControllerB',
-      apis: [
+      routes: [
         { name: 'foo1', uniqName: 'foo1', method: 'POST', pattern: '' },
         { name: 'foo2', uniqName: 'foo2', method: 'PUT', pattern: '' },
       ],
@@ -36,14 +36,14 @@ test('route groups', () => {
 
 test('filter method name', () => {
   const root = new Root(defs, { apis: ['foo1'] });
-  expect(root.routes).toMatchObject([
+  expect(root.modules).toMatchObject([
     {
       name: 'test.RootControllerA',
-      apis: [{ name: 'foo1', uniqName: 'foo1' }],
+      routes: [{ name: 'foo1', uniqName: 'foo1' }],
     },
     {
       name: 'test.RootControllerB',
-      apis: [{ name: 'foo1', uniqName: 'foo1' }],
+      routes: [{ name: 'foo1', uniqName: 'foo1' }],
     },
   ]);
   expect(root.moduleCount).toBe(2);
@@ -53,10 +53,10 @@ test('filter method name', () => {
 
 test('filter full name', () => {
   const root = new Root(defs, { apis: ['test.RootControllerB.foo1'] });
-  expect(root.routes).toMatchObject([
+  expect(root.modules).toMatchObject([
     {
       name: 'test.RootControllerB',
-      apis: [{ name: 'foo1', uniqName: 'foo1' }],
+      routes: [{ name: 'foo1', uniqName: 'foo1' }],
     },
   ]);
   expect(root.moduleCount).toBe(1);
@@ -70,12 +70,12 @@ test('defs', () => {
   const user = root.getDefByName('test.User');
   expect(root.getDefByName('test.User')).toBe(user); // from cache
   expect(user).toBeInstanceOf(Class);
-  if (user) expect(root.getDefBySimpleName(user.simpleName)).toBe(user);
+  if (user) expect(root.getDefBySimpleName(user.moduleName)).toBe(user);
 
   const userType = root.getDefByName('test.UserType');
   expect(root.getDefByName('test.UserType')).toBe(userType); // from cache
   expect(userType).toBeInstanceOf(Enum);
-  if (userType) expect(root.getDefBySimpleName(userType.simpleName)).toBe(userType);
+  if (userType) expect(root.getDefBySimpleName(userType.moduleName)).toBe(userType);
 
   expect(root.getDefBySimpleName('')).toBe(null);
 });

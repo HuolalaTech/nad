@@ -1,19 +1,21 @@
-import { u2o, u2s } from '../utils';
+import { u2o } from '../utils';
+import { Annotated } from './Annotated';
 import type { Enum } from './Enum';
 
-export class EnumConstant {
+export class EnumConstant extends Annotated {
   readonly owner: Enum;
-  readonly name;
   readonly rawValue: unknown;
   readonly properties: Record<string, unknown>;
+  readonly description;
   readonly memo: string;
   constructor(raw: unknown, owner: Enum) {
-    const { name, value, properties } = u2o(raw);
+    super(raw);
+    const { value, properties } = u2o(raw);
     this.owner = owner;
-    this.name = u2s(name);
     this.rawValue = value;
     this.properties = u2o(properties);
     const entries = Object.entries(this.properties);
+    this.description = this.annotations.swagger.getApiModelProperty()?.description;
     this.memo = entries
       .map((i) => i.join('='))
       .join('; ')

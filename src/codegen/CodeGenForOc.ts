@@ -31,14 +31,14 @@ export class CodeGenForOc extends CodeGen {
   }
   private getModulesIface() {
     const gen = new CodeGen();
-    for (const m of this.builder.routes) {
+    for (const m of this.builder.modules) {
       gen.writeComment(() => {
         gen.write(m.description || m.moduleName);
         gen.write(`@JavaClass ${m.name}`);
       });
       gen.write(`@interface ${m.moduleName} : NSObject`);
       gen.write(`@property (nonatomic, copy) NSString *appId;`);
-      for (const a of m.apis) {
+      for (const a of m.routes) {
         gen.writeComment(() => {
           gen.write(a.description || a.name);
           for (const p of a.parameters) {
@@ -74,13 +74,13 @@ export class CodeGenForOc extends CodeGen {
   }
   private getModulesImpl() {
     const gen = new CodeGen();
-    for (const m of this.builder.routes) {
+    for (const m of this.builder.modules) {
       gen.writeComment(() => {
         gen.write(m.description || m.moduleName);
         gen.write(`@JavaClass ${m.name}`);
       });
       gen.write(`@implementation ${m.moduleName}`);
-      for (const a of m.apis) {
+      for (const a of m.routes) {
         gen.write(this.getApiImpl(a));
       }
       gen.write('@end', '');
@@ -90,14 +90,14 @@ export class CodeGenForOc extends CodeGen {
   private writeEnumDefs() {
     for (const c of this.builder.enumList) {
       this.writeComment(() => {
-        this.write(c.description || c.simpleName);
+        this.write(c.description || c.moduleName);
         this.write(`@JavaClass ${c.name}`);
       });
       const enumTypeMapping: Record<string, string> = { string: 'NSString', number: 'NSNumber' };
       const ocType = enumTypeMapping[c.valueType] || 'NSObject';
-      this.write(`typedef ${ocType} ${c.simpleName};`);
+      this.write(`typedef ${ocType} ${c.moduleName};`);
       for (const v of c.constants) {
-        this.write(`const ${c.simpleName} *${c.simpleName}_${v.name} = ${ss(v.value)};`);
+        this.write(`const ${c.moduleName} *${c.moduleName}_${v.name} = ${ss(v.value)};`);
         if (v.memo) this.amend((s) => `${s} // ${v.memo}`);
       }
       this.write('');
@@ -114,7 +114,7 @@ export class CodeGenForOc extends CodeGen {
     this.writeEnumDefs();
     for (const c of list) {
       this.writeComment(() => {
-        this.write(c.description || c.simpleName);
+        this.write(c.description || c.moduleName);
         this.write(`@JavaClass ${c.name}`);
       });
       let superName = 'NSObject';

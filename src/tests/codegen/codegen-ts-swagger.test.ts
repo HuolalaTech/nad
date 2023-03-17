@@ -24,10 +24,10 @@ const defs = { routes: [foo], classes: [User], enums: [UserType] };
 
 test('addRequestParam', () => {
   const { root, code } = new Builder({ target: 'ts', base: '', defs });
-  expect(root.routes.length).toBe(1);
-  const [route] = root.routes;
-  expect(route.apis.length).toBe(1);
-  const [api] = route.apis;
+  expect(root.modules.length).toBe(1);
+  const [route] = root.modules;
+  expect(route.routes.length).toBe(1);
+  const [api] = route.routes;
   expect(api.name).toBe('foo');
   const clz = root.getDefByName('test.UserType');
   expect(clz).toBeInstanceOf(Enum);

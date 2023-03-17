@@ -17,17 +17,19 @@ export interface RawDefs {
   routes?: unknown[];
   classes?: unknown[];
   enums?: unknown[];
+  modules?: unknown[];
 }
 
 export class Root {
   private readonly rawClasses;
   private readonly rawEnums;
+  private readonly rawModules;
   private readonly classes: Record<string, Class>;
   private readonly enums: Record<string, Enum>;
 
   public readonly commonDefs: Record<string, string>;
   public readonly unknownTypes;
-  public readonly routes;
+  public readonly modules;
 
   public readonly uniqueNameSeparator;
 
@@ -39,6 +41,8 @@ export class Root {
   constructor(raw: RawDefs, options: BuilderOptions = {}) {
     this.rawClasses = new Map(u2a(raw.classes, (i) => [u2s(u2o(i).name), i]));
     this.rawEnums = new Map(u2a(raw.enums, (i) => [u2s(u2o(i).name), i]));
+    this.rawModules = new Map(u2a(raw.modules, (i) => [u2s(u2o(i).name), i]));
+
     this.classes = Object.create(null);
     this.enums = Object.create(null);
 
@@ -66,7 +70,11 @@ export class Root {
         }
         return map;
       }, new Map<string, unknown[]>());
-    this.routes = Array.from(groups.entries(), ([name, list]) => new Module(name, list, this));
+
+    this.modules = Array.from(
+      groups.entries(),
+      ([name, list]) => new Module(this.rawModules.get(name) || { name }, this, list),
+    );
   }
 
   get declarationList() {
@@ -78,13 +86,13 @@ export class Root {
   }
 
   get moduleCount() {
-    return this.routes.length;
+    return this.modules.length;
   }
   get defCount() {
     return Object.keys(this.classes).length;
   }
   get apiCount() {
-    return this.routes.reduce((s, i) => s + i.apis.length, 0);
+    return this.modules.reduce((s, i) => s + i.routes.length, 0);
   }
 
   public getDefByName(name: string): Enum | Class | null {
@@ -110,8 +118,8 @@ export class Root {
 
   public getDefBySimpleName(name: string): Enum | Class | null {
     return (
-      this.declarationList.find((def) => def.simpleName === name) ||
-      this.enumList.find((def) => def.simpleName === name) ||
+      this.declarationList.find((def) => def.moduleName === name) ||
+      this.enumList.find((def) => def.moduleName === name) ||
       null
     );
   }

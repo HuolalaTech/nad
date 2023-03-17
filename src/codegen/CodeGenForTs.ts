@@ -37,6 +37,7 @@ export class CodeGenForTs extends CodeGen {
     pars.push('settings?: Partial<Settings>');
     return pars;
   }
+
   private writeApi(a: Route) {
     const pars = this.getPars(a);
     this.writeComment(() => {
@@ -64,25 +65,28 @@ export class CodeGenForTs extends CodeGen {
     });
     this.write('},');
   }
+
   private writeModules() {
-    for (const m of this.builder.routes) {
+    for (const m of this.builder.modules) {
       this.writeComment(() => {
         this.write(m.description || m.moduleName);
         this.write(`@iface ${m.name}`);
       });
       this.write(`export const ${m.moduleName} = {`);
       this.writeBlock(() => {
-        for (const a of m.apis) this.writeApi(a);
+        for (const a of m.routes) this.writeApi(a);
       });
       this.write('};', '');
     }
   }
+
   private writeCommonDefs() {
     for (const [alias, tsType] of Object.entries(this.builder.commonDefs)) {
       this.write(`export type ${alias} = ${tsType};`);
       this.write('');
     }
   }
+
   private writeEnums() {
     for (const e of this.builder.enumList) {
       if (e.description) {
@@ -90,9 +94,14 @@ export class CodeGenForTs extends CodeGen {
           this.write(e.description);
         });
       }
-      this.write(`export enum ${e.simpleName} {`);
+      this.write(`export enum ${e.moduleName} {`);
       this.writeBlock(() => {
         for (const v of e.constants) {
+          if (v.description) {
+            this.writeComment(() => {
+              this.write(v.description);
+            });
+          }
           this.write(`${v.name} = ${ss(v.value)},`);
           if (v.memo) this.amend((s) => `${s} // ${v.memo}`);
         }
@@ -101,10 +110,11 @@ export class CodeGenForTs extends CodeGen {
       this.write('');
     }
   }
+
   private writeClasses() {
     for (const c of this.builder.declarationList) {
       this.writeComment(() => {
-        this.write(c.description || c.simpleName);
+        this.write(c.description || c.moduleName);
         this.write(`@iface ${c.name}`);
       });
       let { defName } = c;
@@ -127,6 +137,7 @@ export class CodeGenForTs extends CodeGen {
       this.write('');
     }
   }
+
   constructor(private builder: Root, private options: Options) {
     super();
     if (!options.noHead) {
