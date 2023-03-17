@@ -1,3 +1,8 @@
+## 0.0.9
+
+- Fix list and unknown types
+- Support enum and module description
+
 ## 0.0.8
 
 - Support more NotNull conditions

@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-builder",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Convert Nad Java definition AST to client code",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
