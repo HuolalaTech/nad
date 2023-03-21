@@ -23,11 +23,12 @@ public class MyController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     Long upload(MultipartFile file) {
+        if (file == null) return 0L;
         return System.currentTimeMillis();
     }
 
     @GetMapping(value = "/ui", produces = MediaType.TEXT_HTML_VALUE)
     String ui() {
-        return "<h1>Hello</h1>";
+        return String.format("<h1>Hello World at %d</h1>", System.currentTimeMillis());
     }
 }

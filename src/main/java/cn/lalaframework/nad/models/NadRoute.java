@@ -4,9 +4,7 @@ import cn.lalaframework.nad.utils.Reflection;
 import cn.lalaframework.nad.utils.TypeCollector;
 import org.springframework.lang.NonNull;
 import org.springframework.util.MimeType;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.condition.NameValueExpression;
 import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -22,11 +20,11 @@ public class NadRoute {
     @NonNull
     private final String bean;
     @NonNull
-    private final Set<RequestMethod> methods;
+    private final List<String> methods;
     @NonNull
     private final List<String> patterns;
     @NonNull
-    private final Set<NameValueExpression<String>> headers;
+    private final List<NameValuePair> headers;
     @NonNull
     private final List<NadParameter> parameters;
     @NonNull
@@ -42,9 +40,16 @@ public class NadRoute {
         name = method.getMethod().getName();
         bean = method.getBeanType().getTypeName();
 
-        methods = info.getMethodsCondition().getMethods();
-        patterns = getActivePatterns(info);
-        headers = info.getHeadersCondition().getExpressions();
+        methods = info.getMethodsCondition()
+                .getMethods()
+                .stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
+        headers = info.getHeadersCondition()
+                .getExpressions()
+                .stream()
+                .map(NameValuePair::new)
+                .collect(Collectors.toList());
         consumes = info.getConsumesCondition()
                 .getConsumableMediaTypes()
                 .stream()
@@ -56,6 +61,7 @@ public class NadRoute {
                 .map(MimeType::toString)
                 .collect(Collectors.toList());
 
+        patterns = getActivePatterns(info);
         parameters = Arrays.stream(method.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
         annotations = NadAnnotation.fromAnnotatedElement(method.getMethod());
         Type genericReturnType = method.getMethod().getGenericReturnType();
@@ -98,7 +104,7 @@ public class NadRoute {
     }
 
     @NonNull
-    public Set<RequestMethod> getMethods() {
+    public List<String> getMethods() {
         return methods;
     }
 
@@ -108,7 +114,7 @@ public class NadRoute {
     }
 
     @NonNull
-    public Set<NameValueExpression<String>> getHeaders() {
+    public List<NameValuePair> getHeaders() {
         return headers;
     }
 
