@@ -2,9 +2,12 @@ package cn.lalaframework.nad.controllers;
 
 import cn.lalaframework.nad.models.Role;
 import cn.lalaframework.nad.models.User;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class MyController {
@@ -16,5 +19,15 @@ public class MyController {
     @GetMapping("/setRole")
     Long setRole(@RequestParam Role type) {
         return System.currentTimeMillis();
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Long upload(MultipartFile file) {
+        return System.currentTimeMillis();
+    }
+
+    @GetMapping(value = "/ui", produces = MediaType.TEXT_HTML_VALUE)
+    String ui() {
+        return "<h1>Hello</h1>";
     }
 }

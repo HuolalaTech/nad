@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 @SpringBootTest(classes = TestApplication.class)
 class NadCoreTest {
@@ -22,20 +22,38 @@ class NadCoreTest {
     void getRoutes() {
         NadResult res = core.create();
         Assertions.assertNotNull(res);
-        NadRoute route = res.getRoutes().stream()
+
+        // getUser
+        NadRoute getUser = res.getRoutes().stream()
                 .filter(i -> "getUser".equals(i.getName())).findAny().orElse(null);
-        Assertions.assertNotNull(route);
-        List<String> patterns = route.getPatterns();
+        Assertions.assertNotNull(getUser);
+        List<String> patterns = getUser.getPatterns();
         Assertions.assertEquals(1, patterns.size());
         Assertions.assertEquals("/getUser", patterns.iterator().next());
-        Assertions.assertEquals(MyController.class.getTypeName(), route.getBean());
-        Assertions.assertEquals(User.class.getTypeName(), route.getReturnType());
-        List<NadParameter> parameters = route.getParameters();
+        Assertions.assertEquals(MyController.class.getTypeName(), getUser.getBean());
+        Assertions.assertEquals(User.class.getTypeName(), getUser.getReturnType());
+        List<NadParameter> parameters = getUser.getParameters();
         Iterator<NadParameter> pi = parameters.iterator();
         NadParameter firstParameter = pi.next();
         NadParameter secondParameter = pi.next();
         Assertions.assertEquals("name", firstParameter.getName());
         Assertions.assertEquals("userType", secondParameter.getName());
+
+        // upload
+        NadRoute upload = res.getRoutes().stream()
+                .filter(i -> "upload".equals(i.getName())).findAny().orElse(null);
+        Assertions.assertNotNull(upload);
+        List<String> consumes = upload.getConsumes();
+        Assertions.assertEquals(1, consumes.size());
+        Assertions.assertEquals(MediaType.MULTIPART_FORM_DATA_VALUE, consumes.get(0));
+
+        // ui
+        NadRoute ui = res.getRoutes().stream()
+                .filter(i -> "ui".equals(i.getName())).findAny().orElse(null);
+        Assertions.assertNotNull(ui);
+        List<String> produces = ui.getProduces();
+        Assertions.assertEquals(1, produces.size());
+        Assertions.assertEquals(MediaType.TEXT_HTML_VALUE, produces.get(0));
     }
 
     @Test

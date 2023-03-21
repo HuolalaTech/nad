@@ -3,6 +3,7 @@ package cn.lalaframework.nad.models;
 import cn.lalaframework.nad.utils.Reflection;
 import cn.lalaframework.nad.utils.TypeCollector;
 import org.springframework.lang.NonNull;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.condition.NameValueExpression;
@@ -32,6 +33,10 @@ public class NadRoute {
     private final List<NadAnnotation> annotations;
     @NonNull
     private final String returnType;
+    @NonNull
+    private final List<String> consumes;
+    @NonNull
+    private final List<String> produces;
 
     private NadRoute(@NonNull RequestMappingInfo info, @NonNull HandlerMethod method) {
         name = method.getMethod().getName();
@@ -40,6 +45,16 @@ public class NadRoute {
         methods = info.getMethodsCondition().getMethods();
         patterns = getActivePatterns(info);
         headers = info.getHeadersCondition().getExpressions();
+        consumes = info.getConsumesCondition()
+                .getConsumableMediaTypes()
+                .stream()
+                .map(MimeType::toString)
+                .collect(Collectors.toList());
+        produces = info.getProducesCondition()
+                .getProducibleMediaTypes()
+                .stream()
+                .map(MimeType::toString)
+                .collect(Collectors.toList());
 
         parameters = Arrays.stream(method.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
         annotations = NadAnnotation.fromAnnotatedElement(method.getMethod());
@@ -120,5 +135,15 @@ public class NadRoute {
     @NonNull
     public String getReturnType() {
         return returnType;
+    }
+
+    @NonNull
+    public List<String> getConsumes() {
+        return consumes;
+    }
+
+    @NonNull
+    public List<String> getProduces() {
+        return produces;
     }
 }
