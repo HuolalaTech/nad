@@ -3,6 +3,7 @@ import { Class } from './Class';
 import { computeIfAbsent, u2o } from '../utils';
 import { u2a, u2s } from '../utils';
 import { Enum } from './Enum';
+import { NadResult } from '../types/nad';
 
 export interface BuilderOptions {
   uniqueNameSeparator?: string;
@@ -13,12 +14,10 @@ export interface BuilderOptions {
   fixPropertyName?: (s: string) => string;
 }
 
-export interface RawDefs {
-  routes?: unknown[];
-  classes?: unknown[];
-  enums?: unknown[];
-  modules?: unknown[];
-}
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+export type RawDefs = DeepPartial<NadResult>;
 
 export class Root {
   private readonly rawClasses;

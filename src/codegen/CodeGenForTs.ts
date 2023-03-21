@@ -117,23 +117,28 @@ export class CodeGenForTs extends CodeGen {
         this.write(c.description || c.moduleName);
         this.write(`@iface ${c.name}`);
       });
-      let { defName } = c;
-      if (c.superclass) {
-        const type = t2s(c.superclass);
-        if (type !== 'any') defName += ` extends ${type}`;
-      }
-      this.write(`export interface ${defName} {`);
-      this.writeBlock(() => {
-        for (const m of c.members) {
-          if (m.description) {
-            this.writeComment(() => {
-              this.write(m.description);
-            });
-          }
-          this.write(`${m.name}${m.optional}: ${t2s(m.type)};`);
+      const { defName } = c;
+      if (c.members.length) {
+        let defStr = defName;
+        if (c.superclass) {
+          const type = t2s(c.superclass);
+          if (type !== 'any') defStr += ` extends ${type}`;
         }
-      });
-      this.write('}');
+        this.write(`export interface ${defStr} {`);
+        this.writeBlock(() => {
+          for (const m of c.members) {
+            if (m.description) {
+              this.writeComment(() => {
+                this.write(m.description);
+              });
+            }
+            this.write(`${m.name}${m.optional}: ${t2s(m.type)};`);
+          }
+        });
+        this.write('}');
+      } else {
+        this.write(`export type ${c.defName} = ${t2s(c.superclass)};`);
+      }
       this.write('');
     }
   }
