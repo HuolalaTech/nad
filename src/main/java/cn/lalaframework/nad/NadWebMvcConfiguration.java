@@ -1,5 +1,6 @@
 package cn.lalaframework.nad;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@ConditionalOnProperty(prefix = "nad", value = "ui", havingValue = "true", matchIfMissing = true)
 public class NadWebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -34,7 +34,7 @@ class NadControllerTest {
 
     @Test
     void js() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/nad/static/js/main.15aec69c.js"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/nad/static/js/main.f9347031.js"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Cache-Control", "max-age=8640000"))
                 .andExpect(MockMvcResultMatchers.content().contentType("application/javascript"));
