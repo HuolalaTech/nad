@@ -1,4 +1,5 @@
 import { NadInvoker, HttpError } from '..';
+import { ObjectNestingTooDeepError } from '../errors/ObjectNestingTooDeepError';
 import './libs/mock-xhr';
 
 const base = 'http://localhost';
@@ -187,9 +188,9 @@ describe('addRequestBody', () => {
   });
 });
 
-describe('addNormalParam', () => {
+describe('addModelAttribute', () => {
   test('add one object', async () => {
-    const res = await new NadInvoker(base).open('GET', '/test').addNormalParam({ a: 1 }).execute();
+    const res = await new NadInvoker(base).open('GET', '/test').addModelAttribute({ a: 1 }).execute();
     expect(res).toMatchObject({
       method: 'GET',
       url: `${base}/test?a=1`,
@@ -198,8 +199,8 @@ describe('addNormalParam', () => {
   test('add two objects', async () => {
     const res = await new NadInvoker(base)
       .open('POST', '/test')
-      .addNormalParam({ a: 1 })
-      .addNormalParam({ b: 2 })
+      .addModelAttribute({ a: 1 })
+      .addModelAttribute({ b: 2 })
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
@@ -209,25 +210,54 @@ describe('addNormalParam', () => {
   test('conflict keys', async () => {
     const res = await new NadInvoker(base)
       .open('POST', '/test')
-      .addNormalParam({ a: 1, c: 3 })
-      .addNormalParam({ b: 2, c: 4 })
+      .addModelAttribute({ a: 1, c: 3 })
+      .addModelAttribute({ b: 2, c: 4 })
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test?a=1&c=4&b=2`,
     });
   });
-  test('undefined value', async () => {
+
+  test('non-object value', async () => {
     const res = await new NadInvoker(base)
       .open('POST', '/test')
-      .addNormalParam(undefined)
-      .addNormalParam(null)
-      .addNormalParam({ a: 1 })
+      .addModelAttribute(undefined)
+      .addModelAttribute(null)
+      .addModelAttribute([])
+      .addModelAttribute({ a: 1 })
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test?a=1`,
     });
+  });
+
+  test('nested object', async () => {
+    const res = await new NadInvoker(base)
+      .open('POST', '/test')
+      .addModelAttribute({ user: { name: 'hehe', age: 18, v: [1, 2] } })
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test?user.name=hehe&user.age=18&user.v=1&user.v=2`,
+    });
+  });
+
+  test('addNormalParam', async () => {
+    const res = await new NadInvoker(base).open('GET', '/test').addNormalParam({ a: 1 }).execute();
+    expect(res).toMatchObject({
+      method: 'GET',
+      url: `${base}/test?a=1`,
+    });
+  });
+
+  test('ObjectNestingTooDeepError', async () => {
+    const a = { a: new Object() };
+    a.a = a;
+    expect(() => {
+      new NadInvoker(base).open('GET', '/test').addModelAttribute(a);
+    }).toThrowError(ObjectNestingTooDeepError);
   });
 });
 

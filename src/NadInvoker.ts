@@ -1,5 +1,7 @@
 import { request } from '@huolala-tech/request';
 import { HttpError } from './errors/HttpError';
+import { ObjectNestingTooDeepError } from './errors/ObjectNestingTooDeepError';
+import { isNonNullObject } from './utils/isNonNullObject';
 import { joinPath } from './utils/joinPath';
 
 export interface Settings {
@@ -60,12 +62,38 @@ export class NadInvoker<T> {
     return this;
   }
 
-  public addNormalParam(param: unknown) {
-    const obj = Object(param);
-    Object.keys(obj).forEach((key) => {
-      this.addRequestParam(key, obj[key]);
+  /**
+   * Defined by RequestParam
+   * @param param A non-null object
+   */
+  public addModelAttribute(param: unknown, path: string[] = []) {
+    if (!isNonNullObject(param)) return this;
+    if (param instanceof Array) return this;
+
+    // If the `param` references itself, this code could enter an endless recursive call.
+    // The next line provides a defensive breaking point.
+    if (path.length > 32) throw new ObjectNestingTooDeepError();
+
+    Object.keys(param).forEach((key) => {
+      const item = param[key];
+      const nextPath = path.concat(key);
+      const name = nextPath.join('.');
+      if (!isNonNullObject(item) || item instanceof Array) {
+        // Spring Web only supports plain types as list items.
+        // Therefore, if the item is an array, we do not have to care its item type, simply call addRequestParam.
+        this.addRequestParam(name, item);
+      } else {
+        this.addModelAttribute(item, nextPath);
+      }
     });
     return this;
+  }
+
+  /**
+   * @deprecated Use the addModelAttribute method instead.
+   */
+  public addNormalParam(param: unknown) {
+    return this.addModelAttribute(param);
   }
 
   public addMultipartFile(key: string, value?: MultipartFile | null | undefined) {
