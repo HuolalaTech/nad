@@ -1,4 +1,5 @@
 import { NadInvoker, HttpError } from '..';
+import { APPLICATION_JSON, MULTIPART_FORM_DATA, OCTET_STREAM, WWW_FORM_URLENCODED } from '../constants';
 import { ObjectNestingTooDeepError } from '../errors/ObjectNestingTooDeepError';
 import './libs/mock-xhr';
 
@@ -96,58 +97,45 @@ describe('addPathVariable', () => {
 });
 
 describe('addRequestParam', () => {
-  test('string in qs', async () => {
-    const res = await new NadInvoker(base).open('POST', '/test').addRequestParam('id', '123').execute();
-    expect(res).toMatchObject({
-      method: 'POST',
-      url: `${base}/test?id=123`,
-    });
-  });
-
-  test('number in qs', async () => {
-    const res = await new NadInvoker(base).open('POST', '/test').addRequestParam('id', 123).execute();
-    expect(res).toMatchObject({
-      method: 'POST',
-      url: `${base}/test?id=123`,
-    });
-  });
-
-  test('object in qs', async () => {
+  test('GET', async () => {
     const res = await new NadInvoker(base)
-      .open('POST', '/test')
-      .addRequestParam('id', {
-        toString() {
-          return 123;
-        },
-      })
+      .open('GET', '/test')
+      .addRequestParam('id', 123)
+      .addRequestParam('name', 'hehe')
+      .addRequestParam('u', undefined)
       .execute();
     expect(res).toMatchObject({
-      method: 'POST',
-      url: `${base}/test?id=123`,
+      method: 'GET',
+      url: `${base}/test?id=123&name=hehe`,
+      data: {},
+      headers: {},
     });
   });
 
-  test('undefined value', async () => {
+  test('POST', async () => {
     const res = await new NadInvoker(base)
       .open('POST', '/test')
       .addRequestParam('id', 123)
-      .addRequestParam('name', undefined)
+      .addRequestParam('name', 'hehe')
+      .addRequestParam('u', undefined)
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
-      url: `${base}/test?id=123`,
+      url: `${base}/test`,
+      data: 'id=123&name=hehe',
+      headers: { 'Content-Type': WWW_FORM_URLENCODED },
     });
   });
 
-  test('array in qs', async () => {
+  test('Array', async () => {
     const res = await new NadInvoker(base)
-      .open('POST', '/test')
+      .open('GET', '/test')
       .addRequestParam('before', 'before')
       .addRequestParam('a', [1, 2, 3])
       .addRequestParam('after', 'after')
       .execute();
     expect(res).toMatchObject({
-      method: 'POST',
+      method: 'GET',
       url: `${base}/test?before=before&a=1&a=2&a=3&after=after`,
     });
   });
@@ -165,7 +153,7 @@ describe('addRequestBody', () => {
 
   test('qs data object in body', async () => {
     const res = await new NadInvoker(base)
-      .open('POST', '/test', { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      .open('POST', '/test', { headers: { 'Content-Type': WWW_FORM_URLENCODED } })
       .addRequestBody({ a: 1 })
       .execute();
     expect(res).toMatchObject({
@@ -177,7 +165,7 @@ describe('addRequestBody', () => {
 
   test('form data object in body', async () => {
     const res = await new NadInvoker(base)
-      .open('POST', '/test', { headers: { 'Content-Type': 'multipart/form-data' } })
+      .open('POST', '/test', { headers: { 'Content-Type': MULTIPART_FORM_DATA } })
       .addRequestBody({ a: 1 })
       .execute();
     expect(res).toMatchObject({
@@ -196,39 +184,71 @@ describe('addModelAttribute', () => {
       url: `${base}/test?a=1`,
     });
   });
-  test('add two objects', async () => {
+
+  test('with file', async () => {
     const res = await new NadInvoker(base)
       .open('POST', '/test')
+      .addMultipartFile('file', new Blob())
+      .addModelAttribute({ a: 1, b: { c: 2 } })
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test`,
+      data: { a: '1', 'b.c': '2' },
+      files: {
+        file: `data:${OCTET_STREAM};base64,`,
+      },
+    });
+  });
+
+  test('with json', async () => {
+    const res = await new NadInvoker(base)
+      .open('POST', '/test')
+      .addHeader('Content-Type', APPLICATION_JSON)
+      .addModelAttribute({ a: 1, b: { c: 2 } })
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test?a=1&b.c=2`,
+      data: {},
+      headers: { 'Content-Type': APPLICATION_JSON },
+    });
+  });
+
+  test('add two objects', async () => {
+    const res = await new NadInvoker(base)
+      .open('GET', '/test')
       .addModelAttribute({ a: 1 })
       .addModelAttribute({ b: 2 })
       .execute();
     expect(res).toMatchObject({
-      method: 'POST',
+      method: 'GET',
       url: `${base}/test?a=1&b=2`,
     });
   });
+
   test('conflict keys', async () => {
     const res = await new NadInvoker(base)
-      .open('POST', '/test')
+      .open('GET', '/test')
       .addModelAttribute({ a: 1, c: 3 })
       .addModelAttribute({ b: 2, c: 4 })
       .execute();
     expect(res).toMatchObject({
-      method: 'POST',
+      method: 'GET',
       url: `${base}/test?a=1&c=4&b=2`,
     });
   });
 
   test('non-object value', async () => {
     const res = await new NadInvoker(base)
-      .open('POST', '/test')
+      .open('GET', '/test')
       .addModelAttribute(undefined)
       .addModelAttribute(null)
       .addModelAttribute([])
       .addModelAttribute({ a: 1 })
       .execute();
     expect(res).toMatchObject({
-      method: 'POST',
+      method: 'GET',
       url: `${base}/test?a=1`,
     });
   });
@@ -240,7 +260,9 @@ describe('addModelAttribute', () => {
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
-      url: `${base}/test?user.name=hehe&user.age=18&user.v=1&user.v=2`,
+      url: `${base}/test`,
+      data: 'user.name=hehe&user.age=18&user.v=1&user.v=2',
+      headers: { 'Content-Type': WWW_FORM_URLENCODED },
     });
   });
 
@@ -268,7 +290,7 @@ describe('addMultipartFile', () => {
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test`,
-      files: { f1: 'data:application/octet-stream;base64,' },
+      files: { f1: `data:${OCTET_STREAM};base64,` },
     });
   });
 

@@ -1,4 +1,5 @@
-import { request } from '@huolala-tech/request';
+import { InvokeResult, request } from '@huolala-tech/request';
+import { WWW_FORM_URLENCODED } from './constants';
 import { HttpError } from './errors/HttpError';
 import { ObjectNestingTooDeepError } from './errors/ObjectNestingTooDeepError';
 import { isNonNullObject } from './utils/isNonNullObject';
@@ -131,26 +132,73 @@ export class NadInvoker<T> {
   }
 
   protected buildUrl() {
-    const { rawPath, settings } = this;
-    // Find all {...} expression in the path, and replace them with values from pathVariables.
-    const path = rawPath.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(this.pathVariables[key])));
     const qs = this.buildQs();
-    const base = settings?.base ?? this.base ?? '';
-    let url = joinPath(base, path);
+    let url = this.buildBasePath();
     if (qs) url += `?${qs}`;
     return url;
   }
 
+  private buildBasePath() {
+    const { rawPath, settings } = this;
+    // Find all {...} expression in the path, and replace them with values from pathVariables.
+    const path = rawPath.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(this.pathVariables[key])));
+    const base = settings?.base ?? this.base ?? '';
+    return joinPath(base, path);
+  }
+
+  // NOTE: Do not use async/await in this libraray, as it may generate some iterator polyfill code in ES5.
   public execute() {
     const { method, settings, body, files, extensions } = this;
-    const url = this.buildUrl();
     const { timeout } = settings || {};
     const headers = { ...this.headers, ...settings?.headers };
-    // NOTE: Do not use async/await in this libraray, as it may generate some iterator polyfill code in ES5.
-    return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then((res) => {
-      const { data, statusCode } = res;
-      if (statusCode >= 200 && statusCode < 300) return data;
-      throw new HttpError(res);
-    });
+    const { postHandler } = NadInvoker;
+    const contentType = findHeader(headers, 'Content-Type');
+
+    /**
+     * PRINCIPLE: Make the HTTP header as light as possible.
+     * Spring Web supports reading certain parameters from either QueryString or FormData (Note: The FormData does not include JSON).
+     * Whenever possible, we should send our parameters with FormData.
+     * The following are the POSSIBLE conditions:
+     * 1. The HTTP method used must support sending payloads (POST, and PUT, and PATCH methods).
+     * 2. No custom body can be provided as it may conflict with other parameters.
+     * 3. The request's Content-Type must be empty or FormData. If it's empty, it can be changed to FormData.
+     */
+    if (canTakePayload(method) && !body && supportFormData(contentType)) {
+      const url = this.buildBasePath();
+      const data = this.requestParams;
+      const hasFile = Object.keys(files).length;
+      // If the `files` is not empty, keep the Content-Type header empty, as it will be automatically set by the request library.
+      if (!contentType && !hasFile) headers['Content-Type'] = WWW_FORM_URLENCODED;
+      return request<T>({ method, url, timeout, headers, data, files, ...extensions }).then(postHandler);
+    } else {
+      const url = this.buildUrl();
+      return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then(postHandler);
+    }
+  }
+
+  public static postHandler<T>(res: InvokeResult<T>) {
+    const { data, statusCode } = res;
+    if (statusCode >= 200 && statusCode < 300) return data;
+    throw new HttpError(res);
   }
 }
+
+const isMultipartFormData = (mediaType: string) => /^multipart\/form-data(?:\s*;|$)/.test(mediaType);
+const isWwwFormUrlEncoded = (mediaType: string) => /^application\/x-www-form-urlencoded(?:\s*;|$)/.test(mediaType);
+
+const findHeader = (headers: Record<string, string>, name: string) => {
+  const keys = Object.keys(headers);
+  const ln = name.toLowerCase();
+  for (let i = 0; i < keys.length; i++) {
+    if (keys[i].toLowerCase() === ln) return headers[keys[i]];
+  }
+  return null;
+};
+
+const supportFormData = (mediaType: string | null) =>
+  !mediaType || isMultipartFormData(mediaType) || isWwwFormUrlEncoded(mediaType);
+
+const canTakePayload = (method: string) => {
+  const u = method.toUpperCase();
+  return u === 'POST' || u === 'PUT' || u === 'PATCH';
+};
