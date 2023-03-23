@@ -57,6 +57,10 @@ export class CodeGenForOc extends CodeGen {
     gen.writeBlock(() => {
       const rt = this.buildReturnType(a);
       gen.write(`NadInvoker *req = [[NadInvoker new] init];`);
+      gen.write(`[req initAppId:${ss(this.options.base)} method:${ss(a.method)} path:${ss(a.pattern)}];`);
+      if (a.requestContentType) {
+        gen.write(`[req addHeader:${ss('Content-Type')} value:${ss(a.requestContentType)}];`);
+      }
       for (const p of a.parameters) {
         for (const [m, ...args] of p.actions) {
           if (args.length) {
@@ -66,7 +70,6 @@ export class CodeGenForOc extends CodeGen {
           }
         }
       }
-      gen.write(`[req initAppId:${ss(this.options.base)} method:${ss(a.method)} path:${ss(a.pattern)}];`);
       gen.write(`return (${rt})[req invoke];`);
     });
     gen.write('}');
@@ -157,6 +160,7 @@ export class CodeGenForOc extends CodeGen {
     this.write('// You should implement this interface in your code.');
     this.write('@interface NadInvoker : NSObject');
     this.write('- (void)initAppId: (NSString*)appId method:(NSString*)method path:(NSString*)path;');
+    this.write('- (void)addHeader: (NSString*)name value:(NSString*)value;');
     this.write('- (void)addPathVariable:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addRequestParam:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addMultipartFile:(NSString*)name value:(NSObject*)value;');

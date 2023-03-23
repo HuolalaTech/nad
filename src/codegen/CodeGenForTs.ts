@@ -51,6 +51,9 @@ export class CodeGenForTs extends CodeGen {
       this.write(`return new NadInvoker<${t2s(a.returnType)}>(BASE)`);
       this.writeBlock(() => {
         this.write(`.open(${ss(a.method)}, ${ss(a.pattern)}, settings)`);
+        if (a.requestContentType) {
+          this.write(`.addHeader(${ss('Content-Type')}, ${ss(a.requestContentType)})`);
+        }
         for (const p of a.parameters) {
           for (const [m, ...args] of p.actions) {
             if (args.length) {

@@ -1,10 +1,13 @@
 import { Member } from './Member';
 import { Type } from './Type';
-import { u2a, u2s } from '../utils';
+import { Dubious, u2a, u2s } from '../utils';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
+import { NadClass } from 'src/types/nad';
 
-export class Class extends DefBase {
+type ClassRaw = Dubious<NadClass>;
+
+export class Class extends DefBase<ClassRaw> {
   /**
    * Generic type parameters.
    * For example, the value of typeParameters is [ "T", "M" ] for `class Foo<T, M> {}`
@@ -13,7 +16,7 @@ export class Class extends DefBase {
   public readonly defName;
   public readonly description;
 
-  constructor(raw: unknown, builder: Root) {
+  constructor(raw: ClassRaw, builder: Root) {
     super(raw, builder);
     this.typeParameters = u2a(this.raw.typeParameters, u2s);
     this.defName = this.moduleName;

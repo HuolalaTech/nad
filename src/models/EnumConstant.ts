@@ -1,14 +1,17 @@
-import { u2o } from '../utils';
+import { NadEnumConstant } from '../types/nad';
+import { Dubious, u2o } from '../utils';
 import { Annotated } from './Annotated';
 import type { Enum } from './Enum';
 
-export class EnumConstant extends Annotated {
+type EnumConstantRaw = Dubious<NadEnumConstant<unknown>>;
+
+export class EnumConstant extends Annotated<EnumConstantRaw> {
   readonly owner: Enum;
   readonly rawValue: unknown;
   readonly properties: Record<string, unknown>;
   readonly description;
   readonly memo: string;
-  constructor(raw: unknown, owner: Enum) {
+  constructor(raw: EnumConstantRaw, owner: Enum) {
     super(raw);
     const { value, properties } = u2o(raw);
     this.owner = owner;

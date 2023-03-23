@@ -20,7 +20,7 @@
     "build": "rollup -c",
     "prepare": "husky install",
     "prepublishOnly": "rollup -c",
-    "prettier": "prettier --write \"**/*.{js,ts,json}\""
+    "prettier": "prettier --write \"src/**/*.{js,ts,json}\""
   },
   "author": "YanagiEiichi <576398868@qq.com>",
   "license": "MIT",

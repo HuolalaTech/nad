@@ -1,9 +1,10 @@
 import { Module } from './Module';
 import { Class } from './Class';
-import { computeIfAbsent, u2o } from '../utils';
+import { computeIfAbsent, Dubious, u2o } from '../utils';
 import { u2a, u2s } from '../utils';
 import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
+import { RouteRaw } from './Route';
 
 export interface BuilderOptions {
   uniqueNameSeparator?: string;
@@ -14,10 +15,7 @@ export interface BuilderOptions {
   fixPropertyName?: (s: string) => string;
 }
 
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-export type RawDefs = DeepPartial<NadResult>;
+export type RawDefs = Dubious<NadResult>;
 
 export class Root {
   private readonly rawClasses;
@@ -62,13 +60,13 @@ export class Root {
         const kw = `${bean}.${name}`;
         return options.apis.some((i) => kw.includes(i));
       })
-      .reduce((map: Map<string, unknown[]>, i) => {
+      .reduce((map: Map<string, RouteRaw[]>, i) => {
         const { bean } = u2o(i);
         if (typeof bean === 'string') {
-          computeIfAbsent(map, bean, () => [] as unknown[]).push(i);
+          computeIfAbsent(map, bean, () => [] as RouteRaw[]).push(i);
         }
         return map;
-      }, new Map<string, unknown[]>());
+      }, new Map<string, RouteRaw[]>());
 
     this.modules = Array.from(
       groups.entries(),

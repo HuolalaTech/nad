@@ -1,16 +1,19 @@
-import { Route } from './Route';
-import { u2a, u2o, u2s } from '../utils';
+import { Route, RouteRaw } from './Route';
+import { Dubious, u2a, u2o, u2s } from '../utils';
 import type { Root } from './Root';
 import { UniqueName } from './UniqueName';
 import { Annotated } from './Annotated';
+import { NadModule } from '../types/nad';
 
-export class Module extends Annotated {
+type ModuleRaw = Dubious<NadModule>;
+
+export class Module extends Annotated<ModuleRaw> {
   public readonly builder;
   public readonly name;
   public readonly moduleName;
   public readonly routes;
   public readonly description;
-  constructor(raw: unknown, builder: Root, list: unknown[]) {
+  constructor(raw: ModuleRaw, builder: Root, list: RouteRaw[]) {
     super(raw);
     this.builder = builder;
     const defs = u2o(raw);
