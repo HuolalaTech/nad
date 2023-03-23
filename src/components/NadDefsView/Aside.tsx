@@ -36,11 +36,11 @@ export const Aside = () => {
   const { treeData, defaultCheckedKeys, defaultExpandedKeys } =
     useMemo(() => {
       const builder = new Builder({ target: 'raw', defs, base });
-      const treeData = builder.root.routes.map((i) => {
+      const treeData = builder.root.modules.map((i) => {
         return {
           key: i.name as Key,
           title: i.description || i.moduleName,
-          children: i.apis.map((a) => ({
+          children: i.routes.map((a) => ({
             key: (i.name + '::' + a.uniqName) as Key,
             title: <TreeMethod api={a} />
           }))

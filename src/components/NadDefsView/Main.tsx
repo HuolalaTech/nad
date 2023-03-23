@@ -53,10 +53,10 @@ export const Main = () => {
   const { defs, base, apis } = context;
   const lang = useLang();
 
-  const builder = useMemo(
-    () => new Builder({ target: lang, defs, base, apis }),
-    [defs, base, lang, apis]
-  );
+  const builder = useMemo(() => {
+    const fixedBase = base.replace(/\/nad\/api\/defs$/, '');
+    return new Builder({ target: lang, defs, base: fixedBase, apis });
+  }, [defs, base, lang, apis]);
 
   const { code, root } = builder;
 
@@ -84,11 +84,11 @@ export const Main = () => {
     if (!current) return;
     selection.removeAllRanges();
     const [, iface, methodName] = select.match(/^(.*?)(?:::(.*))?$/) || [];
-    const controller = root.routes.find((r) => r.name === iface);
+    const controller = root.modules.find((r) => r.name === iface);
     if (!controller) return;
     let range;
     if (methodName) {
-      const method = controller.apis.find((a) => a.uniqName === methodName);
+      const method = controller.routes.find((a) => a.uniqName === methodName);
       if (!method) return;
       range = makeRange(tff, lang, controller.moduleName, method.uniqName);
     } else {
