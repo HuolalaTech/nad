@@ -1,3 +1,7 @@
+## 0.0.6
+- Update README.md
+- Make the HTTP header as light as possible
+- Add addModelAttribute method
 ## 0.0.5
 - Update README.md
 - Update HttpError
