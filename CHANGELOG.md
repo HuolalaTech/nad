@@ -1,3 +1,11 @@
+## 0.0.10
+
+- Update README.md
+- Add "consumers" test cases
+- Support @ModelAttribute
+- Make types more restrictive
+- Add NadResult types
+
 ## 0.0.9
 
 - Fix list and unknown types
