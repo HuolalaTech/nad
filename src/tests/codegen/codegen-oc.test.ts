@@ -126,7 +126,7 @@ test('addRequestBody', () => {
   expect(code).toContain(`[req addRequestBody:people];`);
 });
 
-test('addNormalParam', () => {
+test('addModelAttribute', () => {
   const foo = {
     name: 'foo',
     bean: 'test.Demo',
@@ -143,7 +143,7 @@ test('addNormalParam', () => {
     returnType: 'java.lang.Long',
   };
   const { code } = new Builder({ ...config, defs: { routes: [foo], classes } });
-  expect(code).toContain(`[req addNormalParam:people];`);
+  expect(code).toContain(`[req addModelAttribute:people];`);
 });
 
 test('addMultipartFile', () => {

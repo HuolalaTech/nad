@@ -31,30 +31,47 @@ export class Parameter extends Annotated<ParameterRaw> {
     this.description = this.annotations.swagger.getApiParam()?.description || '';
 
     const pv = this.annotations.web.getPathVariable();
-    const rp = this.annotations.web.getRequestParam();
     const rb = this.annotations.web.getRequestBody();
+    const rp = this.annotations.web.getRequestParam();
+    const ma = this.annotations.web.getModelAttribute();
     this.required = rp?.required || pv?.required || rb?.required ? ('' as const) : ('?' as const);
     this.actions = [] as [string, ...string[]][];
     this.isFile = this.type.name === 'org.springframework.web.multipart.MultipartFile';
     this.hasBody = !!rb;
 
+    // If this parameter is annotated with `@PathVariable`, the `addPathVariable` method must be called in the runtime library.
     if (pv) this.actions.push(['addPathVariable', pv.value || this.name]);
+
+    // If this parameter is annotated with `@RequestBody`, the `addRequestBody` method must be called in the runtime library.
     if (rb) this.actions.push(['addRequestBody']);
+
+    // If this parameter is annotated with `@RequestParam`, ...
     if (rp) {
       if (this.isFile) {
         this.actions.push(['addMultipartFile', rp.value || this.name]);
       } else {
         this.actions.push(['addRequestParam', rp.value || this.name]);
       }
-    } else if (!pv && !rb) {
-      if (isJavaNonClass(this.type.name)) {
-        if (this.isFile) {
-          this.actions.push(['addMultipartFile', this.name]);
-        } else {
-          this.actions.push(['addRequestParam', this.name]);
-        }
-      } else {
-        this.actions.push(['addNormalParam']);
+    }
+
+    // If this parameter ins annotated with `@ModelAttribute`, the `addModelAttribute` method must be called in the runtime library.
+    if (ma) {
+      this.actions.push(['addModelAttribute']);
+    }
+
+    // If not annotations are present, the method that to be called can be automatically detected.
+    if (!pv && !rb && !rp && !ma) {
+      // For the file upload.
+      if (this.isFile) {
+        this.actions.push(['addMultipartFile', this.name]);
+      }
+      // For Java non-class value types.
+      else if (isJavaNonClass(this.type.name)) {
+        this.actions.push(['addRequestParam', this.name]);
+      }
+      // For Java classes.
+      else {
+        this.actions.push(['addModelAttribute']);
       }
     }
   }

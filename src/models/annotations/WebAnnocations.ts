@@ -27,6 +27,8 @@ export class RequestBody extends ValueAliasName {
   }
 }
 
+export class ModelAttribute extends ValueAliasName {}
+
 export class WebAnnotations {
   private annotations;
   constructor(annotations: Annotations) {
@@ -41,5 +43,8 @@ export class WebAnnotations {
   }
   getPathVariable() {
     return PathVariable.create(this.annotations, 'org.springframework.web.bind.annotation.PathVariable');
+  }
+  getModelAttribute() {
+    return ModelAttribute.create(this.annotations, 'org.springframework.web.bind.annotation.ModelAttribute');
   }
 }

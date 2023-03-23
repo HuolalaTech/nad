@@ -165,7 +165,7 @@ export class CodeGenForOc extends CodeGen {
     this.write('- (void)addRequestParam:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addMultipartFile:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addRequestBody:(NSObject*)body;');
-    this.write('- (void)addNormalParam:(NSObject*)params;');
+    this.write('- (void)addModelAttribute:(NSObject*)params;');
     this.write('- (NSObject*)invoke;');
     this.write('@end');
     this.write('');
