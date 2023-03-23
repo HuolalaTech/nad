@@ -1,6 +1,6 @@
 # nad-runtime · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-runtime)](LICENSE.txt)
 
-The runtime lib of NAD project.
+The runtime lib of the Nad project.
 
 ## Include
 
@@ -16,7 +16,7 @@ npm install @huolala-tech/nad-runtime --save
 
 ## Useage
 
-### 1. Param in path
+### 1. @PathVariable
 
 ```typescript
 import { NadInvoker } from '@huolala-tech/nad-runtime';
@@ -30,7 +30,7 @@ const getUserInfo = async () => {
 };
 ```
 
-### 2. Param in QueryString
+### 2. @RequestParam
 
 ```typescript
 import { NadInvoker } from '@huolala-tech/nad-runtime';
@@ -39,12 +39,26 @@ import { NadInvoker } from '@huolala-tech/nad-runtime';
 const getUserInfo = async () => {
   return await new NadInvoker('http://localhost')
     .open('GET', '/getUser')
-    .addRequestParameter('id', id)
+    .addRequestParam('id', id)
     .execute();
 };
 ```
 
-### 3. Param in body
+### 2. @ModelAttribute
+
+```typescript
+import { NadInvoker } from '@huolala-tech/nad-runtime';
+
+// This code will request http://localhost/getUser?id=1&type=2 with GET mtehod.
+const getUserInfo = async () => {
+  return await new NadInvoker('http://localhost')
+    .open('GET', '/getUser')
+    .addModelAttribute({ id: 1, type: 2 })
+    .execute();
+};
+```
+
+### 4. @RequestBody
 
 ```typescript
 import { NadInvoker } from '@huolala-tech/nad-runtime';
