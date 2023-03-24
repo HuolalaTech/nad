@@ -75,6 +75,19 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
                 <executions>
@@ -98,13 +111,15 @@
         </license>
     </licenses>
 
+    <name>nad-core</name>
+    <description>This library is for collecting all Spring Web routes as a serializable data structure.</description>
     <developers>
         <developer>
             <name>YanagiEiichi</name>
             <email>576398868@qq.com</email>
         </developer>
     </developers>
-
+    <url>https://github.com/HuolalaTech/nad-java-core</url>
     <scm>
         <url>https://github.com/HuolalaTech/nad-java-core.git</url>
     </scm>
