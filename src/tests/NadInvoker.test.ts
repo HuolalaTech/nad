@@ -266,14 +266,6 @@ describe('addModelAttribute', () => {
     });
   });
 
-  test('addNormalParam', async () => {
-    const res = await new NadInvoker(base).open('GET', '/test').addNormalParam({ a: 1 }).execute();
-    expect(res).toMatchObject({
-      method: 'GET',
-      url: `${base}/test?a=1`,
-    });
-  });
-
   test('ObjectNestingTooDeepError', async () => {
     const a = { a: new Object() };
     a.a = a;

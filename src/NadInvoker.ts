@@ -90,13 +90,6 @@ export class NadInvoker<T> {
     return this;
   }
 
-  /**
-   * @deprecated Use the addModelAttribute method instead.
-   */
-  public addNormalParam(param: unknown) {
-    return this.addModelAttribute(param);
-  }
-
   public addMultipartFile(key: string, value?: MultipartFile | null | undefined) {
     if (value === null || value === undefined) {
       delete this.files[key];
