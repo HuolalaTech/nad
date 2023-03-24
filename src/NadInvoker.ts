@@ -14,11 +14,30 @@ export interface Settings {
 type MultipartFile = Blob | File | string;
 
 export class NadInvoker<T> {
+  /**
+   * The base URI of the HTTP request.
+   */
   public base;
+
+  /**
+   * The raw path that may contain certain placeholders in the style of Spring Web.
+   */
   public rawPath: string;
+
+  /**
+   * The method of the HTTP request.
+   */
   public method: string;
-  public settings?: Partial<Settings>;
+
+  /**
+   * The custom body of the HTTP request.
+   */
   public body?: unknown;
+
+  /**
+   * The advanced settings of the HTTP request.
+   */
+  public settings?: Partial<Settings>;
 
   protected readonly requestParams: Record<string, unknown>;
   protected readonly pathVariables: Record<string, unknown>;
@@ -26,6 +45,10 @@ export class NadInvoker<T> {
   protected readonly extensions: Record<string, unknown>;
   protected readonly headers: Record<string, string>;
 
+  /**
+   * Create a new instance of NadInvoker with a base URI for the API.
+   * @param base The base URI for the API.
+   */
   constructor(base?: string) {
     this.base = base;
     this.rawPath = '/';
@@ -37,6 +60,12 @@ export class NadInvoker<T> {
     this.extensions = Object.create(null);
   }
 
+  /**
+   * Configure certain necessary parameters.
+   * @param method The HTTP method.
+   * @param rawPath The raw path, that could contain variable templates such as "/api/users/{id}".
+   * @param settings Other settings.
+   */
   public open(method: string, rawPath: string, settings?: Partial<Settings>) {
     this.method = method;
     this.rawPath = rawPath;
@@ -44,16 +73,40 @@ export class NadInvoker<T> {
     return this;
   }
 
+  /**
+   * Set a request body, that maps to a Java method parameter which annotated with "@RequestBody".
+   * NOTE: Use the last value, if this method is called multiple times.
+   * @param body A serializable object.
+   */
   public addRequestBody(body: unknown) {
     this.body = body;
     return this;
   }
 
+  /**
+   * Replace the variable template in the raw path with the real value.
+   * In Java code, a parameter which annotated with "@PathVariable" will receive this value.
+   * NOTE: The value will be encoded as URL encoding.
+   * NOTE: Use the last value, if this method is called mutiple times with same key.
+   * @param key The variable template name in raw path.
+   * @param value The real value. Normally, the value should be a string because the HTTP path is also a string.
+   *              However, you can present any type here, it will be converted to a string with the JavaScript implicit
+   *              conversion rules.
+   */
   public addPathVariable(key: string, value: unknown) {
     this.pathVariables[key] = value;
     return this;
   }
 
+  /**
+   * In Java code, some parameters may be annotated with "@RequestParam".
+   * This method set some key-value pairs, that finally map with Java parameters.
+   * NOTE: These data will be sent with either HTTP query string or payload.
+   *       The specific rules are complex and will not be expended here.
+   * NOTE: Use the last value, if this method is called mutiple times with same key.
+   * @param key The variable name.
+   * @param value The value.
+   */
   public addRequestParam(key: string, value: unknown) {
     if (value === undefined) {
       delete this.requestParams[key];
@@ -64,8 +117,11 @@ export class NadInvoker<T> {
   }
 
   /**
-   * Defined by RequestParam
-   * @param param A non-null object
+   * In Java code, some parameters may be annotated with "@ModelAttribute".
+   * This method set an object, that will map with Java parameters.
+   * NOTE: These data will be sent with either HTTP query string or payload.
+   *       The specific rules are complex and will not be expended here.
+   * @param param A non-null object.
    */
   public addModelAttribute(param: unknown, path: string[] = []) {
     if (!isNonNullObject(param)) return this;
@@ -90,25 +146,52 @@ export class NadInvoker<T> {
     return this;
   }
 
-  public addMultipartFile(key: string, value?: MultipartFile | null | undefined) {
-    if (value === null || value === undefined) {
+  /**
+   * In Java code, certain parameters may be of the MultipartFile type, which expect to receive a file.
+   * This method is used to associate a file object with the key.
+   * NOTE: If this method was called, the request Content-Type will be set to "multipart/form-data".
+   * NOTE: Use the last value, if this method is called mutiple times with same key.
+   * @param key The field name.
+   * @param file A file with a type of either Blob (File extends Blob), or string.
+   *             NOTE: In MiniProgram, it is should be a string representing the temporary path.
+   */
+  public addMultipartFile(key: string, file?: MultipartFile | null | undefined) {
+    if (file === null || file === undefined) {
       delete this.files[key];
     } else {
-      this.files[key] = value;
+      this.files[key] = file;
     }
     return this;
   }
 
-  public addExtension(key: string, value: unknown) {
-    this.extensions[key] = value;
+  /**
+   * The method allows the upper layer application to pass some additional fields to the underlying network library.
+   * NOTE: Use the last value, if this method is called mutiple times with same name.
+   * @param name The additional field name.
+   * @param value The field value.
+   */
+  public addExtension(name: string, value: unknown) {
+    this.extensions[name] = value;
     return this;
   }
 
+  /**
+   * Add a custom request header (HTTP header).
+   * NOTE: Use the last value, if this method is called mutiple times with same name.
+   * @param name The header name.
+   * @param value The value.
+   */
   public addHeader(key: string, value: string) {
     this.headers[key] = value;
     return this;
   }
 
+  /**
+   * Build a query string based on the `requestParams`.
+   * NOTE: This is a stateless method that simply builds a string without concerning how it will be sent.
+   * NOTE: If a value is an array, each value will be joined with same key.
+   *       For instance, the object { a: [ 1, 2 ] } will results in "a=1&a=2".
+   */
   protected buildQs() {
     const { requestParams } = this;
     return Object.keys(requestParams)
@@ -116,7 +199,7 @@ export class NadInvoker<T> {
         []
           // The requestParams[name] may or may not be an array, [].concat ensures it is always an array.
           // For array value, the query string builder should separate it and append each item one by one.
-          // For example, if the requestParams is { a: [ 1, 2, 3 ] }, the qs should be "a=1&a=2&a=3".
+          // For example, if the requestParams is { a: [ 1, 2 ] }, the qs should be "a=1&a=2".
           .concat(requestParams[name] as unknown as never)
           .map((v) => `${encodeURIComponent(name)}=${encodeURIComponent(v)}`)
           .join('&'),
@@ -124,6 +207,10 @@ export class NadInvoker<T> {
       .join('&');
   }
 
+  /**
+   * Build a URL string (includes query string).
+   * NOTE: This is a stateless method that simply builds a string without concerning how it will be used.
+   */
   protected buildUrl() {
     const qs = this.buildQs();
     let url = this.buildBasePath();
@@ -131,6 +218,12 @@ export class NadInvoker<T> {
     return url;
   }
 
+  /**
+   * Build the base string (excluding the query string).
+   * This method joins the base and path, where the path is the result of filling the `pathVariables` into
+   * placeholders in the `rawPath`.
+   * NOTE: The base value is attempted to be read from the settings, and from the instance as a fallback option.
+   */
   private buildBasePath() {
     const { rawPath, settings } = this;
     // Find all {...} expression in the path, and replace them with values from pathVariables.
@@ -139,7 +232,9 @@ export class NadInvoker<T> {
     return joinPath(base, path);
   }
 
-  // NOTE: Do not use async/await in this libraray, as it may generate some iterator polyfill code in ES5.
+  /**
+   * Actually execute this request.
+   */
   public execute() {
     const { method, settings, body, files, extensions } = this;
     const { timeout } = settings || {};
@@ -169,6 +264,9 @@ export class NadInvoker<T> {
     }
   }
 
+  /**
+   * To handle the raw HTTP response object from the underlying network library.
+   */
   public static postHandler<T>(res: InvokeResult<T>) {
     const { data, statusCode } = res;
     if (statusCode >= 200 && statusCode < 300) return data;
@@ -179,6 +277,9 @@ export class NadInvoker<T> {
 const isMultipartFormData = (mediaType: string) => /^multipart\/form-data(?:\s*;|$)/.test(mediaType);
 const isWwwFormUrlEncoded = (mediaType: string) => /^application\/x-www-form-urlencoded(?:\s*;|$)/.test(mediaType);
 
+/**
+ * Find the first value that matches the key in a case-insensitive manner.
+ */
 const findHeader = (headers: Record<string, string>, name: string) => {
   const keys = Object.keys(headers);
   const ln = name.toLowerCase();
