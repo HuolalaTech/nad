@@ -1,7 +1,7 @@
 import { InvokeResult, request } from '@huolala-tech/request';
 import { WWW_FORM_URLENCODED } from './constants';
 import { HttpError } from './errors/HttpError';
-import { ObjectNestingTooDeepError } from './errors/ObjectNestingTooDeepError';
+import { ObjectNestingTooDeepError } from './errors';
 import { isNonNullObject } from './utils/isNonNullObject';
 import { joinPath } from './utils/joinPath';
 
