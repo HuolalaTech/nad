@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller()
+@Controller
 @RequestMapping("nad/api")
 @ConditionalOnProperty(prefix = "nad", value = "enable", havingValue = "true")
-@Import(NadWebMvcConfiguration.class)
+@Import(NadUiConfiguration.class)
 public class NadApiController {
     @Autowired
     private NadCore core;

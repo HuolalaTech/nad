@@ -1,6 +1,6 @@
 # nad-sdk
 
-Nad (named from **N**ot **a** **D**ocument) is a Java component that exports typed Java definitions for generating associated code for another platform.
+Nad (an acronym for **N**ot **a** **D**ocument) is a Java component that produces typed Java definitions, which can be used to create code for another platform.
 
 ## GAV
 
@@ -14,11 +14,11 @@ Nad (named from **N**ot **a** **D**ocument) is a Java component that exports typ
 
 ## Configuration
 
-To ensure security, the nad-sdk is disabled by default.
-You can add the following configuration to your `application.properties` to manually enable it.
+To ensure security, the nad-sdk is disabled by default. You can add the following configuration to
+your `application.properties` to manually enable it.
 
 ```properties
-nad.enable = true
+nad.enable=true
 ```
 
 ## Nad UI
@@ -26,4 +26,4 @@ nad.enable = true
 Access your project web page, such as http://localhost:8080/nad/, to visit the Nad UI page.
 
 > The Nad UI is enabled by default once the Nad component is enabled.
-> You can also manually disable it by setting `nad.ui = false` in `application.properties`.
+> You can also manually disable it by setting `nad.ui=false` in `application.properties`.

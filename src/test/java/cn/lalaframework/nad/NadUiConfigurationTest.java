@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 @SpringBootTest(classes = TestApplication.class)
-class NadControllerTest {
+class NadUiConfigurationTest {
     private MockMvc mockMvc;
 
     @Autowired
@@ -27,6 +27,13 @@ class NadControllerTest {
     @PostConstruct
     void init() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
+    @Test
+    void redirect() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/nad"))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.header().string("Location", "/nad/"));
     }
 
     @Test
@@ -61,17 +68,5 @@ class NadControllerTest {
             mockMvc.perform(MockMvcRequestBuilders.get(path))
                     .andExpect(MockMvcResultMatchers.status().isOk());
         }
-    }
-
-    @Test
-    void defs() throws Exception {
-        mockMvc.perform(
-                        MockMvcRequestBuilders
-                                .get("/nad/api/defs")
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("@.routes").isArray())
-                .andExpect(MockMvcResultMatchers.jsonPath("@.classes").isArray());
     }
 }

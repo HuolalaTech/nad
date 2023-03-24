@@ -10,11 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyController {
     @GetMapping("/getUser")
     User getUser(@RequestParam String name, @RequestParam("type") String userType) {
-        return new User();
+        User user = new User();
+        user.setId(1L);
+        user.setName(name);
+        user.setType((userType));
+        return user;
     }
 
     @GetMapping("/setRole")
-    Long setRole(@RequestParam Role type) {
-        return System.currentTimeMillis();
+    Role setRole(@RequestParam Role type) {
+        return type;
     }
 }
