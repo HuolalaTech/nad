@@ -34,7 +34,8 @@ export class Parameter extends Annotated<ParameterRaw> {
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
-    this.required = rp?.required || pv?.required || rb?.required ? ('' as const) : ('?' as const);
+    this.required =
+      rp?.required || pv?.required || rb?.required || this.annotations.hasNonNull() ? ('' as const) : ('?' as const);
     this.actions = [] as [string, ...string[]][];
     this.isFile = this.type.name === 'org.springframework.web.multipart.MultipartFile';
     this.hasBody = !!rb;
