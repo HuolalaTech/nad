@@ -59,10 +59,10 @@ export const t2s = (type: Type): string => {
     if (first && (isJavaString(first.name) || isJavaNumber(first.name) || first.isEnum)) {
       keyType = t2s(first);
     }
-    return `Record<${keyType}, ${t2s(second) || 'any'}>`;
+    return `Record<${keyType}, ${t2s(second)}>`;
   }
   if (isJavaList(name)) {
-    return `${t2s(parameters[0]) || 'any'}[]`;
+    return `${t2s(parameters[0])}[]`;
   }
   if (isJavaUnknown(name)) return 'any';
 
@@ -73,7 +73,7 @@ export const t2s = (type: Type): string => {
   if (clz instanceof Class) {
     const { typeParameters } = clz;
     if (typeParameters.length > 0) {
-      const pars = typeParameters.map((_, i) => t2s(parameters[i]) || 'any').join(', ');
+      const pars = typeParameters.map((_, i) => t2s(parameters[i])).join(', ');
       return `${simpleName}<${pars}>`;
     }
   }
