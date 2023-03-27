@@ -107,7 +107,7 @@ export class CodeGenForOc extends CodeGen {
     }
   }
   private writeDefs() {
-    const list = this.builder.declarationList.sort((a, b) => {
+    const list = this.builder.declarationList.slice(0).sort((a, b) => {
       if (checkSuper(a, b)) return 1;
       if (checkSuper(b, a)) return -1;
       return 0;

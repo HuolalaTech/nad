@@ -2,20 +2,19 @@ import { NadClass } from '../../types/nad';
 
 export const User: NadClass = {
   name: 'test.User',
-  annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { value: 'User' } }],
   members: [
     {
-      annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { value: 'Name' } }]],
+      annotations: [],
       name: 'name',
       type: 'java.lang.String',
     },
     {
-      annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { name: 'Age' } }]],
+      annotations: [],
       name: 'age',
       type: 'int',
     },
     {
-      annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: {} }]],
+      annotations: [],
       name: 'memo',
       type: 'test.UserType',
     },
@@ -23,4 +22,5 @@ export const User: NadClass = {
   superclass: 'java.lang.Object',
   interfaces: [],
   typeParameters: [],
+  annotations: [],
 };

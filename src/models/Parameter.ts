@@ -1,7 +1,7 @@
 import { Dubious, u2o, u2s } from '../utils';
 import { Annotated } from './Annotated';
 import { Type } from './Type';
-import { isJavaNonClass } from '../helpers/javaHelper';
+import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
 
@@ -35,7 +35,9 @@ export class Parameter extends Annotated<ParameterRaw> {
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
     this.required =
-      rp?.required || pv?.required || rb?.required || this.annotations.hasNonNull() ? ('' as const) : ('?' as const);
+      rp?.required || pv?.required || rb?.required || this.annotations.hasNonNull() || isJavaPrimitive(this.type.name)
+        ? ('' as const)
+        : ('?' as const);
     this.actions = [] as [string, ...string[]][];
     this.isFile = this.type.name === 'org.springframework.web.multipart.MultipartFile';
     this.hasBody = !!rb;

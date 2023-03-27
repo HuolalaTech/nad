@@ -59,7 +59,8 @@ test('long', () => {
   expect(code).toContain(`export interface FooModel { a: Long; }`);
 });
 
-test('Object type', () => {
-  const code = buildCode({ name: 'a', type: 'java.lang.Long', annotations: [] });
+test('java.lang.Long', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildCode({ name: 'a', type, annotations: [] });
   expect(code).toContain(`export interface FooModel { a?: Long; }`);
 });
