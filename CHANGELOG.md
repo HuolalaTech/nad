@@ -1,3 +1,7 @@
+## 1.0.0
+- Add comments
+- Remove deprecated method
+- Fix error object exposing
 ## 0.0.6
 - Update README.md
 - Make the HTTP header as light as possible
