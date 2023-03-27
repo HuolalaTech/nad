@@ -15,7 +15,10 @@ import {
 // Convert value to safe string in code
 export const ss = (s: string | number) => {
   if (typeof s === 'string') {
-    return `@"${s.replace(/["\\\r\n]/g, (i) => `\\x${i.charCodeAt(0).toString(16)}`)}"`;
+    return `@"${s.replace(/["\\\r\n]/g, (char) => {
+      const code = char.charCodeAt(0);
+      return code < 0x10 ? `\\x0${code.toString(16)}` : `\\x${code.toString(16)}`;
+    })}"`;
   }
   if (typeof s === 'number') {
     return `@${s}`;
