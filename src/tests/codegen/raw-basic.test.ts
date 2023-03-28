@@ -1,7 +1,9 @@
 import { Root } from '../../models';
 import { Builder } from '../../Builder';
+import { DeepPartial } from '../../utils';
+import { NadClass, NadRoute } from '../../types/nad';
 
-const classes = [
+const classes: DeepPartial<NadClass>[] = [
   {
     name: 'test.People',
     members: [
@@ -18,19 +20,17 @@ const classes = [
   },
 ];
 
-const foo = {
+const foo: DeepPartial<NadRoute> = {
   name: 'foo',
   bean: 'test.Demo',
   methods: ['POST'],
   patterns: ['/foo'],
-  headers: [],
   parameters: [
     {
       name: 'id',
       type: 'java.lang.Long',
     },
   ],
-  annotations: [],
   returnType: 'java.lang.Long',
 };
 

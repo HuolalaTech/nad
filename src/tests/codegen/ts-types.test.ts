@@ -3,40 +3,41 @@ import { NadClass, NadRoute } from '../../types/nad';
 import { buildTsFoo } from '../test-tools/buildFoo';
 import { mg } from '../test-tools/mg';
 import { paginitionDefs } from '../defs/paginitionTestDefs';
+import { DeepPartial } from '../../utils';
 
 test('boolean', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type, annotations: [] });
+  const code = buildTsFoo({ name: 'a', type });
   expect(code).toContain('async foo(a: boolean,');
 });
 
 test('void', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type, annotations: [] });
+  const code = buildTsFoo({ name: 'a', type });
   expect(code).toContain('async foo(a: void,');
 });
 
 test('java.util.List', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type, annotations: [] });
+  const code = buildTsFoo({ name: 'a', type });
   expect(code).toContain('async foo(a?: any[],');
 });
 
 test('java.util.List<java.lang.Long>', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type, annotations: [] });
+  const code = buildTsFoo({ name: 'a', type });
   expect(code).toContain('async foo(a?: Long[],');
 });
 
 test('java.util.List<java.lang.Void>', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type, annotations: [] });
+  const code = buildTsFoo({ name: 'a', type });
   expect(code).toContain('async foo(a?: void[],');
 });
 
 test('java.util.Map<java.lang.Long, java.lang.Long>', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type, annotations: [] });
+  const code = buildTsFoo({ name: 'a', type });
   expect(code).toContain('async foo(a?: Record<Long, Long>,');
 });
 
@@ -58,9 +59,9 @@ test('Paginition', () => {
 });
 
 test('Type alias', () => {
-  const routes: Partial<NadRoute>[] = [{ bean: 'test.FooModule', name: 'foo', returnType: 'test.B' }];
-  const classes: Partial<NadClass>[] = [
-    { name: 'test.A', members: [{ name: 'data', type: 'long', annotations: [] }] },
+  const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.FooModule', name: 'foo', returnType: 'test.B' }];
+  const classes: DeepPartial<NadClass>[] = [
+    { name: 'test.A', members: [{ name: 'data', type: 'long' }] },
     { name: 'test.B', superclass: 'test.A' },
   ];
   const code = new Builder({ target: 'ts', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');

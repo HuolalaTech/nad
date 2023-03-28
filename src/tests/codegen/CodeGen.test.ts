@@ -1,4 +1,4 @@
-import { CodeGen, CodeGenForTs } from '../../codegen';
+import { CodeGen } from '../../codegen';
 
 test('write with a number', () => {
   const gen = new CodeGen();

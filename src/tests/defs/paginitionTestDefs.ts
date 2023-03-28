@@ -1,4 +1,4 @@
-import { DeepPartial } from 'src/utils';
+import { DeepPartial } from '../../utils';
 import { NadClass, NadResult, NadRoute } from '../../types/nad';
 
 const routes: Partial<NadRoute>[] = [
@@ -9,21 +9,21 @@ const routes: Partial<NadRoute>[] = [
   },
 ];
 
-const classes: Partial<NadClass>[] = [
+const classes: DeepPartial<NadClass>[] = [
   {
     name: 'test.Paginition',
     typeParameters: ['T'],
     members: [
-      { name: 'data', type: 'T', annotations: [] },
-      { name: 'limit', type: 'java.lang.Long', annotations: [] },
-      { name: 'offset', type: 'java.lang.Long', annotations: [] },
+      { name: 'data', type: 'T' },
+      { name: 'limit', type: 'java.lang.Long' },
+      { name: 'offset', type: 'java.lang.Long' },
     ],
   },
   {
     name: 'test.MetaPaginition',
     superclass: 'test.Paginition<T>',
     typeParameters: ['T'],
-    members: [{ name: 'meta', type: 'java.lang.Object', annotations: [] }],
+    members: [{ name: 'meta', type: 'java.lang.Object' }],
   },
 ];
 

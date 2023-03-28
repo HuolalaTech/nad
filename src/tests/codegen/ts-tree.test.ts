@@ -1,22 +1,22 @@
 import { NadClass, NadRoute } from '../../types/nad';
 import { Builder } from '../../Builder';
 import { mg } from '../test-tools/mg';
+import { DeepPartial } from '../../utils';
 
 const config = { base: 'test', target: 'ts' } as const;
 
 test('Tree', () => {
-  const getTree: Partial<NadRoute> = {
+  const getTree: DeepPartial<NadRoute> = {
     name: 'getTree',
     bean: 'test.Demo',
-    parameters: [],
     returnType: 'test.Node',
   };
 
-  const Node: Partial<NadClass> = {
+  const Node: DeepPartial<NadClass> = {
     name: 'test.Node',
     members: [
-      { name: 'parent', type: 'test.Node', annotations: [] },
-      { name: 'children', type: 'test.Node[]', annotations: [] },
+      { name: 'parent', type: 'test.Node' },
+      { name: 'children', type: 'test.Node[]' },
     ],
   };
 

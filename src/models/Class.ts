@@ -3,7 +3,7 @@ import { Type } from './Type';
 import { Dubious, u2a, u2s } from '../utils';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
-import { NadClass } from 'src/types/nad';
+import { NadClass } from '../types/nad';
 
 type ClassRaw = Dubious<NadClass>;
 
