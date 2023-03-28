@@ -1,3 +1,14 @@
+## 0.0.11
+
+- Update dependencies
+- Remove unused code
+- Add test cases to achieve 100% coverage
+- Refactor annotations and add test cases
+- Add test cases for basic types
+- Add test cases for enum type
+- Refactor basic test cases
+- Add required-\* test cases
+
 ## 0.0.10
 
 - Update README.md
