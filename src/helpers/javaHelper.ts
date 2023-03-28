@@ -126,7 +126,3 @@ export const isJavaNonClass = (v: string) =>
   isJavaMap(v) ||
   isJavaVoid(v) ||
   isJavaUnknown(v);
-
-export const camelToSnake = (s: string) => {
-  return s.replace(/[A-Z]/g, (i) => `_${i.toLowerCase()}`);
-};

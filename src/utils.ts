@@ -24,7 +24,6 @@ export function u2a(a: unknown, callbackfn?: MapCallback<any, unknown>) {
 }
 
 export const u2s = <T>(u: T) => (typeof u === 'string' ? u : '') as T extends string ? T : string;
-export const u2n = <T>(u: T) => (typeof u === 'number' ? u : 0) as T extends number ? T : number;
 export const u2b = (v: unknown, d = false) => (typeof v === 'boolean' ? v : d);
 
 export function neverReachHere(): Error;
@@ -66,3 +65,11 @@ export type Dubious<T> = T extends (infer U)[]
       [P in keyof T]?: Dubious<T[P]>;
     }
   : unknown;
+
+export type DeepPartial<T> = T extends (infer U)[]
+  ? DeepPartial<U>[] | undefined
+  : T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;

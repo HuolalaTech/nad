@@ -100,6 +100,11 @@ export class CodeGenForOc extends CodeGen {
       const ocType = enumTypeMapping[c.valueType] || 'NSObject';
       this.write(`typedef ${ocType} ${c.moduleName};`);
       for (const v of c.constants) {
+        if (v.description) {
+          this.writeComment(() => {
+            this.write(v.description);
+          });
+        }
         this.write(`const ${c.moduleName} *${c.moduleName}_${v.name} = ${ss(v.value)};`);
         if (v.memo) this.amend((s) => `${s} // ${v.memo}`);
       }

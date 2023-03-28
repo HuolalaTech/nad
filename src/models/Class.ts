@@ -39,16 +39,6 @@ export class Class extends DefBase<ClassRaw> {
     return value;
   }
 
-  // findAnnotation<T = Record<string, unknown>>(name: string, deep = false): T | null {
-  //   const anno = this.annotations.find(name);
-  //   if (anno) return anno as T;
-  //   if (deep) {
-  //     const clz = this.superclass?.clz;
-  //     if (clz instanceof Class) return clz.findAnnotation<T>(name, deep);
-  //   }
-  //   return null;
-  // }
-
   spread() {
     this.superclass.valueOf();
     this.members.valueOf();

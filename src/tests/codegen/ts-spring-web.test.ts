@@ -53,11 +53,20 @@ test('ModelAttribute auto', () => {
   expect(code).toContain(`.addModelAttribute(people)`);
 });
 
-test('MultipartFile', () => {
+test('MultipartFile without annotation', () => {
   const code = buildTsFoo({
     name: 'myFile',
     type: 'org.springframework.web.multipart.MultipartFile',
     annotations: [],
+  });
+  expect(code).toContain(`.addMultipartFile('myFile', myFile)`);
+});
+
+test('MultipartFile', () => {
+  const code = buildTsFoo({
+    name: 'myFile',
+    type: 'org.springframework.web.multipart.MultipartFile',
+    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: {} }],
   });
   expect(code).toContain(`.addMultipartFile('myFile', myFile)`);
 });

@@ -10,8 +10,9 @@ export class CodeGen {
   [Symbol.iterator]() {
     return this.lines[Symbol.iterator]();
   }
-  write(...liens: unknown[]) {
+  write(...liens: (null | undefined | string | Iterable<string>)[]) {
     for (const i of liens) {
+      if (i == undefined || i == null) continue;
       if (typeof i === 'string') {
         let line = this.indent;
         // Comment block cannot be nested
@@ -33,10 +34,8 @@ export class CodeGen {
     const last = lines.length - 1;
     lines[last] = f(lines[last]);
   }
-  writeComment(what: unknown) {
-    if (typeof what === 'string') {
-      this.write(`// ${what}`);
-    } else if (typeof what === 'function') {
+  writeComment(what: () => void) {
+    if (typeof what === 'function') {
       this.write('/**');
       this.indent += ' * ';
       what();

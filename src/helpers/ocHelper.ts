@@ -27,7 +27,7 @@ export const ss = (s: string | number) => {
 };
 
 export const checkSuper = (sub: Class, sup: Class): boolean => {
-  const clz = sub.superclass?.clz;
+  const clz = sub.superclass.clz;
   if (!clz || !(clz instanceof Class)) return false;
   if (clz === sup) return true;
   return checkSuper(clz, sup);

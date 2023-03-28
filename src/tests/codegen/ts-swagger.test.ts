@@ -1,86 +1,58 @@
 import { Builder } from '../../Builder';
-import { NadClass, NadEnum, NadRoute } from '../../types/nad';
 import { mg } from '../test-tools/mg';
+import { swaggerTestDefs } from '../defs/swaggerTestDefs';
 
-test('Swagger', () => {
-  const foo: Partial<NadRoute> = {
-    name: 'foo',
-    bean: 'test.Demo',
-    methods: ['POST'],
-    patterns: ['/foo'],
-    headers: [],
-    annotations: [{ type: 'io.swagger.annotations.ApiOperation', attributes: { value: 'My API' } }],
-    parameters: [
-      {
-        name: 'id',
-        type: 'java.lang.Long',
-        annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { name: 'My ID' } }],
-      },
-    ],
-    returnType: 'test.FooModel',
-  };
+const code = new Builder({ target: 'ts', base: '', defs: swaggerTestDefs }).code.replace(/\s+/g, ' ');
 
-  const FooModel: Partial<NadClass> = {
-    name: 'test.FooModel',
-    annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { value: 'My Model' } }],
-    members: [
-      {
-        annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { name: 'My Name' } }]],
-        name: 'name',
-        type: 'java.lang.String',
-      },
-    ],
-  };
-
-  const FooEnum: Partial<NadEnum> = {
-    name: 'test.FoEnum',
-    annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { value: 'My Enum' } }],
-    constants: [
-      {
-        name: 'Type1',
-        value: 'TYPE1',
-        properties: { desc: 'My Type1' },
-        annotations: [{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { value: 'My Type1' } }],
-      },
-      {
-        name: 'Type2',
-        value: 'TYPE2',
-        properties: { desc: 'My Type2' },
-        annotations: [{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { value: 'My Type2' } }],
-      },
-    ],
-  };
-
-  const defs = { routes: [foo], classes: [FooModel], enums: [FooEnum] };
-
-  const code = new Builder({ target: 'ts', base: '', defs }).code.replace(/\s+/g, ' ');
-
+test('module', () => {
   expect(code).toContain(mg`
     /**
-     * demo
+     * My Module
      * @iface test.Demo
      */
     export const demo = {
   `);
+});
 
+test('route', () => {
   expect(code).toContain(mg`
     /**
-     * My API
+     * My Route
      * @param id My ID
      */
     async foo(id?: Long, settings?: Partial<Settings>)
   `);
+});
 
+test('class', () => {
   expect(code).toContain(mg`
     /**
-     * My Model 
+     * My Model
      * @iface test.FooModel
      */
     export interface FooModel {
       /**
-       * My Name
+       * My Field
        */
-      name?: string;
+      type?: FooEnum;
+    }
+  `);
+});
+
+test('enum', () => {
+  expect(code).toContain(mg`
+    /**
+     * My Enum
+     */
+    export enum FooEnum {
+      /**
+       * My Type One
+       */
+      Type1 = 'TYPE1', // desc=My Type1
+      /**
+       * My Type Two
+       */
+      Type2 = 'TYPE2', // desc=My Type2
     }
   `);
 });

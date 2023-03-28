@@ -2,6 +2,7 @@ import { Builder } from '../../Builder';
 import { NadClass, NadRoute } from '../../types/nad';
 import { buildTsFoo } from '../test-tools/buildFoo';
 import { mg } from '../test-tools/mg';
+import { paginitionDefs } from '../defs/paginitionTestDefs';
 
 test('boolean', () => {
   const { currentTestName: type = '' } = expect.getState();
@@ -40,31 +41,7 @@ test('java.util.Map<java.lang.Long, java.lang.Long>', () => {
 });
 
 test('Paginition', () => {
-  const routes: Partial<NadRoute>[] = [
-    {
-      bean: 'test.FooModule',
-      name: 'foo',
-      returnType: 'test.MetaPaginition<java.lang.Long[]>',
-    },
-  ];
-  const classes: Partial<NadClass>[] = [
-    {
-      name: 'test.Paginition',
-      typeParameters: ['T'],
-      members: [
-        { name: 'data', type: 'T', annotations: [] },
-        { name: 'limit', type: 'java.lang.Long', annotations: [] },
-        { name: 'offset', type: 'java.lang.Long', annotations: [] },
-      ],
-    },
-    {
-      name: 'test.MetaPaginition',
-      superclass: 'test.Paginition<T>',
-      typeParameters: ['T'],
-      members: [{ name: 'meta', type: 'java.lang.Object', annotations: [] }],
-    },
-  ];
-  const code = new Builder({ target: 'ts', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
+  const code = new Builder({ target: 'ts', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
   expect(code).toContain('new NadInvoker<MetaPaginition<Long[]>>');
   expect(code).toContain(mg`
     export interface Paginition<T> {
@@ -78,4 +55,32 @@ test('Paginition', () => {
       meta?: any;
     }
   `);
+});
+
+test('Type alias', () => {
+  const routes: Partial<NadRoute>[] = [{ bean: 'test.FooModule', name: 'foo', returnType: 'test.B' }];
+  const classes: Partial<NadClass>[] = [
+    { name: 'test.A', members: [{ name: 'data', type: 'long', annotations: [] }] },
+    { name: 'test.B', superclass: 'test.A' },
+  ];
+  const code = new Builder({ target: 'ts', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
+  expect(code).toContain('new NadInvoker<B>');
+  expect(code).toContain(`export type B = A;`);
+  expect(code).toContain(mg`
+    export interface A {
+      data: Long;
+    }
+  `);
+});
+
+test('special controller name', () => {
+  const routes: Partial<NadRoute>[] = [{ bean: 'cn.xxx.xxx.People$$wtf23333', name: 'foo', returnType: 'void' }];
+  const code = new Builder({ target: 'ts', base: '', defs: { routes } }).code.replace(/\s+/g, ' ');
+  expect(code).toContain(`export const people = {`);
+});
+
+test('empty bean', () => {
+  const routes: Partial<NadRoute>[] = [{ bean: '', name: 'foo', returnType: 'void' }];
+  const code = new Builder({ target: 'ts', base: '', defs: { routes } }).code.replace(/\s+/g, ' ');
+  expect(code).toContain(`export const $ = {`);
 });
