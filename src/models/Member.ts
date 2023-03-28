@@ -13,18 +13,15 @@ export class Member {
   public readonly optional: '' | '?';
   constructor(raw: unknown, public readonly owner: Class) {
     const { name, type, annotations } = u2o(raw);
-    this.name = owner.builder.fixPropertyName(u2s(name));
-    this.type = Type.create(u2s(type), owner);
     this.annotations = new Annotations(u2a(annotations).flat());
+    const aliasOrName = this.annotations.json.alias || name;
+    this.name = owner.builder.fixPropertyName(u2s(aliasOrName));
+    this.type = Type.create(u2s(type), owner);
     const amp = this.annotations.swagger.getApiModelProperty();
     this.description = amp?.description;
 
     // It is visible by default unless set to @JsonIgnore or @ApiModelProperty(hidden = true) or @JSONField(serialize = false).
-    this.visible = !(
-      amp?.hidden === true ||
-      this.annotations.json.getJsonIgnore()?.value === true ||
-      this.annotations.json.getJSONField()?.serialize === false
-    );
+    this.visible = !(amp?.hidden === true || this.annotations.json.isIgnored);
 
     // It is optinoal by default unless set to @NotNull or @ApiModelProperty(required = true) or JavaPrimitive types.
     this.optional =

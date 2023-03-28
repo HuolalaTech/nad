@@ -21,13 +21,23 @@ export class JsonAnnotations {
     this.annotations = annotations;
   }
 
-  getJSONField() {
-    return this.annotations.find<JSONField>('com.alibaba.fastjson.annotation.JSONField');
+  public get alias() {
+    return this.getJsonProperty()?.value || this.getJSONField()?.name;
   }
-  getJsonProperty() {
+
+  public get isIgnored() {
+    return this.getJsonIgnore()?.value === true || this.getJSONField()?.serialize === false;
+  }
+
+  private getJsonProperty() {
     return this.annotations.find<JsonProperty>('com.fasterxml.jackson.annotation.JsonProperty');
   }
-  getJsonIgnore() {
+
+  private getJsonIgnore() {
     return this.annotations.find<JsonIgnore>('com.fasterxml.jackson.annotation.JsonIgnore');
+  }
+
+  private getJSONField() {
+    return this.annotations.find<JSONField>('com.alibaba.fastjson.annotation.JSONField');
   }
 }

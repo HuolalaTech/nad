@@ -14,7 +14,7 @@ test('Swagger', () => {
       {
         name: 'id',
         type: 'java.lang.Long',
-        annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { description: 'My ID' } }],
+        annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { name: 'My ID' } }],
       },
     ],
     returnType: 'test.FooModel',
@@ -25,7 +25,7 @@ test('Swagger', () => {
     annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { value: 'My Model' } }],
     members: [
       {
-        annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { value: 'My Name' } }]],
+        annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { name: 'My Name' } }]],
         name: 'name',
         type: 'java.lang.String',
       },

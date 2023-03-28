@@ -1,4 +1,4 @@
-import { u2o } from '../../utils';
+import { neverReachHere, u2o } from '../../utils';
 import { Annotations } from '.';
 
 export class AnnotationBase<V> {
@@ -33,6 +33,6 @@ export class AnnotationBase<V> {
       const [annotation, name] = args;
       return this.create(annotation.find(name));
     }
-    throw new Error('never');
+    throw neverReachHere();
   }
 }
