@@ -115,8 +115,8 @@ export class Root {
 
   public getDefBySimpleName(name: string): Enum | Class | null {
     return (
-      this.declarationList.find((def) => def.moduleName === name) ||
-      this.enumList.find((def) => def.moduleName === name) ||
+      this.declarationList.find((def) => def.simpleName === name) ||
+      this.enumList.find((def) => def.simpleName === name) ||
       null
     );
   }

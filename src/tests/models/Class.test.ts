@@ -41,6 +41,6 @@ test('generic', () => {
   });
 
   expect(clz.name).toBe('test.MyClass');
-  expect(clz.moduleName).toBe('MyClass');
+  expect(clz.simpleName).toBe('MyClass');
   expect(clz.defName).toBe('MyClass<K, V>');
 });

@@ -69,7 +69,7 @@ export const t2s = (type: Type): string => {
   const { clz } = type;
   if (!clz) return 'any';
 
-  const { moduleName: simpleName } = clz;
+  const { simpleName: simpleName } = clz;
   if (clz instanceof Class) {
     const { typeParameters } = clz;
     if (typeParameters.length > 0) {

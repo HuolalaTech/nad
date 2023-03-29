@@ -55,7 +55,7 @@ export const t2s = (type: Type): string => {
   const { clz, parameters } = type;
   if (!clz) return 'NSObject';
 
-  const { moduleName: simpleName } = clz;
+  const { simpleName } = clz;
   if (clz instanceof Class) {
     const { typeParameters } = clz;
     if (typeParameters.length > 0) {

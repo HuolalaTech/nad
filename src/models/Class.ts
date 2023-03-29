@@ -19,7 +19,7 @@ export class Class extends DefBase<ClassRaw> {
   constructor(raw: ClassRaw, builder: Root) {
     super(raw, builder);
     this.typeParameters = u2a(this.raw.typeParameters, u2s);
-    this.defName = this.moduleName;
+    this.defName = this.simpleName;
     this.description = this.annotations.swagger.getApiModel()?.description;
     if (this.typeParameters.length) {
       const pars = this.typeParameters.join(', ');

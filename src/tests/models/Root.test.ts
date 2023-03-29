@@ -70,12 +70,12 @@ test('defs', () => {
   const user = root.getDefByName('test.User');
   expect(root.getDefByName('test.User')).toBe(user); // from cache
   expect(user).toBeInstanceOf(Class);
-  if (user) expect(root.getDefBySimpleName(user.moduleName)).toBe(user);
+  if (user) expect(root.getDefBySimpleName(user.simpleName)).toBe(user);
 
   const userType = root.getDefByName('test.UserType');
   expect(root.getDefByName('test.UserType')).toBe(userType); // from cache
   expect(userType).toBeInstanceOf(Enum);
-  if (userType) expect(root.getDefBySimpleName(userType.moduleName)).toBe(userType);
+  if (userType) expect(root.getDefBySimpleName(userType.simpleName)).toBe(userType);
 
   expect(root.getDefBySimpleName('')).toBe(null);
 });
