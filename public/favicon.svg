@@ -1,7 +1,0 @@
-<!DOCTYPE svg>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" stroke="tomato" fill="tomato">
-  <path d="M 112 824 v -580 L 512 48 V 972 l 400 -200 v -480" fill="none"
-    stroke-width="64" stroke-linecap="round" stroke-linejoin="round" />
-  <circle cx="112" cy="824" r="128" stroke="none"></circle>
-  <circle cx="912" cy="200" r="128" stroke="none"></circle>
-</svg>

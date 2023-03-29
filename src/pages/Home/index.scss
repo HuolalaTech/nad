@@ -8,4 +8,24 @@ body {
 .Home {
   height: 100%;
   overflow: hidden;
+  > .header {
+    position: relative;
+    z-index: 1;
+    height: 50px;
+    // background: #f8f8f8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    .logo {
+      fill: #ff6347;
+      width: 24px;
+      height: 24px;
+    }
+    > h1 {
+      font-size: 20px;
+      margin-left: 1ch;
+      color: #ff6347;
+    }
+  }
 }

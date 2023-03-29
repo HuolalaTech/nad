@@ -1,7 +1,0 @@
-<!DOCTYPE svg>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
-  <path d="M 0 0 L 512 512 L 0 1024 Z" fill="#33F" />
-  <path d="M 0 0 L 512 512 L 1024 0 Z" fill="#66F" />
-  <path d="M 1024 1024 L 512 512 L 1024 0 Z" fill="#99F" />
-  <path d="M 1024 1024 L 512 512 L 0 1024  Z" fill="#CCF" />
-</svg>

@@ -87,9 +87,27 @@ const HomeInternal = () => {
   return <NadDefsView defs={data} base={absBase} />;
 };
 
+const Header = () => {
+  return (
+    <div className='header'>
+      <svg
+        version='1.1'
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 1024 1024'
+        className='logo'
+      >
+        <polygon points='432,915 649,630 271,699 467,427 125,507 271,213 19,282 0,205 0,1024 972,1024 918,828 ' />
+        <polygon points='461,58 309,361 705,269 497,556 885,485 667,771 990,713 1024,834 1024,0 51,0 91,159 ' />
+      </svg>
+      <h1>Nad</h1>
+    </div>
+  );
+};
+
 export const Home = () => {
   return (
     <div className='Home'>
+      <Header />
       <HomeInternal />
     </div>
   );
