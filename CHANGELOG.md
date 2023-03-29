@@ -1,3 +1,10 @@
+## 0.0.12
+
+- Remove unused bin
+- Refactor moduleName property of DefBase
+- Add LICENSE.txt
+- Update README.md
+
 ## 0.0.11
 
 - Update dependencies
