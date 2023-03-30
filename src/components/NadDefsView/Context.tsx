@@ -1,15 +1,42 @@
-import { createContext, useContext, useEffect, useReducer } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef
+} from 'react';
 
 export class NadDefsViewContext {
   public defs;
   public base;
   public apis?: any[];
 
-  public event = new EventTarget();
+  private eventTarget = new EventTarget();
+
+  public useEventListener(name: string, handler: (e: Event) => void) {
+    /* eslint-disable react-hooks/rules-of-hooks */
+    const { eventTarget } = this;
+    const ref = useRef(handler);
+    ref.current = handler;
+    const persistentHandler = useCallback((event: Event) => {
+      ref.current(event);
+    }, []);
+    useEffect(() => {
+      eventTarget.addEventListener(name, persistentHandler);
+      return () => eventTarget.removeEventListener(name, persistentHandler);
+    }, [name, persistentHandler, eventTarget]);
+  }
+
+  public selectApi(api: string) {
+    this.eventTarget.dispatchEvent(
+      new CustomEvent('selectApi', { detail: api })
+    );
+  }
 
   public setApis(apis: any[]) {
     this.apis = apis;
-    this.event.dispatchEvent(new CustomEvent('update'));
+    this.eventTarget.dispatchEvent(new CustomEvent('update'));
   }
 
   constructor(defs: any, base: string) {
@@ -27,10 +54,7 @@ export const useNadDefsViewContext = () => {
 
   const [, render] = useReducer(() => ({}), {});
 
-  useEffect(() => {
-    context.event.addEventListener('update', render);
-    return () => context.event.removeEventListener('update', render);
-  }, [context, render]);
+  context.useEventListener('update', render);
 
   return context;
 };

@@ -2,8 +2,6 @@ import { Checkbox, Tree } from 'antd';
 import { Key, useMemo, useState } from 'react';
 import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import { useNadDefsViewContext } from './Context';
-import { useNavigate } from 'react-router';
-import { useSearchParams } from 'react-router-dom';
 import { Builder, Route } from '@huolala-tech/nad-builder';
 
 const TreeMethod = ({ api }: { api: Route }) => {
@@ -30,9 +28,8 @@ const TreeMethod = ({ api }: { api: Route }) => {
 
 export const Aside = () => {
   const context = useNadDefsViewContext();
-  const [usp] = useSearchParams();
   const { defs, base } = context;
-  const navigate = useNavigate();
+
   const { treeData, defaultCheckedKeys, defaultExpandedKeys } =
     useMemo(() => {
       const builder = new Builder({ target: 'raw', defs, base });
@@ -55,7 +52,6 @@ export const Aside = () => {
 
   const [cks, setCks] = useState(defaultCheckedKeys);
   const [eks, setEks] = useState(defaultExpandedKeys);
-  const sks = usp.getAll('select');
 
   return (
     <aside>
@@ -83,9 +79,16 @@ export const Aside = () => {
               context.setApis(apis);
               setCks(list);
             }}
+          />{' '}
+          <span
+            className='all'
+            role='button'
+            onClick={() => {
+              context.selectApi('*');
+            }}
           >
             All
-          </Checkbox>{' '}
+          </span>
         </div>
       </div>
       <Tree
@@ -95,14 +98,9 @@ export const Aside = () => {
           context.setApis(apis);
           setCks(list);
         }}
-        onSelect={([item]) => {
-          const u = new URLSearchParams(usp);
-          if (typeof item === 'string') {
-            u.set('select', item);
-          } else {
-            u.delete('select');
-          }
-          navigate({ search: u.toString() });
+        onSelect={([api]) => {
+          if (typeof api !== 'string') return;
+          context.selectApi(api);
         }}
         onExpand={(v) => {
           setEks(v);
@@ -113,7 +111,7 @@ export const Aside = () => {
         defaultExpandedKeys={defaultExpandedKeys}
         checkedKeys={cks}
         expandedKeys={eks}
-        selectedKeys={sks}
+        selectedKeys={[]}
         selectable={true}
       />
     </aside>

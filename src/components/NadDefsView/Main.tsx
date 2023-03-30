@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { hl } from './hl';
 import { useLang } from './useLang';
 import { Button, Select } from 'antd';
@@ -66,40 +66,57 @@ export const Main = () => {
 
   const ref = useRef<HTMLElement>(null);
 
-  const [usp] = useSearchParams();
-  const select = usp.get('select');
-
   const [tff, setTff] = useState<TextFragmentFinder>();
   useEffect(() => {
     const { current } = ref;
     if (!current) return;
     setTff(new TextFragmentFinder(current));
+    current.scrollTop = 0;
   }, [html]);
 
-  useEffect(() => {
-    if (!select || !tff) return;
-    const selection = document.getSelection();
-    if (!selection) return;
-    const { current } = ref;
-    if (!current) return;
-    selection.removeAllRanges();
-    const [, iface, methodName] = select.match(/^(.*?)(?:::(.*))?$/) || [];
-    const controller = root.modules.find((r) => r.name === iface);
-    if (!controller) return;
-    let range;
-    if (methodName) {
-      const method = controller.routes.find((a) => a.uniqName === methodName);
-      if (!method) return;
-      range = makeRange(tff, lang, controller.moduleName, method.uniqName);
-    } else {
-      range = makeRange(tff, lang, controller.moduleName);
-    }
-    if (!range) return;
-    selection.addRange(range);
-    const rect = range.getBoundingClientRect();
-    const margin = Math.max((current.offsetHeight - rect.height) / 2, 20);
-    current.scrollTop += rect.top - margin;
-  }, [root, select, lang, tff]);
+  const selectRange = useCallback(
+    (api: string) => {
+      if (!api || !tff) return;
+      const selection = document.getSelection();
+      if (!selection) return;
+      const { current } = ref;
+      if (!current) return;
+      selection.removeAllRanges();
+      // Select all and reset scroll bar.
+      if (api === '*') {
+        const range = document.createRange();
+        range.selectNode(current);
+        selection.addRange(range);
+        current.scrollTop = 0;
+        return;
+      }
+      // Find text and select range and scroll into range center.
+      const [, iface, methodName] = api.match(/^(.*?)(?:::(.*))?$/) || [];
+      const controller = root.modules.find((r) => r.name === iface);
+      if (!controller) return;
+      let range;
+      if (methodName) {
+        const method = controller.routes.find((a) => a.uniqName === methodName);
+        if (!method) return;
+        range = makeRange(tff, lang, controller.moduleName, method.uniqName);
+      } else {
+        range = makeRange(tff, lang, controller.moduleName);
+      }
+      if (!range) return;
+      selection.addRange(range);
+      const rect = range.getBoundingClientRect();
+      const margin = Math.max((current.offsetHeight - rect.height) / 2, 20);
+      current.scrollTop += rect.top - margin;
+    },
+    [root, lang, tff]
+  );
+
+  context.useEventListener('selectApi', (e) => {
+    if (!(e instanceof CustomEvent)) return;
+    const { detail } = e;
+    if (typeof detail !== 'string') return;
+    selectRange(detail);
+  });
 
   return (
     <main ref={ref}>

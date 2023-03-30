@@ -20,6 +20,7 @@
     flex-basis: 360px;
     overflow: auto;
     padding: var(--gap);
+    padding-top: 30px;
     .tools {
       display: flex;
       margin: -10px -20px 0 -20px;
@@ -29,6 +30,17 @@
       width: 24px;
       display: inline-block;
       cursor: pointer;
+    }
+    .all {
+      margin: 0 4px;
+      padding: 0 4px;
+      transition: background-color 0.2s;
+      border-radius: 6px;
+      line-height: 24px;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
     }
   }
 
