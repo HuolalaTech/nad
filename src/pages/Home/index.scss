@@ -1,0 +1,76 @@
+.Home {
+  overflow: hidden;
+  width: 1100px;
+  margin: auto;
+  padding-top: var(--header-height);
+
+  .center {
+    margin: 150px auto;
+    font-size: 1.5em;
+    --right-width: 430px;
+    padding-right: var(--right-width);
+    .left {
+      flex: 1;
+      margin-right: 80px;
+      h1 {
+        margin: 0;
+        white-space: nowrap;
+        --ending: hsl(calc(var(--primary-h) - 120deg), var(--primary-s), var(--primary-l));
+        background: linear-gradient(60deg, var(--primary), var(--ending));
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      h2 {
+        margin: 0;
+        white-space: nowrap;
+      }
+      p {
+        margin: 0.5em 0 0 0;
+        white-space: pre-wrap;
+      }
+      .buttons {
+        margin-top: 1.5em;
+        display: flex;
+        gap: 1em;
+      }
+    }
+    .CodePanel {
+      position: absolute;
+      transform: translateX(calc(1100px - var(--right-width)));
+      width: var(--right-width);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      perspective: 2000px;
+    }
+  }
+
+  .descs {
+    padding-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px; // var(--gap);
+    font-size: 0.9em;
+    img {
+      font-size: 32px;
+      width: 1em;
+      height: 1em;
+      filter: invert(0.5);
+    }
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      > span {
+        opacity: 0.7;
+      }
+    }
+    p {
+      opacity: 0.5;
+      font-weight: 500;
+    }
+    > * {
+      flex: 1;
+    }
+  }
+}

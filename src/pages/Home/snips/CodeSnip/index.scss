@@ -1,0 +1,8 @@
+.CodeSnip {
+  position: relative;
+  > pre {
+    position: relative;
+    box-shadow: 1em 2em 4em -0.5em rgba(0, 0, 0, 0.5);
+    transition: transform 50ms ease, filter 50ms ease;
+  }
+}
