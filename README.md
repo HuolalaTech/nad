@@ -1,4 +1,4 @@
-# nad-runtime · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-runtime)](LICENSE.txt)
+# nad-runtime · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-runtime)](LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad-runtime/branch/main/graph/badge.svg?token=KMGFP4FTJH)](https://codecov.io/gh/HuolalaTech/nad-runtime)
 
 The runtime lib of the Nad project.
 
