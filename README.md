@@ -1,4 +1,4 @@
-# nad-builder · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-builder)](LICENSE.txt)
+# nad-builder · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-builder)](LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad-builder/branch/main/graph/badge.svg?token=L7MHGWDORY)](https://codecov.io/gh/HuolalaTech/nad-builder)
 
 Convert the Java AST to client-side code.
 
