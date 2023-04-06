@@ -1,3 +1,7 @@
+## 1.0.1
+- Update dependencies
+- Add codecov badge
+- Add workflows
 ## 1.0.0
 - Add comments
 - Remove deprecated method
