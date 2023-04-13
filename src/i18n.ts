@@ -47,15 +47,15 @@ Example: nad http://localhost:8080
          nad -t oc http://localhost:8080
 
 Options:
-  -t, --target <target>     The output file format, one of ("ts", "oc", "raw"), defaults "ts"
-  -c, --confit <path>       A config file path (if it's specified, other arguments are no loger revent)
-  -h, --help                Show this help information
+  -t, --target <target>     Specify the output file format ("ts", "oc", "raw"), defaults to "ts".
+  -c, --config <path>       Path to configuration file. If specified, all other arguments will be ignored.
+  -h, --help                Display this help message.
   `,
 });
 
 export const I101 = i18n<1>({
   zh: `成功生成 $1 个模块，其中包含:`,
-  en: `There $1<is,are> $1 $1<module,modules> have been successfully generated, containing the following:`,
+  en: `A total of $1 $1<module,modules> $1<was,were> generated, containing the following:`,
 });
 
 export const I102 = i18n<1>({
@@ -85,35 +85,35 @@ export const I107 = i18n<1>({
 
 export const I108 = i18n<0>({
   zh: `你指定了一个配置文件，因此其它参数将会被忽略`,
-  en: `Since you specified a configuration file, arguments are no longer relevant`,
+  en: `Since a configuration file was specified, all other arguments will be ignored`,
 });
 
 export const I109 = i18n<1>({
   zh: `配置文件中缺少 $1 字段`,
-  en: `The '$1' field is missing from your configuration file`,
+  en: `The configuration file is missing the '$1' field`,
 });
 
 export const I110 = i18n<1>({
   zh: `提供的 $1 不是一个有效的 URI`,
-  en: `The $1 is not a valid URI`,
+  en: `The '$1' is not a valid URI`,
 });
 
 export const I111 = i18n<1>({
-  zh: `提供的 $1 是一个目录不是文件`,
-  en: `The $1 is a directory not a file`,
+  zh: `提供的 $1 是一个目录而不是文件`,
+  en: `The '$1' is a directory, not a file`,
 });
 
 export const I112 = i18n<1>({
-  zh: `无效的输出格式 $1`,
-  en: `Invalid output formats ($1)`,
+  zh: `无效的输出格式 '$1'，只支持 ts、oc、raw`,
+  en: `The output format '$1' is not valid. Only 'ts', 'oc', and 'raw' are supported`,
 });
 
 export const I113 = i18n<1>({
   zh: `配置文件 $1 不是一个有效的 JSON`,
-  en: `The config file $1 is not a valid JSON.`,
+  en: `The configuration file '$1' is not a valid JSON`,
 });
 
 export const I114 = i18n<1>({
   zh: `配置文件 $1 不存在`,
-  en: `The config file $1 is not found.`,
+  en: `The configuration file '$1' not found`,
 });
