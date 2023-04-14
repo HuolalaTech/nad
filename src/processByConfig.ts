@@ -5,20 +5,8 @@ import { Builder, RawDefs } from '@huolala-tech/nad-builder';
 import { CodeGen, Root } from '@huolala-tech/nad-builder';
 import { green, red, bold } from './ansi';
 import { I101, I102, I103, I104, I105 } from './i18n';
-import { IO, lang } from './utils';
+import { IO, findVariablePosition, lang } from './utils';
 import { Config } from './prepareConfigList';
-
-const findVariablePosition = (line: string) => {
-  let pos = 0;
-  for (let i = 0; i < line.length; i++) {
-    const v = line.charCodeAt(i);
-    if (v === 0x1b) break; // break on ANSI start
-    // 1: ASCII
-    // 2: Other wider character
-    pos += v > 0xff ? 2 : 1;
-  }
-  return pos;
-};
 
 const printBuilderInfo = (root: Root, io: IO) => {
   const gen = new CodeGen();
