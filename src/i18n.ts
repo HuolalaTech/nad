@@ -7,11 +7,15 @@ interface Desc {
   en: string;
 }
 
-const i18n = <T extends number>(desc: Desc) => {
+export const getTemplateByType = (desc: Desc, key: string = type) => {
+  return key in desc ? desc[key as keyof typeof desc] : desc.en;
+};
+
+export const i18n = <T extends number>(desc: Desc) => {
   type Ins = number | string | null | undefined;
   type Args<P extends Ins[]> = P['length'] extends T ? P : Args<[...P, Ins]>;
-  return (...args: Args<[]>) => {
-    const template = type in desc ? desc[type as keyof typeof desc] : desc.en;
+  const fn = (...args: Args<[]>) => {
+    const template = getTemplateByType(desc);
     return template.replace(/\$(\d+)(<(.*?),(.*?)>)?/g, (_, number, isChoice, singular, plural) => {
       const variable = String((args as Ins[])[number - 1]);
       if (isChoice) {
@@ -22,6 +26,7 @@ const i18n = <T extends number>(desc: Desc) => {
       return variable;
     });
   };
+  return Object.assign(fn, desc);
 };
 
 export const I100 = i18n<0>({

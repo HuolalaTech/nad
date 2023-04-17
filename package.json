@@ -14,7 +14,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "jest src",
+    "test": "jest --coverage",
     "fix": "yarn lint && yarn prettier",
     "lint": "eslint src --fix",
     "build": "rollup -c",
