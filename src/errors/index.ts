@@ -5,3 +5,4 @@ export * from './MissingField';
 export * from './InvalidURI';
 export * from './DirIsNotFile';
 export * from './UnknownOption';
+export * from './ContentTypeIsNotJson';

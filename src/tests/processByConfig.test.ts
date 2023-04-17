@@ -15,17 +15,21 @@ const ast: Dubious<NadResult> = {
 const server = http
   .createServer(async (req, res) => {
     await req.pipe(new Capacitance());
-    if (req.url === '/404') {
+    if (req.url === '/301') {
+      res.statusCode = 301;
+      res.setHeader('Location', '/nad/api/defs');
+      res.end('Redirect to /');
+    } else if (req.url === '/500') {
+      res.statusCode = 500;
+      res.end('500 Internal Error');
+    } else if (req.url === '/nad/api/defs') {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(ast));
+    } else {
       res.statusCode = 404;
       res.setHeader('Content-Type', 'text/plain');
       res.end('404 Not Found');
-    } else if (req.url === '/301') {
-      res.statusCode = 301;
-      res.setHeader('Location', '/');
-      res.end('Redirect to /');
-    } else {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(ast));
     }
   })
   .listen();
@@ -38,7 +42,7 @@ test('basic', async () => {
   await processByConfig(
     {
       target: 'ts',
-      url: `http://127.0.0.1:${port}`,
+      url: `http://127.0.0.1:${port}/nad/api/defs`,
     },
     { stdout, stderr },
   );
@@ -56,7 +60,19 @@ test('404', async () => {
       target: 'ts',
       url: `http://127.0.0.1:${port}/404`,
     });
-    fail();
+    throw new Error('never');
+  } catch (error) {
+    expect(error).toBeInstanceOf(AxiosError);
+  }
+});
+
+test('500', async () => {
+  try {
+    await processByConfig({
+      target: 'ts',
+      url: `http://127.0.0.1:${port}/500`,
+    });
+    throw new Error('never');
   } catch (error) {
     expect(error).toBeInstanceOf(AxiosError);
   }

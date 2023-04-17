@@ -117,3 +117,8 @@ export const I114 = i18n<1>({
   zh: `配置文件 $1 不存在`,
   en: `The configuration file '$1' not found`,
 });
+
+export const I115 = i18n<3>({
+  zh: `接口响应了一个 $1 内容类型，期望是 $2（来自 $3）`,
+  en: `Response Content-Type $1 while expected $2 (from $3)`,
+});
