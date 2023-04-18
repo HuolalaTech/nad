@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "The CLI Tools of Nad Project",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
