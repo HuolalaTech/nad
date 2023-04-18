@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { Dubious } from '@huolala-tech/nad-builder/dist/cjs/utils';
 import { NadResult } from '@huolala-tech/nad-builder/dist/cjs/types/nad';
 import { fixUrl, processByConfig } from '../processByConfig';
+import { FailedToWrite } from '../errors';
 
 const ast: Dubious<NadResult> = {
   classes: [],
@@ -95,6 +96,23 @@ test('Write file', async () => {
   expect(out).toBe('');
   const err = String(await stderr);
   expect(err).toContain(' 1 ');
+});
+
+test('Failed to write file', async () => {
+  const stdout = new Capacitance();
+  const stderr = new Capacitance();
+  try {
+    await processByConfig(
+      {
+        target: 'ts',
+        url: `http://127.0.0.1:${port}`,
+        output: '/',
+      },
+      { stdout, stderr },
+    );
+  } catch (error) {
+    expect(error).toBeInstanceOf(FailedToWrite);
+  }
 });
 
 test('301', async () => {

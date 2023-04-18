@@ -40,6 +40,7 @@ export const I100 = i18n<0>({
 
 选项:
   -t, --target <target>     输出的文件格式，支持 ts, oc, raw，默认是 ts
+  -o, --output <path>       输出的文件路径，默认到标准输出
   -c, --confit <path>       指定一个配置文件（如果使用配置文件，其它将会被忽略）
   -h, --help                输出本帮助信息
   `,
@@ -53,6 +54,7 @@ Example: nad http://localhost:8080
 
 Options:
   -t, --target <target>     Specify the output file format ("ts", "oc", "raw"), defaults to "ts".
+  -o, --output <path>       Specify the output file path, defaults to stdout.
   -c, --config <path>       Path to configuration file. If specified, all other arguments will be ignored.
   -h, --help                Display this help message.
   `,
@@ -126,4 +128,19 @@ export const I114 = i18n<1>({
 export const I115 = i18n<3>({
   zh: `接口响应了一个 $1 内容类型，期望是 $2（来自 $3）`,
   en: `Response Content-Type $1 while expected $2 (from $3)`,
+});
+
+export const I130 = i18n<1>({
+  zh: `尝试写入 '$1' 失败，文件系统不可写`,
+  en: `Failed to write '$1', file system not writable`,
+});
+
+export const I131 = i18n<1>({
+  zh: `尝试写入 '$1' 失败，它是一个目录`,
+  en: `Failed to write '$1', file is a directory`,
+});
+
+export const I132 = i18n<1>({
+  zh: `尝试写入 '$1' 失败，没有写权限`,
+  en: `Failed to write '$1', permission denied`,
 });

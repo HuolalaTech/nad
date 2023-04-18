@@ -22,6 +22,10 @@ export const program = new Program({
   get t() {
     return this.target;
   },
+  output: new Option(String),
+  get o() {
+    return this.output;
+  },
   help: new Option(() => true),
   get h() {
     return this.help;
@@ -97,7 +101,8 @@ export const prepareConfigList = async (argv: readonly string[], io: IO = proces
     return loadConfigFile('./nad.config.json', io);
   }
 
+  const output = program.getOption('output');
   const target = program.getOption('target') || 'ts';
   const url = program.args[0];
-  return [parseConfig({ target, url })];
+  return [parseConfig({ target, url, output })];
 };

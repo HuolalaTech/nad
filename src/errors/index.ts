@@ -6,3 +6,4 @@ export * from './InvalidURI';
 export * from './DirIsNotFile';
 export * from './UnknownOption';
 export * from './ContentTypeIsNotJson';
+export * from './FailedToWrite';

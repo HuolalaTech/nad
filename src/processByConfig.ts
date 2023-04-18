@@ -1,13 +1,13 @@
 import fs from 'fs';
 import axios, { AxiosError } from 'axios';
-import type { Writable } from 'stream';
+import { Writable } from 'stream';
 import { Builder, RawDefs } from '@huolala-tech/nad-builder';
 import { CodeGen, Root } from '@huolala-tech/nad-builder';
 import { green, red, bold } from './ansi';
 import { I101, I102, I103, I104, I105 } from './i18n';
 import { IO, findVariablePosition, lang } from './utils';
 import { Config } from './prepareConfigList';
-import { UnexpectedContentType } from './errors';
+import { FailedToWrite, UnexpectedContentType } from './errors';
 
 const printBuilderInfo = (root: Root, io: IO) => {
   const gen = new CodeGen();
@@ -27,11 +27,6 @@ const printBuilderInfo = (root: Root, io: IO) => {
   gen.write('');
   gen.write('');
   io.stderr.write(gen.toString());
-};
-
-export const getWritable = (file: string | undefined, io: IO): Writable => {
-  if (typeof file === 'string') return fs.createWriteStream(file);
-  return io.stdout;
 };
 
 const request = async (url: string) => {
@@ -68,11 +63,20 @@ const getDefsFromRemote = async (url: string) => {
   }
 };
 
+const createWriteStream = (path: string) =>
+  new Promise<Writable>((resolve, reject) => {
+    const out = fs.createWriteStream(path);
+    out.on('open', () => resolve(out));
+    out.on('error', reject);
+  }).catch((error) => {
+    throw FailedToWrite.wrap(error, path);
+  });
+
 export const processByConfig = async (config: Config, io: IO = process) => {
   const { url, output, apis, target } = config;
   const defs = await getDefsFromRemote(url);
   const { root, code } = new Builder({ defs, target, base: url, apis });
-  const out = getWritable(output, io);
+  const out = output ? await createWriteStream(output) : io.stdout;
   out.write(code);
   printBuilderInfo(root, io);
 };
