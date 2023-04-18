@@ -34,8 +34,6 @@ export const getWritable = (file: string | undefined, io: IO): Writable => {
   return io.stdout;
 };
 
-const DEFS_PATH = '/nad/api/defs';
-
 const request = async (url: string) => {
   const config = { headers: {} as Record<string, string>, timeout: 10000 };
   config.headers['Accept-Language'] = [lang, '*'].join(', ');
@@ -45,11 +43,10 @@ const request = async (url: string) => {
   return res.data;
 };
 
-function fixUrl(url: string) {
+const DEFS_PATH = '/nad/api/defs';
+export function fixUrl(url: string) {
   const u = new URL(url);
-  if (!u.pathname.endsWith(DEFS_PATH)) {
-    u.pathname = u.pathname.replace(/\/*$/, DEFS_PATH);
-  }
+  u.pathname = u.pathname.replace(/((\/nad(\/api(\/defs)?)?)?|\/*)$/, DEFS_PATH);
   return u.toString();
 }
 

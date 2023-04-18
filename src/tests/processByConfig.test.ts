@@ -3,7 +3,7 @@ import Capacitance from 'capacitance';
 import { AxiosError } from 'axios';
 import { Dubious } from '@huolala-tech/nad-builder/dist/cjs/utils';
 import { NadResult } from '@huolala-tech/nad-builder/dist/cjs/types/nad';
-import { processByConfig } from '../processByConfig';
+import { fixUrl, processByConfig } from '../processByConfig';
 
 const ast: Dubious<NadResult> = {
   classes: [],
@@ -113,4 +113,15 @@ test('301', async () => {
   expect(out).toContain('async foo(settings?: Partial<Settings>)');
   const err = String(await stderr);
   expect(err).toContain(' 1 ');
+});
+
+test('fixUrl', () => {
+  const base = 'http://localhost';
+  const path = '/nad/api/defs';
+  expect(fixUrl(base)).toBe(base + path);
+  expect(fixUrl(base + '/')).toBe(base + path);
+  expect(fixUrl(base + '/nad')).toBe(base + path);
+  expect(fixUrl(base + '/nad/api')).toBe(base + path);
+  expect(fixUrl(base + '/nad/api/defs')).toBe(base + path);
+  expect(fixUrl(base + '/hehe')).toBe(base + '/hehe' + path);
 });
