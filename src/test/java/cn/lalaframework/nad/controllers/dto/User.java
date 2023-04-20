@@ -1,4 +1,4 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.controllers.dto;
 
 import java.io.Serializable;
 

@@ -1,6 +1,8 @@
 package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.controllers.MyController;
+import cn.lalaframework.nad.controllers.dto.Role;
+import cn.lalaframework.nad.controllers.dto.User;
 import cn.lalaframework.nad.models.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

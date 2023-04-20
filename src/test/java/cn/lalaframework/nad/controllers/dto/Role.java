@@ -1,4 +1,4 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.controllers.dto;
 
 public enum Role {
     ADMIN(7, "administrator"),

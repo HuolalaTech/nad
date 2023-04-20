@@ -1,7 +1,7 @@
 package cn.lalaframework.nad.controllers;
 
-import cn.lalaframework.nad.models.Role;
-import cn.lalaframework.nad.models.User;
+import cn.lalaframework.nad.controllers.dto.Role;
+import cn.lalaframework.nad.controllers.dto.User;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
