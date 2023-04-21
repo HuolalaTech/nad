@@ -7,7 +7,7 @@
 
     <groupId>cn.lalaframework</groupId>
     <artifactId>nad-core</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
 
     <dependencies>
         <dependency>
