@@ -1,5 +1,6 @@
 package cn.lalaframework.nad;
 
+import cn.lalaframework.nad.exceptions.NoNadContextException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,5 +20,11 @@ class NadContextTest {
             Assertions.assertTrue(e instanceof InvocationTargetException);
             Assertions.assertTrue(((InvocationTargetException) e).getTargetException() instanceof IllegalStateException);
         }
+    }
+
+    @Test
+    void NoNadContextException() {
+        Assertions.assertThrows(NoNadContextException.class, NadContext::dumpClasses);
+        Assertions.assertThrows(NoNadContextException.class, NadContext::dumpEnums);
     }
 }

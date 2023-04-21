@@ -1,6 +1,6 @@
 package cn.lalaframework.nad;
 
-import cn.lalaframework.nad.exceptions.BadTypeCollectorStateException;
+import cn.lalaframework.nad.exceptions.NoNadContextException;
 import cn.lalaframework.nad.models.NadClass;
 import cn.lalaframework.nad.models.NadEnum;
 import org.springframework.aop.ClassFilter;
@@ -26,14 +26,14 @@ public class NadContext {
     private static Map<String, NadClass> getClassesMap() {
         TreeMap<String, NadClass> map = classesMapRef.get();
         if (map != null) return map;
-        throw new BadTypeCollectorStateException();
+        throw new NoNadContextException();
     }
 
     @NonNull
     private static Map<String, NadEnum> getEnumsMap() {
         TreeMap<String, NadEnum> map = enumsMapRef.get();
         if (map != null) return map;
-        throw new BadTypeCollectorStateException();
+        throw new NoNadContextException();
     }
 
     /**
