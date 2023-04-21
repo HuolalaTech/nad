@@ -77,6 +77,7 @@ public class NadRoute {
     @NonNull
     public static List<NadRoute> fromMapping(RequestMappingHandlerMapping requestMappingHandlerMapping) {
         return requestMappingHandlerMapping.getHandlerMethods().entrySet().stream()
+                .filter(e -> NadContext.matchClass(e.getValue().getBeanType().getTypeName()))
                 .map(e -> NadRoute.create(e.getKey(), e.getValue()))
                 .collect(Collectors.toList());
     }
