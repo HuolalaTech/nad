@@ -1,12 +1,13 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.utils.ClassExcluder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ClassFilterTest {
     @Test
     void basic() {
-        ClassFilter filter = new ClassFilter();
+        ClassExcluder filter = new ClassExcluder();
 
         filter.addRule(Test.class.getTypeName());
         Assertions.assertTrue(filter.match(Test.class.getTypeName()));
@@ -15,6 +16,6 @@ class ClassFilterTest {
 
         filter.addRule("java.*");
         Assertions.assertTrue(filter.match(String.class.getTypeName()));
-        Assertions.assertFalse(filter.match(ClassFilter.class.getTypeName()));
+        Assertions.assertFalse(filter.match(ClassExcluder.class.getTypeName()));
     }
 }

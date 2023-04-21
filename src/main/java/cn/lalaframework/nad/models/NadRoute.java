@@ -1,7 +1,7 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.NadContext;
 import cn.lalaframework.nad.utils.Reflection;
-import cn.lalaframework.nad.utils.TypeCollector;
 import org.springframework.lang.NonNull;
 import org.springframework.util.MimeType;
 import org.springframework.web.method.HandlerMethod;
@@ -65,7 +65,7 @@ public class NadRoute {
         parameters = Arrays.stream(method.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
         annotations = NadAnnotation.fromAnnotatedElement(method.getMethod());
         Type genericReturnType = method.getMethod().getGenericReturnType();
-        TypeCollector.collect(genericReturnType);
+        NadContext.collect(genericReturnType);
         returnType = genericReturnType.getTypeName();
     }
 

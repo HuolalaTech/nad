@@ -1,6 +1,6 @@
 package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.utils.TypeCollector;
+import cn.lalaframework.nad.NadContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -23,7 +23,7 @@ public class NadParameter {
         p.initParameterNameDiscovery(getParameterNameDiscoverer());
         name = p.getParameterName();
         Type parameterType = p.getGenericParameterType();
-        TypeCollector.collect(parameterType);
+        NadContext.collect(parameterType);
         type = parameterType.getTypeName();
         annotations = NadAnnotation.fromArray(p.getParameterAnnotations());
     }

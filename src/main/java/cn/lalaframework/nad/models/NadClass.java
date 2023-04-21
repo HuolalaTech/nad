@@ -1,6 +1,6 @@
 package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.utils.TypeCollector;
+import cn.lalaframework.nad.NadContext;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -25,7 +25,7 @@ public class NadClass extends NadDef {
     public NadClass(Class<?> clz) {
         super(clz);
         typeParameters = Arrays.stream(clz.getTypeParameters()).map(type -> {
-            TypeCollector.collect(type);
+            NadContext.collect(type);
             return type.getTypeName();
         }).collect(Collectors.toList());
 
@@ -35,12 +35,12 @@ public class NadClass extends NadDef {
         if (genericSuperclass == null) {
             superclass = null;
         } else {
-            TypeCollector.collect(genericSuperclass);
+            NadContext.collect(genericSuperclass);
             superclass = genericSuperclass.getTypeName();
         }
 
         interfaces = Arrays.stream(clz.getGenericInterfaces()).map(type -> {
-            TypeCollector.collect(type);
+            NadContext.collect(type);
             return type.getTypeName();
         }).collect(Collectors.toList());
     }

@@ -1,6 +1,6 @@
 package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.utils.TypeCollector;
+import cn.lalaframework.nad.NadContext;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -53,7 +53,7 @@ public class NadMember {
             }
         }
         if (javaType != null) {
-            TypeCollector.collect(javaType);
+            NadContext.collect(javaType);
             type = javaType.getTypeName();
         }
     }

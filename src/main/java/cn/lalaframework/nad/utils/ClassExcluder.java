@@ -1,17 +1,15 @@
-package cn.lalaframework.nad.models;
-
-import cn.lalaframework.nad.utils.PatternTree;
+package cn.lalaframework.nad.utils;
 
 import java.util.List;
 
-public class ClassFilter {
+public class ClassExcluder {
     private final PatternTree root;
 
-    public ClassFilter() {
+    public ClassExcluder() {
         root = new PatternTree();
     }
 
-    public ClassFilter(List<String> rules) {
+    public ClassExcluder(List<String> rules) {
         this();
         rules.forEach(this::addRule);
     }
