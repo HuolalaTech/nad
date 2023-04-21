@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 public class MyController {
     @GetMapping("/getUser")
@@ -16,7 +19,12 @@ public class MyController {
         return new User();
     }
 
-    @GetMapping("/setRole")
+    @GetMapping("/users")
+    List<User> getUserList(int limit) {
+        return Collections.singletonList(new User());
+    }
+
+    @PostMapping(value = "/setRole", headers = {"id=5"})
     Long setRole(@RequestParam Role type) {
         return System.currentTimeMillis();
     }

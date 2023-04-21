@@ -4,7 +4,9 @@ import cn.lalaframework.nad.utils.ClassExcluder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ClassFilterTest {
+import java.util.Collections;
+
+class ClassExcluderTest {
     @Test
     void basic() {
         ClassExcluder filter = new ClassExcluder();
@@ -15,6 +17,13 @@ class ClassFilterTest {
         Assertions.assertFalse(filter.match(String.class.getTypeName()));
 
         filter.addRule("java.*");
+        Assertions.assertTrue(filter.match(String.class.getTypeName()));
+        Assertions.assertFalse(filter.match(ClassExcluder.class.getTypeName()));
+    }
+
+    @Test
+    void constructor() {
+        ClassExcluder filter = new ClassExcluder(Collections.singletonList("java.*"));
         Assertions.assertTrue(filter.match(String.class.getTypeName()));
         Assertions.assertFalse(filter.match(ClassExcluder.class.getTypeName()));
     }

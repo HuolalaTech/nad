@@ -3,6 +3,10 @@ package cn.lalaframework.nad.utils;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Build string patterns to a tree.
+ */
+
 public class PatternTree {
     private boolean isWildcard = false;
     private Map<Character, PatternTree> children = null;

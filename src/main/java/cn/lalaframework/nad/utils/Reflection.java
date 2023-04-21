@@ -8,11 +8,11 @@ public class Reflection {
         throw new IllegalStateException("Utility class");
     }
 
-    public static Object invokeMethod(Object info, String methodName, Object... args) {
+    public static Object invokeMethod(Object info, String methodName) {
         if (info == null) return null;
         try {
             Method method = info.getClass().getDeclaredMethod(methodName);
-            return method.invoke(info, args);
+            return method.invoke(info);
         } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
             return null;
         }
