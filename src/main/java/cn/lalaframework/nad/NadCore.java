@@ -2,7 +2,7 @@ package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.exceptions.NoHandlerMappingException;
 import cn.lalaframework.nad.models.*;
-import cn.lalaframework.nad.utils.ClassExcluder;
+import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class NadCore {
     }
 
     @NonNull
-    public NadResult create(ClassExcluder classFilter) {
+    public NadResult create(ClassFilter classFilter) {
         if (handlerMapping == null) throw new NoHandlerMappingException();
         return NadContext.run(() -> {
             List<NadRoute> routes = NadRoute.fromMapping(handlerMapping);

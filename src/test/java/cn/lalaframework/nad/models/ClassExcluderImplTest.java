@@ -1,31 +1,31 @@
 package cn.lalaframework.nad.models;
 
 import cn.lalaframework.nad.utils.ClassExcluder;
-import cn.lalaframework.nad.utils.impls.ClassExcluderImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.ClassFilter;
 
 import java.util.Collections;
 
 class ClassExcluderImplTest {
     @Test
     void basic() {
-        ClassExcluderImpl filter = new ClassExcluderImpl();
+        ClassExcluder filter = new ClassExcluder();
 
         filter.addRule(Test.class.getTypeName());
-        Assertions.assertTrue(filter.match(Test.class.getTypeName()));
-        Assertions.assertFalse(filter.match(Assertions.class.getTypeName()));
-        Assertions.assertFalse(filter.match(String.class.getTypeName()));
+        Assertions.assertTrue(filter.matches(Test.class));
+        Assertions.assertFalse(filter.matches(Assertions.class));
+        Assertions.assertFalse(filter.matches(String.class));
 
         filter.addRule("java.*");
-        Assertions.assertTrue(filter.match(String.class.getTypeName()));
-        Assertions.assertFalse(filter.match(ClassExcluder.class.getTypeName()));
+        Assertions.assertTrue(filter.matches(String.class));
+        Assertions.assertFalse(filter.matches(NadResult.class));
     }
 
     @Test
     void constructor() {
-        ClassExcluder filter = new ClassExcluderImpl(Collections.singletonList("java.*"));
-        Assertions.assertTrue(filter.match(String.class.getTypeName()));
-        Assertions.assertFalse(filter.match(ClassExcluder.class.getTypeName()));
+        ClassFilter filter = new ClassExcluder(Collections.singletonList("java.*"));
+        Assertions.assertTrue(filter.matches(String.class));
+        Assertions.assertFalse(filter.matches(NadResult.class));
     }
 }

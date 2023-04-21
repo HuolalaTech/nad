@@ -3,7 +3,7 @@ package cn.lalaframework.nad;
 import cn.lalaframework.nad.exceptions.BadTypeCollectorStateException;
 import cn.lalaframework.nad.models.NadClass;
 import cn.lalaframework.nad.models.NadEnum;
-import cn.lalaframework.nad.utils.ClassExcluder;
+import org.springframework.aop.ClassFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class NadContext {
     private static final ThreadLocal<TreeMap<String, NadClass>> classesMapRef = new ThreadLocal<>();
     private static final ThreadLocal<TreeMap<String, NadEnum>> enumsMapRef = new ThreadLocal<>();
-    private static final ThreadLocal<ClassExcluder> classExcluderRef = new ThreadLocal<>();
+    private static final ThreadLocal<ClassFilter> classExcluderRef = new ThreadLocal<>();
 
     private NadContext() {
         throw new IllegalStateException("Utility class");
@@ -57,11 +57,11 @@ public class NadContext {
             return;
         }
 
+        // Ignore some classes which are matched by ClassFilter.
+        if (!matchClass(clz)) return;
+
         // Now, The clz is a pure Java class type (not an array).
         String name = clz.getTypeName();
-
-        // Ignore some classes which are matched by ClassExcluder.
-        if (!matchClass(name)) return;
 
         Map<String, NadClass> map = getClassesMap();
 
@@ -78,9 +78,10 @@ public class NadContext {
     }
 
     private static void collectEnum(@NonNull Class<? extends Enum<?>> clz) {
+        // Ignore some classes which are matched by ClassFilter.
+        if (!matchClass(clz)) return;
         getEnumsMap().computeIfAbsent(clz.getTypeName(), name -> new NadEnum(clz));
     }
-
 
     /**
      * Collect all seen types.
@@ -106,14 +107,14 @@ public class NadContext {
         }
     }
 
-    public static boolean matchClass(String name) {
-        ClassExcluder classExcluder = classExcluderRef.get();
-        // If ClassExcluder are not provided, all classes are retained.
+    public static boolean matchClass(Class<?> clz) {
+        ClassFilter classExcluder = classExcluderRef.get();
+        // If ClassFilter are not provided, all classes are retained.
         if (classExcluder == null) return true;
         // The matchClass specifies which classes can be retained,
         // while the classExcluder indicates which classes should be excluded.
         // Therefore, the NOT operator is necessary here.
-        return !classExcluder.match(name);
+        return !classExcluder.matches(clz);
     }
 
     @NonNull
@@ -127,7 +128,7 @@ public class NadContext {
     }
 
     @NonNull
-    public static <R> R run(@NonNull Supplier<R> transaction, ClassExcluder classExcluder) {
+    public static <R> R run(@NonNull Supplier<R> transaction, ClassFilter classExcluder) {
         try {
             classesMapRef.set(new TreeMap<>());
             enumsMapRef.set(new TreeMap<>());
