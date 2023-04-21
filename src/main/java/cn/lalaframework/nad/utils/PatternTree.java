@@ -1,5 +1,8 @@
 package cn.lalaframework.nad.utils;
 
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -9,9 +12,11 @@ import java.util.TreeMap;
 
 public class PatternTree {
     private boolean isWildcard = false;
+
+    @Nullable
     private Map<Character, PatternTree> children = null;
 
-    private void add(String path, int offset) {
+    private void add(@NonNull String path, int offset) {
         if (isWildcard) return;
         if (offset >= path.length()) return;
         char ch = path.charAt(offset);
@@ -24,20 +29,21 @@ public class PatternTree {
         }
     }
 
-    private boolean match(String path, int offset) {
+    private boolean match(@NonNull String path, int offset) {
         if (isWildcard) return true;
         if (offset >= path.length()) return true;
         char ch = path.charAt(offset);
-        PatternTree node = this.children.get(ch);
+        if (children == null) return false;
+        PatternTree node = children.get(ch);
         if (node == null) return false;
         return node.match(path, offset + 1);
     }
 
-    public void add(String path) {
-        this.add(path, 0);
+    public void add(@NonNull String path) {
+        add(path, 0);
     }
 
-    public boolean match(String path) {
-        return this.match(path, 0);
+    public boolean match(@NonNull String path) {
+        return match(path, 0);
     }
 }
