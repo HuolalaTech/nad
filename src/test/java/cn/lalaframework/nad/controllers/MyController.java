@@ -20,7 +20,7 @@ public class MyController {
     }
 
     @GetMapping("/users")
-    List<User> getUserList(int limit) {
+    List<User> getUserList() {
         return Collections.singletonList(new User());
     }
 

@@ -1,15 +1,16 @@
 package cn.lalaframework.nad.models;
 
 import cn.lalaframework.nad.utils.ClassExcluder;
+import cn.lalaframework.nad.utils.impls.ClassExcluderImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-class ClassExcluderTest {
+class ClassExcluderImplTest {
     @Test
     void basic() {
-        ClassExcluder filter = new ClassExcluder();
+        ClassExcluderImpl filter = new ClassExcluderImpl();
 
         filter.addRule(Test.class.getTypeName());
         Assertions.assertTrue(filter.match(Test.class.getTypeName()));
@@ -23,7 +24,7 @@ class ClassExcluderTest {
 
     @Test
     void constructor() {
-        ClassExcluder filter = new ClassExcluder(Collections.singletonList("java.*"));
+        ClassExcluder filter = new ClassExcluderImpl(Collections.singletonList("java.*"));
         Assertions.assertTrue(filter.match(String.class.getTypeName()));
         Assertions.assertFalse(filter.match(ClassExcluder.class.getTypeName()));
     }
