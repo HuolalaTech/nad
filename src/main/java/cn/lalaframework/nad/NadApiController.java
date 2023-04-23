@@ -1,7 +1,7 @@
 package cn.lalaframework.nad;
 
-import cn.lalaframework.nad.models.ClassFilter;
 import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.utils.ClassExcluder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Import;
@@ -26,12 +26,13 @@ public class NadApiController {
     @NonNull
     synchronized void initCache() {
         if (defsCache == null) {
-            ClassFilter filter = new ClassFilter();
+            ClassExcluder filter = new ClassExcluder();
             filter.addRule("java.*");
             filter.addRule("javax.*");
             filter.addRule("org.springframework.*");
             filter.addRule("com.alibaba.fastjson.*");
             filter.addRule("com.fasterxml.jackson.*");
+            filter.addRule(NadApiController.class.getTypeName());
             defsCache = core.create(filter);
         }
     }
