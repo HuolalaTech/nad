@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class NadUiConfiguration implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/nad/favicon.svg")
-                .addResourceLocations("classpath:/nad-ui/favicon.svg")
+        registry.addResourceHandler("/nad/logo.svg")
+                .addResourceLocations("classpath:/nad-ui/logo.svg")
                 .setCacheControl(CacheControl.maxAge(1, TimeUnit.HOURS))
                 .resourceChain(true)
                 .addResolver(new NadResourceResolver());

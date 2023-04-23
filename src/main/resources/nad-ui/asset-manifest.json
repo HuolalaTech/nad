@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/nad/static/css/main.5ce75d01.css",
-    "main.js": "/nad/static/js/main.6a5474f8.js",
+    "main.css": "/nad/static/css/main.e1f63280.css",
+    "main.js": "/nad/static/js/main.6de809d9.js",
     "index.html": "/nad/index.html"
   },
   "entrypoints": [
-    "static/css/main.5ce75d01.css",
-    "static/js/main.6a5474f8.js"
+    "static/css/main.e1f63280.css",
+    "static/js/main.6de809d9.js"
   ]
 }

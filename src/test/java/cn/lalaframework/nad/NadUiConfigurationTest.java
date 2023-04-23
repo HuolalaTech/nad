@@ -45,8 +45,8 @@ class NadUiConfigurationTest {
     }
 
     @Test
-    void favicon() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/nad/favicon.svg"))
+    void logo() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/nad/logo.svg"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.header().string("Cache-Control", "max-age=3600"))
                 .andExpect(MockMvcResultMatchers.content().contentType("image/svg+xml"));
