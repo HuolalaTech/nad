@@ -1,5 +1,5 @@
 import { isJavaNonClass } from '../helpers/javaHelper';
-import { SyntaxReader, neverReachHere } from '../utils';
+import { neverReachHere, SyntaxReader } from '../utils';
 import type { Class } from './Class';
 import type { Root } from './Root';
 

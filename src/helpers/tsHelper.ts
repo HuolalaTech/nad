@@ -1,4 +1,4 @@
-import { neverReachHere } from '../utils';
+import { neverReachHere } from '../utils/neverReachHere';
 import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';

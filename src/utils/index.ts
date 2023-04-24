@@ -1,7 +1,7 @@
-import { NeverReachHere } from '../exceptions';
-
 export * from './SyntaxReader';
 export * from './UniqueName';
+export * from './computeIfAbsent';
+export * from './neverReachHere';
 
 export function u2o<T>(
   v: T,
@@ -29,14 +29,6 @@ export function u2a(a: unknown, callbackfn?: MapCallback<any, unknown>) {
 export const u2s = <T>(u: T) => (typeof u === 'string' ? u : '') as T extends string ? T : string;
 export const u2b = (v: unknown, d = false) => (typeof v === 'boolean' ? v : d);
 
-export function neverReachHere(): Error;
-export function neverReachHere(u: never): Error;
-export function neverReachHere(u: never, message: string): Error;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function neverReachHere(u?: never, message?: string) {
-  return new NeverReachHere(message);
-}
-
 export const notEmpty = <T>(w: T): w is NonNullable<T> => w !== null && w !== undefined;
 
 export const isOneOf =
@@ -44,16 +36,7 @@ export const isOneOf =
   (u: string): u is T =>
     a.indexOf(u as T) !== -1;
 
-type AnyMap<K, V> = K extends object ? Map<K, V> | WeakMap<K, V> : Map<K, V>;
-
-export const computeIfAbsent = <K, V>(map: AnyMap<K, V>, key: K, factory: (k: K) => V) => {
-  let value = map.get(key);
-  if (value === undefined || value === null) {
-    value = factory(key);
-    map.set(key, value);
-  }
-  return value;
-};
+export type AnyMap<K, V> = K extends object ? Map<K, V> | WeakMap<K, V> : Map<K, V>;
 
 /**
  * Some objects received from outside are not trusted, like some fields may be of wrong type or missing.
