@@ -31,9 +31,13 @@ export class Route extends Annotated<RouteRaw> {
       this.builder.uniqueNameSeparator,
     );
 
+    // The POST is the best method in HTTP (while this conclusion may sound hasty, it is the case), because:
+    // 1. Some platforms can only support GET and POST, such as Alipay MiniProgram, and so on.
+    // 2. Compared to GET method, the POST method can take payload.
+    // Therefore, use the POST method as the first preferred option in case the route supports it.
+    // Otherwise use the first method in the supported list.
     const methods = u2a(this.raw.methods, u2s);
-    if (methods.includes('POST')) this.method = 'POST';
-    else if (methods.length > 0) this.method = methods[0];
+    if (methods.length > 0 && !methods.includes('POST')) this.method = methods[0];
     else this.method = 'POST';
 
     this.pattern = u2a(this.raw.patterns, u2s)[0] || '';
