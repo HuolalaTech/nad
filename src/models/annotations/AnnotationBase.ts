@@ -1,4 +1,4 @@
-import { neverReachHere, u2o } from '../../utils';
+import { u2o } from '../../utils';
 import { Annotations } from '.';
 
 export class AnnotationBase<V> {
@@ -11,28 +11,14 @@ export class AnnotationBase<V> {
     return this.raw.value as V;
   }
 
+  public static iface: string;
+
   public static create<T extends typeof AnnotationBase<V>, V>(
     this: T,
-    annotation: Annotations,
-    name: string,
-  ): InstanceType<T> | null;
-  public static create<T extends typeof AnnotationBase<V>, V>(
-    this: T,
-    raw: Record<string, unknown> | null,
-  ): InstanceType<T> | null;
-  public static create<T extends typeof AnnotationBase<V>, V>(
-    this: T,
-    ...args: [Annotations, string] | [Record<string, unknown> | null]
+    annotations: Annotations,
   ): InstanceType<T> | null {
-    if (args.length === 1) {
-      const [raw] = args;
-      if (raw == null) return null;
-      return new this(raw) as InstanceType<T>;
-    }
-    if (args.length === 2) {
-      const [annotation, name] = args;
-      return this.create(annotation.find(name));
-    }
-    throw neverReachHere();
+    const raw = annotations.find(this.iface);
+    if (!raw) return null;
+    return new this(raw) as InstanceType<T>;
   }
 }

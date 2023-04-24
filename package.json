@@ -10,7 +10,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "test": "jest src",
+    "test": "jest src --coverage",
     "fix": "yarn lint && yarn prettier",
     "lint": "eslint src --fix",
     "start": "rollup -c --watch",
