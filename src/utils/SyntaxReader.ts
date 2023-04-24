@@ -1,4 +1,4 @@
-import { neverReachHere } from '../utils';
+import { neverReachHere } from '.';
 
 export class SyntaxReader {
   private index = 0;

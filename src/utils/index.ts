@@ -1,4 +1,7 @@
-import { NeverReachHere } from './exceptions';
+import { NeverReachHere } from '../exceptions';
+
+export * from './SyntaxReader';
+export * from './UniqueName';
 
 export function u2o<T>(
   v: T,

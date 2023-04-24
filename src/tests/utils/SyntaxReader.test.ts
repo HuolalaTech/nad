@@ -1,4 +1,4 @@
-import { SyntaxReader } from '../../models/SyntaxReader';
+import { SyntaxReader } from '../../utils/SyntaxReader';
 
 test('single char', () => {
   const sr = new SyntaxReader('abc');

@@ -1,6 +1,5 @@
 import { isJavaNonClass } from '../helpers/javaHelper';
-import { SyntaxReader } from './SyntaxReader';
-import { neverReachHere } from '../utils';
+import { SyntaxReader, neverReachHere } from '../utils';
 import type { Class } from './Class';
 import type { Root } from './Root';
 
@@ -15,7 +14,7 @@ export class Type {
   public readonly parameters;
   public readonly clz;
 
-  constructor(owner: TypeOwner, name: string, parameters: readonly Type[]) {
+  private constructor(owner: TypeOwner, name: string, parameters: readonly Type[]) {
     wm.set(this, owner);
     this.name = name;
     this.parameters = parameters;

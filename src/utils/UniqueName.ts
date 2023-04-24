@@ -1,4 +1,4 @@
-import { computeIfAbsent } from '../utils';
+import { computeIfAbsent } from '.';
 import { UniqueNameCreatingError } from '../exceptions';
 
 const heap = new WeakMap<object, UniqueName>();

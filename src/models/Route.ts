@@ -1,9 +1,7 @@
 import { Annotated } from './Annotated';
 import type { Module } from './Module';
 import { Type } from './Type';
-import { Dubious, notEmpty } from '../utils';
-import { u2a, u2s } from '../utils';
-import { UniqueName } from './UniqueName';
+import { Dubious, notEmpty, UniqueName, u2a, u2s } from '../utils';
 import { Parameter } from './Parameter';
 import { NadRoute } from '../types/nad';
 import { RouteConsumes } from './RouteConsumes';

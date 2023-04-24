@@ -1,7 +1,6 @@
 import { Route, RouteRaw } from './Route';
-import { Dubious, u2a, u2o, u2s } from '../utils';
+import { Dubious, u2a, u2o, u2s, UniqueName } from '../utils';
 import type { Root } from './Root';
-import { UniqueName } from './UniqueName';
 import { Annotated } from './Annotated';
 import { NadModule } from '../types/nad';
 

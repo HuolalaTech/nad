@@ -1,4 +1,4 @@
-import { UniqueName } from '../../models';
+import { UniqueName } from '../../utils';
 
 test('basic', () => {
   const o = {};
