@@ -28,16 +28,29 @@ export class Parameter extends Annotated<ParameterRaw> {
     this.owner = owner;
     this.builder = owner.builder;
     this.type = Type.create(u2s(this.raw.type), this.builder);
-    this.description = this.annotations.swagger.getApiParam()?.description || '';
 
+    const ap = this.annotations.swagger.getApiParam();
     const pv = this.annotations.web.getPathVariable();
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
+
+    this.description = ap?.value || ap?.defaultValue || ap?.name || '';
+
+    // A parameter is optional by default, unless any one or more of the following three conditions are met:
+    // 1. The "required" option is enabled in any one of known annotations.
+    // 2. This parameter has any "NotNull" annotations (contains @NotNull, @NonNull, and @Nonnull).
+    // 3. The type of this parameter is a java primitive type.
     this.required =
-      rp?.required || pv?.required || rb?.required || this.annotations.hasNonNull() || isJavaPrimitive(this.type.name)
+      ap?.required ||
+      rp?.required ||
+      pv?.required ||
+      rb?.required ||
+      this.annotations.hasNonNull() ||
+      isJavaPrimitive(this.type.name)
         ? ('' as const)
         : ('?' as const);
+
     this.actions = [] as [string, ...string[]][];
     this.isFile = this.type.name === 'org.springframework.web.multipart.MultipartFile';
     this.hasBody = !!rb;

@@ -56,25 +56,19 @@ export class ApiModelProperty extends AnnotationBase<string> {
   // }
 }
 
+/**
+ * @see https://docs.swagger.io/swagger-core/v1.5.0/apidocs/io/swagger/annotations/ApiParam.html
+ */
 export class ApiParam extends AnnotationBase<string> {
   get name() {
     return u2s(this.raw.name);
   }
-  get description(): string {
-    return u2s(this.raw.description) || this.name;
+  get required() {
+    return u2b(this.raw.required);
   }
-  // get required() {
-  //   return u2b(this.raw.required);
-  // }
-  // get readOnly() {
-  //   return u2b(this.raw.readOnly);
-  // }
-  // get hidden() {
-  //   return u2b(this.raw.hidden);
-  // }
-  // get allowMultiple() {
-  //   return u2b(this.raw.allowMultiple);
-  // }
+  get defaultValue() {
+    return u2s(this.raw.defaultValue);
+  }
 }
 
 export class SwaggerAnnotations {

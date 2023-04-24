@@ -18,9 +18,11 @@ test('route', () => {
   expect(code).toContain(mg`
     /**
      * My Route
-     * @param id My ID
+     * @param a My A
+     * @param b My B
+     * @param c My C
      */
-    - (FooModel*)foo:(NSNumber*)id;
+    - (FooModel*)foo:(NSNumber*)a b:(NSNumber*)b c:(NSNumber*)c;
   `);
 });
 

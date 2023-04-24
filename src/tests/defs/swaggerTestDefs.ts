@@ -15,9 +15,19 @@ const foo: Partial<NadRoute> = {
   annotations: [{ type: 'io.swagger.annotations.ApiOperation', attributes: { value: 'My Route' } }],
   parameters: [
     {
-      name: 'id',
+      name: 'a',
       type: 'java.lang.Long',
-      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { name: 'My ID' } }],
+      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { value: 'My A' } }],
+    },
+    {
+      name: 'b',
+      type: 'java.lang.Long',
+      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { defaultValue: 'My B' } }],
+    },
+    {
+      name: 'c',
+      type: 'java.lang.Long',
+      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { name: 'My C' } }],
     },
   ],
   returnType: 'test.FooModel',

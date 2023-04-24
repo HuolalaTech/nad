@@ -18,9 +18,11 @@ test('route', () => {
   expect(code).toContain(mg`
     /**
      * My Route
-     * @param id My ID
+     * @param a My A
+     * @param b My B
+     * @param c My C
      */
-    async foo(id?: Long, settings?: Partial<Settings>)
+    async foo(a?: Long, b?: Long, c?: Long, settings?: Partial<Settings>)
   `);
 });
 
