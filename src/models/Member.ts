@@ -20,7 +20,12 @@ export class Member {
     const amp = this.annotations.swagger.getApiModelProperty();
     this.description = amp?.description;
 
-    // It is visible by default unless set to @JsonIgnore or @ApiModelProperty(hidden = true) or @JSONField(serialize = false).
+    // It is visible by default unless one or more following conditions are met:
+    // 1. The @JsonIgnore is set (jackson).
+    // 2. The @JSONField(serialize = false) is set (fastjson).
+    // 3. The @ApiModelProperty(hidden = true) is set.
+    // NOTE: Nad does not known which serialization library is actually used by backend service,
+    //       so both jackson and fastjson annotations will be followed.
     this.visible = !(amp?.hidden === true || this.annotations.json.isIgnored);
 
     // It is optinoal by default unless set to @NotNull or @ApiModelProperty(required = true) or JavaPrimitive types.

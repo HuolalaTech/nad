@@ -55,13 +55,13 @@ export class Parameter extends Annotated<ParameterRaw> {
     this.isFile = this.type.name === 'org.springframework.web.multipart.MultipartFile';
     this.hasBody = !!rb;
 
-    // If this parameter is annotated with `@PathVariable`, the `addPathVariable` method must be called in the runtime library.
+    // If a parameter is annotated with `@PathVariable`, the `addPathVariable` method must be called.
     if (pv) this.actions.push(['addPathVariable', pv.value || this.name]);
 
-    // If this parameter is annotated with `@RequestBody`, the `addRequestBody` method must be called in the runtime library.
+    // If a parameter is annotated with `@RequestBody`, the `addRequestBody` method must be called.
     if (rb) this.actions.push(['addRequestBody']);
 
-    // If this parameter is annotated with `@RequestParam`, ...
+    // If a parameter is annotated with `@RequestParam`, ...
     if (rp) {
       if (this.isFile) {
         this.actions.push(['addMultipartFile', rp.value || this.name]);
@@ -70,7 +70,7 @@ export class Parameter extends Annotated<ParameterRaw> {
       }
     }
 
-    // If this parameter ins annotated with `@ModelAttribute`, the `addModelAttribute` method must be called in the runtime library.
+    // If a parameter ins annotated with `@ModelAttribute`, the `addModelAttribute` method must be called.
     if (ma) {
       this.actions.push(['addModelAttribute']);
     }

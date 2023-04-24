@@ -44,21 +44,32 @@ export class CodeGenForTs extends CodeGen {
 
   /**
    * TS does not allow a required parameter follow an optional parameter, see https://typescript.tv/errors/#TS1016
-   * SOLUTION 1: Sort the parameter list, making all required parameters be advanced.
-   * This solution breaks uniformity with Java definitions and may lead to confusion among some developers, making it an unfavorable option.
-   * SOLUTION 2: Find the last required parameters, make all optional parameters to left of it required, and change their type to `T | null`.
-   * Use the SOLUTION 2 here.
+   * We have two solutions here:
+   * 1. Sort the parameter list, making all required parameters be advanced.
+   * 2. For all optional parameters to left of the last required parameter,
+   *    change them to required (to ensure that no optional parameters are defined before any required parameters),
+   *    and change their types to `T | null` (to ensure that the original optional parameters can be null).
+   * The solution 1 breaks uniformity with Java definitions and may lead to confusion among some developers,
+   * so use the solution 2 here.
    */
   private getPars(a: Route) {
     let hasRequired = false;
     const pars = a.parameters
+      // The below `reverse` method will modify the original array, so use `slice(0)` to create a copy.
       .slice(0)
+      // The `map` method does not support right-to-left, so reverse the array first.
       .reverse()
       .map((p) => {
+        // If a parameter is optional and has any required parameters in the right,
+        // then change its type to `T | null` and make it requreid.
         if (hasRequired && p.required === '?') return `${p.name}: ${t2s(p.type)} | null`;
+        // If current parameter is required, update `hasRequired` flag to `true`.
         hasRequired = hasRequired || p.required === '';
+        // Otherwise, the current parameter is requreid, or there are no required parameters to its right,
+        // so the original parameter settings should be maintained.
         return `${p.name}${p.required}: ${t2s(p.type)}`;
       })
+      // Reverse again to offset the previous reverse.
       .reverse();
     pars.push('settings?: Partial<Settings>');
     return pars;

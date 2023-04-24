@@ -35,6 +35,7 @@ export class Builder {
   }
 
   /**
+   * The tree root object of the AST.
    * It's generated lazily, only when it is actually used.
    */
   get root() {
@@ -52,6 +53,7 @@ export class Builder {
   }
 
   /**
+   * The generated code.
    * It's generated lazily, only when it is actually used.
    */
   get code() {
