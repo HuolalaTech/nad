@@ -1,3 +1,16 @@
+## 0.0.13
+
+- Fix circular dependencies
+- Remove description property of ApiModelProperty
+- Update comments
+- Update the selection logic of the route method
+- Refactor util classes
+- Add annotation class doc links
+- Refactor AnnotationBase
+- Fix @ApiParam
+- Add codecov badge
+- Add workflows
+
 ## 0.0.12
 
 - Remove unused bin
