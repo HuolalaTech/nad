@@ -2,10 +2,16 @@ import { u2b, u2s } from '../../utils';
 import { Annotations } from '.';
 import { AnnotationBase } from './AnnotationBase';
 
+/**
+ * @see https://docs.swagger.io/swagger-core/v1.5.0/apidocs/io/swagger/annotations/Api.html
+ */
 export class Api extends AnnotationBase<string> {
   public static iface = 'io.swagger.annotations.Api';
 }
 
+/**
+ * @see https://docs.swagger.io/swagger-core/v1.5.0/apidocs/io/swagger/annotations/ApiOperation.html
+ */
 export class ApiOperation extends AnnotationBase<string> {
   public static iface = 'io.swagger.annotations.ApiOperation';
   get description() {
@@ -13,6 +19,9 @@ export class ApiOperation extends AnnotationBase<string> {
   }
 }
 
+/**
+ * @see https://docs.swagger.io/swagger-core/v1.5.0/apidocs/io/swagger/annotations/ApiModel.html
+ */
 export class ApiModel extends AnnotationBase<string> {
   public static iface = 'io.swagger.annotations.ApiModel';
   get description(): string {
@@ -20,6 +29,9 @@ export class ApiModel extends AnnotationBase<string> {
   }
 }
 
+/**
+ * @see https://docs.swagger.io/swagger-core/v1.5.0/apidocs/io/swagger/annotations/ApiModelProperty.html
+ */
 export class ApiModelProperty extends AnnotationBase<string> {
   public static iface = 'io.swagger.annotations.ApiModelProperty';
   get name() {
@@ -46,9 +58,6 @@ export class ApiParam extends AnnotationBase<string> {
   }
   get required() {
     return u2b(this.raw.required);
-  }
-  get defaultValue() {
-    return u2s(this.raw.defaultValue);
   }
 }
 

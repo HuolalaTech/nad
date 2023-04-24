@@ -22,7 +22,7 @@ const foo: Partial<NadRoute> = {
     {
       name: 'b',
       type: 'java.lang.Long',
-      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { defaultValue: 'My B' } }],
+      annotations: [{ type: 'io.swagger.annotations.ApiParam', attributes: { value: 'My B' } }],
     },
     {
       name: 'c',

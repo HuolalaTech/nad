@@ -35,7 +35,7 @@ export class Parameter extends Annotated<ParameterRaw> {
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
 
-    this.description = ap?.value || ap?.defaultValue || ap?.name || '';
+    this.description = ap?.value || ap?.name || '';
 
     // A parameter is optional by default, unless any one or more of the following three conditions are met:
     // 1. The "required" option is enabled in any one of known annotations.
