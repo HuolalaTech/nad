@@ -34,12 +34,6 @@ export class ApiModel extends AnnotationBase<string> {
  */
 export class ApiModelProperty extends AnnotationBase<string> {
   public static iface = 'io.swagger.annotations.ApiModelProperty';
-  get name() {
-    return u2s(this.raw.name);
-  }
-  get description() {
-    return this.value || this.name;
-  }
   get hidden() {
     return u2b(this.raw.hidden);
   }

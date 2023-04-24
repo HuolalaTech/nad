@@ -18,7 +18,7 @@ export class Member {
     this.name = owner.builder.fixPropertyName(u2s(aliasOrName));
     this.type = Type.create(u2s(type), owner);
     const amp = this.annotations.swagger.getApiModelProperty();
-    this.description = amp?.description;
+    this.description = amp?.value;
 
     // It is visible by default unless one or more following conditions are met:
     // 1. The @JsonIgnore is set (jackson).

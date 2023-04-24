@@ -18,7 +18,7 @@ export class EnumConstant extends Annotated<EnumConstantRaw> {
     this.rawValue = value;
     this.properties = u2o(properties);
     const entries = Object.entries(this.properties);
-    this.description = this.annotations.swagger.getApiModelProperty()?.description;
+    this.description = this.annotations.swagger.getApiModelProperty()?.value;
     this.memo = entries
       .map((i) => i.join('='))
       .join('; ')

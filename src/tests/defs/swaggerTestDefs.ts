@@ -38,7 +38,7 @@ const FooModel: Partial<NadClass> = {
   annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { value: 'My Model' } }],
   members: [
     {
-      annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { name: 'My Field' } }]],
+      annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { value: 'My Field' } }]],
       name: 'type',
       type: 'test.FooEnum',
     },
