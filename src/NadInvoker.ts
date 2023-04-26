@@ -1,4 +1,4 @@
-import { InvokeResult, request } from '@huolala-tech/request';
+import { InvokeParams, InvokeResult, request } from '@huolala-tech/request';
 import { WWW_FORM_URLENCODED } from './constants';
 import { HttpError } from './errors/HttpError';
 import { ObjectNestingTooDeepError } from './errors';
@@ -236,10 +236,13 @@ export class NadInvoker<T> {
    * Actually execute this request.
    */
   public execute() {
-    const { method, settings, body, files, extensions } = this;
+    const { method, settings, body, files, extensions, constructor } = this;
     const { timeout } = settings || {};
     const headers = { ...this.headers, ...settings?.headers };
-    const { postHandler } = NadInvoker;
+
+    // Get the static methods from the current constructor that may be overridden by the derived class.
+    const { postHandler, request } = constructor as typeof NadInvoker;
+
     const contentType = findHeader(headers, 'Content-Type');
 
     /**
@@ -265,7 +268,16 @@ export class NadInvoker<T> {
   }
 
   /**
+   * To call the network library.
+   * For the ease of overriding, this method is defined as static.
+   */
+  public static request<T>(options: InvokeParams) {
+    return request<T>(options);
+  }
+
+  /**
    * To handle the raw HTTP response object from the underlying network library.
+   * For the ease of overriding, this method is defined as static.
    */
   public static postHandler<T>(res: InvokeResult<T>) {
     const { data, statusCode } = res;
