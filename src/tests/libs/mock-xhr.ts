@@ -1,5 +1,18 @@
 import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
+import { APPLICATION_JSON, MULTIPART_FORM_DATA } from '@huolala-tech/request';
+
+/**
+ * Get a value by a case-insensitive key
+ */
+const getHeader = <T>(headers: Record<string, T>, name: string) => {
+  if (!headers) return undefined;
+  const found = Object.entries(headers).find(
+    ([key]) => key.localeCompare(name, undefined, { sensitivity: 'accent' }) === 0,
+  );
+  if (found) return found[1];
+  return undefined;
+};
 
 global.XMLHttpRequest = class {
   private em = new EventEmitter();
@@ -17,14 +30,23 @@ global.XMLHttpRequest = class {
   async send(body: string | FormData) {
     const { openArgs, headers } = this;
     this.readyState = 3;
-    this.status = Number(Object(headers)['status-code']) || 200;
+    this.status = Number(getHeader(headers, 'status-code')) || 200;
     this.em.emit('readystatechange');
 
-    const mockResponse = Object(headers)['response-body'];
+    const mockEvent = getHeader(headers, 'event');
+    if (mockEvent) {
+      this.readyState = 4;
+      this.em.emit('readystatechange');
+      this.em.emit(mockEvent, new ProgressEvent(mockEvent));
+      return;
+    }
+
+    const mockResponse = getHeader(headers, 'response-body');
     if (mockResponse) {
       this.readyState = 4;
       this.responseText = mockResponse;
       this.em.emit('readystatechange');
+      this.em.emit('load');
       return;
     }
 
@@ -38,6 +60,9 @@ global.XMLHttpRequest = class {
         data = body;
       }
     } else if (body instanceof FormData) {
+      if (!Object.keys(this.headers).some((s) => /^Content-Type$/i.test(s))) {
+        this.headers['Content-Type'] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
+      }
       const temp: Record<string, unknown> = {};
       const tasks = Array.from(body, async ([k, v]) => {
         if (v instanceof File) {
@@ -50,7 +75,6 @@ global.XMLHttpRequest = class {
       data = temp;
     }
     await Promise.resolve();
-    this.readyState = 4;
     this.responseText = JSON.stringify({
       method: openArgs[0],
       url: openArgs[1],
@@ -59,7 +83,9 @@ global.XMLHttpRequest = class {
       data,
       files,
     });
+    this.readyState = 4;
     this.em.emit('readystatechange');
+    this.em.emit('load');
   }
   addEventListener(e: string, h: () => void) {
     this.em.addListener(e, h);
@@ -68,7 +94,7 @@ global.XMLHttpRequest = class {
     this.headers[key] = value;
   }
   getResponseHeader(key: string) {
-    if (key === 'Content-Type') return 'application/json';
+    if (key === 'Content-Type') return APPLICATION_JSON;
     return null;
   }
   getAllResponseHeaders() {

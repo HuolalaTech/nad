@@ -1,5 +1,5 @@
 import { NadInvoker, HttpError } from '..';
-import { APPLICATION_JSON, MULTIPART_FORM_DATA, OCTET_STREAM, WWW_FORM_URLENCODED } from '../constants';
+import { APPLICATION_JSON, MULTIPART_FORM_DATA, OCTET_STREAM, WWW_FORM_URLENCODED } from '@huolala-tech/request';
 import { ObjectNestingTooDeepError } from '../errors';
 import './libs/mock-xhr';
 

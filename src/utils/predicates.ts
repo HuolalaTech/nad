@@ -1,19 +1,4 @@
-import { MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
-
-const createMimePredicate = (mime: string) => {
-  const pattern = new RegExp(`^${mime}(?:\\s*;|$)`, 'i');
-  return RegExp.prototype.test.bind(pattern);
-};
-
-/**
- * Detects a WWW_FORM_URLENCODED
- */
-export const isWwwFormUrlEncoded = createMimePredicate(WWW_FORM_URLENCODED);
-
-/**
- * Detects a MULTIPART_FORM_DATA
- */
-export const isMultipartFormData = createMimePredicate(MULTIPART_FORM_DATA);
+import { isMultipartFormData, isWwwFormUrlEncoded } from '@huolala-tech/request';
 
 /**
  * Detects a form (WWW_FORM_URLENCODED or MULTIPART_FORM_DATA)

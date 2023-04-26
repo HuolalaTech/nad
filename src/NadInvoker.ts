@@ -1,5 +1,4 @@
-import { InvokeParams, InvokeResult, request } from '@huolala-tech/request';
-import { WWW_FORM_URLENCODED } from './constants';
+import { InvokeParams, InvokeResult, WWW_FORM_URLENCODED, request } from '@huolala-tech/request';
 import { HttpError } from './errors/HttpError';
 import { ObjectNestingTooDeepError } from './errors';
 import { joinPath } from './utils/joinPath';
