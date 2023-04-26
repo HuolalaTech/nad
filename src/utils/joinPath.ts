@@ -1,6 +1,7 @@
-export const joinPath = (a: string, b: string) => {
-  let u = a;
-  if (u[u.length - 1] !== '/') u += '/';
-  u += b.replace(/^[./]+/, '');
-  return u;
+/**
+ * Join two paths, keeping only a slash in between them.
+ * For example joinPath('a', 'b') === 'a/b', and joinPath('a///', '///b') === 'a/b'
+ */
+export const joinPath = (left: string, right: string) => {
+  return left.replace(/[./]+$/, '') + '/' + right.replace(/^[./]+/, '');
 };

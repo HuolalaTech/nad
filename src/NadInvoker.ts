@@ -2,8 +2,9 @@ import { InvokeParams, InvokeResult, request } from '@huolala-tech/request';
 import { WWW_FORM_URLENCODED } from './constants';
 import { HttpError } from './errors/HttpError';
 import { ObjectNestingTooDeepError } from './errors';
-import { isNonNullObject } from './utils/isNonNullObject';
 import { joinPath } from './utils/joinPath';
+import { insensitiveGet } from './utils/insensitiveGet';
+import { isSupportingPayload, isForm, isNonNullObject } from './utils/predicates';
 
 export interface Settings {
   timeout?: number;
@@ -243,19 +244,19 @@ export class NadInvoker<T> {
     // Get the static methods from the current constructor that may be overridden by the derived class.
     const { postHandler, request } = constructor as typeof NadInvoker;
 
-    const contentType = findHeader(headers, 'Content-Type');
+    const contentType = insensitiveGet(headers, 'Content-Type');
 
     /**
      * PRINCIPLE: Make the HTTP header as light as possible.
-     * Spring Web supports reading certain parameters from either QueryString or FormData.
-     * Note: The FormData includes only MULTIPART_FORM_DATA and WWW_FORM_URLENCODED.
+     * Spring Web supports reading certain parameters from either QueryString or Form.
+     * Note: The Form includes only MULTIPART_FORM_DATA and WWW_FORM_URLENCODED.
      * Whenever possible, we should send our parameters with FormData.
      * The following are the POSSIBLE conditions:
      * 1. The HTTP method used must support sending payloads (POST, and PUT, and PATCH methods).
      * 2. No custom body can be provided as it may conflict with other parameters.
-     * 3. The request's Content-Type must be empty or FormData. If it's empty, it can be changed to FormData.
+     * 3. The request's Content-Type must be empty or Form. If it's empty, it can be changed to FormData.
      */
-    if (canTakePayload(method) && !body && supportFormData(contentType)) {
+    if (isSupportingPayload(method) && !body && isForm(contentType)) {
       const url = this.buildBasePath();
       const data = this.requestParams;
       const hasFile = Object.keys(files).length;
@@ -286,26 +287,3 @@ export class NadInvoker<T> {
     throw new HttpError(res);
   }
 }
-
-const isMultipartFormData = (mediaType: string) => /^multipart\/form-data(?:\s*;|$)/.test(mediaType);
-const isWwwFormUrlEncoded = (mediaType: string) => /^application\/x-www-form-urlencoded(?:\s*;|$)/.test(mediaType);
-
-/**
- * Find the first value that matches the key in a case-insensitive manner.
- */
-const findHeader = (headers: Record<string, string>, name: string) => {
-  const keys = Object.keys(headers);
-  const ln = name.toLowerCase();
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i].toLowerCase() === ln) return headers[keys[i]];
-  }
-  return null;
-};
-
-const supportFormData = (mediaType: string | null) =>
-  !mediaType || isMultipartFormData(mediaType) || isWwwFormUrlEncoded(mediaType);
-
-const canTakePayload = (method: string) => {
-  const u = method.toUpperCase();
-  return u === 'POST' || u === 'PUT' || u === 'PATCH';
-};
