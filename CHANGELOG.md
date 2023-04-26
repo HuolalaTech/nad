@@ -1,3 +1,9 @@
+## 1.0.2
+- Use utils from request lib
+- Update dependencies
+- Extract some utils
+- Fix comments longer than 120 characters
+- Make the request method static
 ## 1.0.1
 - Update dependencies
 - Add codecov badge
