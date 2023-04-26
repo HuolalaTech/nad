@@ -247,7 +247,8 @@ export class NadInvoker<T> {
 
     /**
      * PRINCIPLE: Make the HTTP header as light as possible.
-     * Spring Web supports reading certain parameters from either QueryString or FormData (Note: The FormData does not include JSON).
+     * Spring Web supports reading certain parameters from either QueryString or FormData.
+     * Note: The FormData includes only MULTIPART_FORM_DATA and WWW_FORM_URLENCODED.
      * Whenever possible, we should send our parameters with FormData.
      * The following are the POSSIBLE conditions:
      * 1. The HTTP method used must support sending payloads (POST, and PUT, and PATCH methods).
@@ -258,7 +259,7 @@ export class NadInvoker<T> {
       const url = this.buildBasePath();
       const data = this.requestParams;
       const hasFile = Object.keys(files).length;
-      // If the `files` is not empty, keep the Content-Type header empty, as it will be automatically set by the request library.
+      // If the `files` is not empty, keep the Content-Type header empty, as it will be set by the request library.
       if (!contentType && !hasFile) headers['Content-Type'] = WWW_FORM_URLENCODED;
       return request<T>({ method, url, timeout, headers, data, files, ...extensions }).then(postHandler);
     } else {
