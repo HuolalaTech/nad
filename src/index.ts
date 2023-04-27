@@ -1,5 +1,6 @@
 import { NadInvoker } from './NadInvoker';
 
+export * from './NadRuntime';
 export * from './NadInvoker';
 export * from './errors';
 
