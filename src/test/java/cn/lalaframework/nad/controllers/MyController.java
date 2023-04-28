@@ -3,10 +3,7 @@ package cn.lalaframework.nad.controllers;
 import cn.lalaframework.nad.controllers.dto.Role;
 import cn.lalaframework.nad.controllers.dto.User;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
@@ -14,7 +11,7 @@ import java.util.List;
 
 @RestController
 public class MyController {
-    @GetMapping("/getUser")
+    @RequestMapping(method = RequestMethod.GET, value = "/getUser")
     User getUser(@RequestParam String name, @RequestParam("type") String userType) {
         return new User();
     }

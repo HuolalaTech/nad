@@ -17,6 +17,7 @@ public class NadCore {
 
     /**
      * Find all routes from Spring Web and create a NadResult.
+     *
      * @return A NadResult object.
      */
     @NonNull
@@ -26,6 +27,7 @@ public class NadCore {
 
     /**
      * Find all routes from Spring Web and create a NadResult.
+     *
      * @param classExcluder An implementation of the ClassFilter interface to specify which classes should be excluded.
      *                      You can also use the util implementation of cn.lalaframework.nad.utils.ClassExcluder.
      * @return A NadResult object.

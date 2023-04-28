@@ -70,18 +70,30 @@ public class NadRoute {
     }
 
     @NonNull
-    public static NadRoute create(RequestMappingInfo requestMappingInfo, HandlerMethod handlerMethod) {
-        return new NadRoute(requestMappingInfo, handlerMethod);
-    }
-
-    @NonNull
     public static List<NadRoute> fromMapping(RequestMappingHandlerMapping requestMappingHandlerMapping) {
         return requestMappingHandlerMapping.getHandlerMethods().entrySet().stream()
+                // Ignore some classes who are specified by ClassExcluder
                 .filter(e -> NadContext.matchClass(e.getValue().getBeanType()))
-                .map(e -> NadRoute.create(e.getKey(), e.getValue()))
+                .map(e -> new NadRoute(e.getKey(), e.getValue()))
+                // The HandlerMethods object is unsorted.
+                // To ensure that uniformity of the results, it is necessary to be sorted.
+                .sorted(Comparator.comparing(NadRoute::getSortKey))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * There are two advantages for this sort key:
+     * 1. Methods on the same controller will be grouped together, because the package name is included.
+     * 2. There is no conflict even if the methods are overloaded, because the parameters are included.
+     */
+    private static String getSortKey(NadRoute route) {
+        return String.format(
+                "%s#%s(%s)",
+                route.getBean(),
+                route.getName(),
+                route.getParameters().stream().map(NadParameter::getType).collect(Collectors.joining(","))
+        );
+    }
 
     private List<String> getActivePatterns(RequestMappingInfo info) {
         // Compatible with future versions of the SpringFramework.
