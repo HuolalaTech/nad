@@ -29,7 +29,7 @@ public class NadClass extends NadDef {
             return type.getTypeName();
         }).collect(Collectors.toList());
 
-        members = new NadMembersBuilder(clz).build();
+        members = NadMemberBuilder.buildMemberList(clz);
 
         Type genericSuperclass = clz.getGenericSuperclass();
         if (genericSuperclass == null) {
