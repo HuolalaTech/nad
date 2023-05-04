@@ -13,7 +13,7 @@ public class NadModule extends NadDef {
     }
 
     @NonNull
-    public static List<NadModule> fromMapping(RequestMappingHandlerMapping requestMappingHandlerMapping) {
+    public static List<NadModule> fromMapping(@NonNull RequestMappingHandlerMapping requestMappingHandlerMapping) {
         return requestMappingHandlerMapping.getHandlerMethods().values().stream()
                 .map(HandlerMethod::getBeanType)
                 .distinct()

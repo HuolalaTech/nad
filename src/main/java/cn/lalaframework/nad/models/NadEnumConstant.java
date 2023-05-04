@@ -13,8 +13,10 @@ public class NadEnumConstant<T extends Enum<T>> {
     @NonNull
     private final String name;
 
-    // An enum value can be serialized to an unknown value and type,
-    // this field is used to tall the frontend what the serialized value is.
+    /**
+     * An enum value can be serialized to an unknown value and type,
+     * this field is used to tall the frontend what the serialized value is.
+     */
     @NonNull
     private final Enum<T> value;
 
@@ -33,7 +35,7 @@ public class NadEnumConstant<T extends Enum<T>> {
         fields.forEach(field -> properties.put(field.getName(), ReflectionUtils.getField(field, value)));
     }
 
-    private static List<NadAnnotation> initAnnotations(Enum<?> value) {
+    private static List<NadAnnotation> initAnnotations(@NonNull Enum<?> value) {
         try {
             Field field = value.getClass().getDeclaredField(value.name());
             return NadAnnotation.fromAnnotatedElement(field);

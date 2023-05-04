@@ -10,7 +10,7 @@ public class NadDef {
     @NonNull
     private final List<NadAnnotation> annotations;
 
-    public NadDef(Class<?> clz) {
+    public NadDef(@NonNull Class<?> clz) {
         name = clz.getTypeName();
         annotations = NadAnnotation.fromAnnotatedElement(clz);
     }

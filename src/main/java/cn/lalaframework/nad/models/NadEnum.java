@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class NadEnum extends NadDef {
+    @NonNull
     private final List<NadEnumConstant<?>> constants;
 
-    public NadEnum(Class<? extends Enum<?>> clz) {
+    public NadEnum(@NonNull Class<? extends Enum<?>> clz) {
         super(clz);
         List<Field> fields = Arrays.stream(clz.getDeclaredFields())
                 .filter(i -> !Modifier.isStatic(i.getModifiers()))

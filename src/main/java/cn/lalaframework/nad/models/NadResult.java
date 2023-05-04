@@ -21,18 +21,22 @@ public class NadResult {
         this.enums = enums;
     }
 
+    @NonNull
     public List<NadModule> getModules() {
         return modules;
     }
 
+    @NonNull
     public List<NadRoute> getRoutes() {
         return routes;
     }
 
+    @NonNull
     public List<NadClass> getClasses() {
         return classes;
     }
 
+    @NonNull
     public List<NadEnum> getEnums() {
         return enums;
     }

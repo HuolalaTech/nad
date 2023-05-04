@@ -70,7 +70,7 @@ public class NadRoute {
     }
 
     @NonNull
-    public static List<NadRoute> fromMapping(RequestMappingHandlerMapping requestMappingHandlerMapping) {
+    public static List<NadRoute> fromMapping(@NonNull RequestMappingHandlerMapping requestMappingHandlerMapping) {
         return requestMappingHandlerMapping.getHandlerMethods().entrySet().stream()
                 // Ignore some classes who are specified by ClassExcluder
                 .filter(e -> NadContext.matchClass(e.getValue().getBeanType()))
@@ -86,7 +86,8 @@ public class NadRoute {
      * 1. Methods on the same controller will be grouped together, because the package name is included.
      * 2. There is no conflict even if the methods are overloaded, because the parameters are included.
      */
-    private static String getSortKey(NadRoute route) {
+    @NonNull
+    private static String getSortKey(@NonNull NadRoute route) {
         return String.format(
                 "%s#%s(%s)",
                 route.getBean(),
@@ -95,7 +96,8 @@ public class NadRoute {
         );
     }
 
-    private List<String> getActivePatterns(RequestMappingInfo info) {
+    @NonNull
+    private List<String> getActivePatterns(@NonNull RequestMappingInfo info) {
         // Compatible with future versions of the SpringFramework.
         Object pc1 = Reflection.invokeMethod(info, "getPathPatternsCondition");
         if (pc1 != null) {
