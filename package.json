@@ -11,7 +11,7 @@
     "prepublishOnly": "rollup -c",
     "build": "rollup -c",
     "start": "rollup -c -w",
-    "prettier": "prettier --write \"src/**/*.{js,ts,json}\"",
+    "format": "prettier --write \"src/**/*.{js,ts,json}\"",
     "prepare": "husky install"
   },
   "files": [

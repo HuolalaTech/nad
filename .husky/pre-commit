@@ -3,4 +3,4 @@
 
 yarn lint
 yarn test
-yarn prettier
+yarn format

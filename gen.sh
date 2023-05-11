@@ -19,4 +19,4 @@ do
   fi
 done > $f
 
-npx prettier $f --write
+yarn prettier $f --write
