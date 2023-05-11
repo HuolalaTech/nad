@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "strict": true,
     "moduleResolution": "Node",
-    "target": "es5",
     "module": "ESNext",
-    "outDir": "./dist",
-    "lib": ["dom", "es6"],
+    "target": "ES5",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

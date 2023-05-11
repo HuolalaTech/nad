@@ -5,6 +5,7 @@ export * from './NadInvoker';
 export * from './errors';
 
 // Find the globalThis object across browsers and miniprogram platforms.
+declare const global: unknown;
 const globalThis =
   typeof window === 'object' ? window : typeof global === 'object' ? global : /* istanbul ignore next */ null;
 if (globalThis) {
