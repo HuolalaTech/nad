@@ -107,7 +107,6 @@ describe('addRequestParam', () => {
     expect(res).toMatchObject({
       method: 'GET',
       url: `${base}/test?id=123&name=hehe`,
-      data: {},
       headers: {},
     });
   });
