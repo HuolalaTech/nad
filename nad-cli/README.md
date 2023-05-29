@@ -1,7 +1,7 @@
 # nad-cli · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-cli)](LICENSE.txt)
 
 A CLI tool, can generate client code from an API service
-that has installed and enabled the [nad-java-sdk](https://github.com/HuolalaTech/nad-java-sdk).
+that has installed and enabled the [nad-java-sdk](../nad-java-sdk).
 
 ## Include
 

@@ -30,7 +30,7 @@ const MainPart = () => {
           <Button type='primary' href='/introduction#sec-2'>
             {i18n.HOME_PRIMARY_BTN_TEXT}
           </Button>
-          <Button href='https://github.com/HuolalaTech/nad-java-sdk' target='_blank'>
+          <Button href='https://github.com/HuolalaTech/nad' target='_blank'>
             <GitHubIcon />
             {i18n.HOME_GIT_BTN_TEXT}
           </Button>

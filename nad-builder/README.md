@@ -39,7 +39,3 @@ const { code } = new Builder({ defs, target, base });
 
 console.log(code); // Output the generated TypeScript code
 ```
-
-## About the **defs** type
-
-See https://github.com/HuolalaTech/nad-java-sdk
