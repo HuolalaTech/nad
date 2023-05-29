@@ -53,7 +53,6 @@
     "url": "https://gitlab.huolala.cn/group-van/nad-ui"
   },
   "devDependencies": {
-    "husky": "^8.0.3",
     "prettier": "^2.8.8"
   }
 }

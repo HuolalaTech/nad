@@ -19,7 +19,6 @@
     "lint": "eslint src --fix",
     "build": "rollup -c",
     "start": "rollup -c --watch",
-    "prepare": "husky install",
     "prettier": "prettier --write \"src/**/*.{js,ts,md,json}\""
   },
   "author": "YanagiEiichi <576398868@qq.com>",
@@ -41,7 +40,6 @@
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.39.0",
-    "husky": "^8.0.3",
     "jest": "^29.5.0",
     "prettier": "^2.8.8",
     "rollup": "^3.21.0",

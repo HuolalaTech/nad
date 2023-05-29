@@ -6,6 +6,5 @@ coverage
 !.gitignore
 !.eslintrc.js
 !.npmrc
-!.husky
 !.prettierignore
 !.prettierrc
