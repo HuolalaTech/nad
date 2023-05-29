@@ -1,0 +1,83 @@
+.Introduction {
+  padding-top: var(--header-height);
+
+  overflow: hidden;
+  aside {
+    font-size: 0.9em;
+    position: fixed;
+    padding: 0 1em;
+    ul {
+      list-style: none;
+      padding: 0;
+      line-height: 2;
+    }
+    li {
+      transition: all 0.3s ease;
+      padding: 0 1ch;
+      cursor: pointer;
+      &:hover {
+        background-color: hsla(var(--primary-hsl), 0.1);
+        border-radius: 7px;
+      }
+      &.active {
+        font-weight: bold;
+      }
+    }
+  }
+  > article {
+    width: 800px;
+    margin: 0 auto;
+    .nad {
+      svg {
+        display: inline-block;
+        vertical-align: -1px;
+        width: 1em;
+        fill: currentColor;
+      }
+      color: var(--primary);
+      font-weight: bold;
+    }
+    .swagger {
+      color: #50990f;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+      svg {
+        display: inline-block;
+        vertical-align: -6px;
+        width: 1.5em;
+      }
+    }
+    .weak {
+      opacity: 0.5;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      position: relative;
+      border-radius: 10px;
+    }
+  }
+  .flashing {
+    position: absolute;
+    z-index: -1;
+    color: hsla(var(--primary-hsl), 0.3);
+    background: currentColor;
+    inset: 0;
+    border-radius: 1ch;
+    box-shadow: 0 0 8px 8px currentColor;
+    animation: fadeOut ease-in 1s;
+    animation-fill-mode: forwards;
+  }
+}
+
+@keyframes fadeOut {
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

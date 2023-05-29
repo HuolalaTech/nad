@@ -1,0 +1,55 @@
+pre[data-name]::before {
+  content: attr(data-name);
+  position: absolute;
+  right: 0;
+  top: 0;
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0 1ch;
+  border-radius: 0 0.5em 0 0.5em;
+  color: #fff;
+}
+
+pre[data-language] {
+  position: relative;
+  font-size: 16px;
+  background: #313131;
+  padding: 1em;
+  display: block;
+  color: #fff;
+  border-radius: 0.5em;
+  tab-size: 4ch;
+  cursor: pointer;
+}
+
+pre[data-language='xml'] {
+  color: rgb(169, 183, 198);
+  .hljs-tag {
+    color: rgb(232, 191, 106);
+  }
+}
+
+pre[data-language='properties'] {
+  color: rgb(128, 128, 128);
+  .hljs-attr {
+    color: rgb(204, 120, 50);
+  }
+  .hljs-string {
+    color: rgb(106, 135, 89);
+  }
+}
+
+.copied {
+  position: fixed;
+  color: var(--primary);
+  font-weight: bold;
+  transform: translate(-50%, -100%);
+  animation: copied 1000ms ease-in forwards;
+}
+
+@keyframes copied {
+  100% {
+    transform: translate(-50%, -300%);
+    opacity: 0;
+  }
+}

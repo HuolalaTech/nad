@@ -1,0 +1,59 @@
+{
+  "name": "nad-ui",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/plugin-syntax-flow": "^7.21.4",
+    "@babel/plugin-transform-react-jsx": "^7.21.5",
+    "@huolala-tech/custom-error": "^1.0.0",
+    "@huolala-tech/hooks": "^1.0.0",
+    "@huolala-tech/nad-builder": ">=0.0.13",
+    "@huolala-tech/request": "^1.1.1",
+    "@types/marked": "^4.3.0",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "ahooks": "^3.7.7",
+    "classnames": "^2.3.2",
+    "highlight.js": "^11.8.0",
+    "marked": "^5.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "^6.11.1",
+    "react-router-dom": "^6.11.1",
+    "react-scripts": "5.0.1",
+    "sass": "^1.62.1",
+    "typescript": "^5.0.4"
+  },
+  "scripts": {
+    "start": "GENERATE_SOURCEMAP=false react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "echo noop",
+    "format": "prettier --write \"**/*.{js,ts,json}\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.huolala.cn/group-van/nad-ui"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "prettier": "^2.8.8"
+  }
+}

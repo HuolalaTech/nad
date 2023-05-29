@@ -1,0 +1,11 @@
+{
+  "files": {
+    "main.css": "/nad/static/css/main.1badb5d2.css",
+    "main.js": "/nad/static/js/main.1b949a3f.js",
+    "index.html": "/nad/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.1badb5d2.css",
+    "static/js/main.1b949a3f.js"
+  ]
+}

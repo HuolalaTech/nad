@@ -1,0 +1,20 @@
+.ThemesSwitch {
+  font-size: 24px;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  fill: currentColor;
+  user-select: none;
+  svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    &:first-child {
+      transition: margin-top 300ms ease;
+      .dark & {
+        margin-top: -1em;
+      }
+    }
+  }
+}

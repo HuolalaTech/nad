@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+.*
+*.tgz
+*.log
+!.github
+!.gitignore
+!.eslintrc.js
+!.vscode
+!.prettierignore
+!.prettierrc
+!.husky
+!.npmrc

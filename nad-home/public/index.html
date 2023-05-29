@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="<%= webpackConfig.output.publicPath %>logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nad</title>
+    <script>
+      switch (localStorage.getItem('prefers-color-scheme')) {
+        case null:
+          if (!window.matchMedia || !window.matchMedia('(prefers-color-scheme: dark)').matches) break;
+        case 'dark':
+          document.documentElement.classList.add('dark');
+      }
+      document.documentElement.lang = localStorage.getItem('language') || navigator.language;
+    </script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+  </body>
+</html>
