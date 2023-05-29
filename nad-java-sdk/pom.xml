@@ -119,8 +119,9 @@
         </developer>
     </developers>
 
+    <url>https://github.com/HuolalaTech/nad</url>
     <scm>
-        <url>https://github.com/HuolalaTech/nad-java-sdk.git</url>
+        <url>https://github.com/HuolalaTech/nad.git</url>
     </scm>
 
     <distributionManagement>
