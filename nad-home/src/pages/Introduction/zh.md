@@ -43,12 +43,12 @@ npm install @huolala-tect/nad --save
 比如后端服务在本地启动，启动后的接口 URL 是 `http://localhost:8080`，希望生成的文件写入到 `src/api.ts`，则执行以下命令
 
 ```shell
-npx nad http://localhost:8080 > src/api.ts
+npx nad http://localhost:8080 -o src/api.ts
 ```
 
 ### STEP 3. 在业务代码中使用
 
-可以用 IDE 打开 src/api.ts查看里面的接口定义，在业务代码中 import 对应的模块使用即可。如果后端代码中有足够详尽的注解，理论上生成的代码是保护所有细节的。
+可以用 IDE 打开 `src/api.ts` 查看里面的接口定义，在业务代码中 import 对应的模块使用即可。如果后端代码中有足够详尽的注解，理论上生成的代码是保护所有细节的。
 
 # 2. 扩展阅读
 

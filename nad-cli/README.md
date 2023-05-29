@@ -31,5 +31,3 @@ Options:
   -c, --config <path>       Path to configuration file. If specified, all other arguments will be ignored.
   -h, --help                Display this help message.
 ```
-
-##

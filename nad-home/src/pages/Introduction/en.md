@@ -46,7 +46,7 @@ For example, if the backend service is started locally and the interface URL is 
 and you want to the generated file to be written to `src/api.ts`, then execute the following command
 
 ```shell
-npx nad http://localhost:8080 > src/api.ts
+npx nad http://localhost:8080 -o src/api.ts
 ```
 
 ### STEP 3. Using in your code
