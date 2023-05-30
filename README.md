@@ -1,4 +1,4 @@
-# [Nad](https://nad.huolala.cn/) · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](LICENSE.txt)
+# [Nad](https://nad.huolala.cn/) · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL)](https://codecov.io/gh/HuolalaTech/nad)
 
 ## What is Nad?
 
