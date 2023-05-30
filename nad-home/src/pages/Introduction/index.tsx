@@ -19,11 +19,11 @@ export const Introduction = () => {
 
   const { data } = useRequest(
     async () => {
-      // await new Promise((f) => setTimeout(f, 10000));
-      const { data, statusCode } = await request<string>({
+      const { data, statusCode } = await request({
         method: 'GET',
         url: lang === 'zh' ? zh : en,
-        responseType: 'text'
+        responseType: 'text',
+        withCredentials: false
       });
       if (statusCode !== 200) throw new Error('error');
       return new MdParser(data);
