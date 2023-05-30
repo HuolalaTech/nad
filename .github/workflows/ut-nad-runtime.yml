@@ -1,4 +1,4 @@
-name: Unit Test (nad-runtme)
+name: Unit Test (nad-runtime)
 
 on:
   push:
@@ -21,4 +21,4 @@ jobs:
       - run: yarn test
       - uses: codecov/codecov-action@v3
         with:
-          flags: nad-runtme
+          flags: nad-runtime
