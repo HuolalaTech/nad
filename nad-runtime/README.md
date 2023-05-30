@@ -1,4 +1,4 @@
-# nad-runtime · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-runtime)](LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad-runtime/branch/main/graph/badge.svg?token=KMGFP4FTJH)](https://codecov.io/gh/HuolalaTech/nad-runtime)
+# nad-runtime · [![LICENSE](https://img.shields.io/npm/l/@huolala-tech/nad-runtime)](LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-runtime)](https://app.codecov.io/gh/HuolalaTech/nad/tree/main/nad-runtime)
 
 The runtime lib of the Nad project.
 
@@ -23,10 +23,7 @@ import { NadInvoker } from '@huolala-tech/nad-runtime';
 
 // This code will request http://localhost/users/123 with GET mtehod.
 const getUserInfo = async () => {
-  return await new NadInvoker('http://localhost')
-    .open('GET', '/users/{id}')
-    .addPathVariable('id', 123)
-    .execute();
+  return await new NadInvoker('http://localhost').open('GET', '/users/{id}').addPathVariable('id', 123).execute();
 };
 ```
 
@@ -37,10 +34,7 @@ import { NadInvoker } from '@huolala-tech/nad-runtime';
 
 // This code will request http://localhost/getUser?id=123 with GET mtehod.
 const getUserInfo = async () => {
-  return await new NadInvoker('http://localhost')
-    .open('GET', '/getUser')
-    .addRequestParam('id', id)
-    .execute();
+  return await new NadInvoker('http://localhost').open('GET', '/getUser').addRequestParam('id', id).execute();
 };
 ```
 
@@ -65,9 +59,6 @@ import { NadInvoker } from '@huolala-tech/nad-runtime';
 
 // This code will request http://localhost/userService with POST mtehod and send payload {"id":123}.
 const getUserInfo = async () => {
-  return await new NadInvoker('http://localhost')
-    .open('POST', '/userService')
-    .addRequestBody({ id: 123 })
-    .execute();
+  return await new NadInvoker('http://localhost').open('POST', '/userService').addRequestBody({ id: 123 }).execute();
 };
 ```
