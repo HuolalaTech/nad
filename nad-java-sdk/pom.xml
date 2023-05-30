@@ -13,7 +13,7 @@
         <dependency>
             <groupId>cn.lalaframework</groupId>
             <artifactId>nad-core</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-RELEASE</version>
         </dependency>
 
         <dependency>
