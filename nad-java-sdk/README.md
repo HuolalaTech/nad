@@ -1,4 +1,5 @@
-# nad-sdk · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../LICENSE.txt)
+# nad-sdk · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-sdk)](https://app.codecov.io/gh/HuolalaTech/nad/tree/main/nad-java-sdk)
+
 
 Nad (an acronym for **N**ot **a** **D**ocument) is a Java component that produces typed Java definitions, which can be used to create code for another platform.
 
