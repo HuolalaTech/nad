@@ -1,9 +1,10 @@
-# nad-ui
+# nad-home
 
-User interface of Nad project.
+Introduction website of Nad project
 
 ## Develop
 
 ```bash
+yarn
 yarn start
 ```

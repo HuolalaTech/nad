@@ -1,4 +1,4 @@
-# [Nad](https://nad.huolala.cn/)
+# [Nad](https://nad.huolala.cn/) · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](LICENSE.txt)
 
 ## What is Nad?
 
@@ -19,9 +19,9 @@ Before using it, make sure the backend API is based on the standard Spring Web a
 
 ```xml
 <dependency>
-	<groupId>cn.lalaframework</groupId>
-	<artifactId>nad-sdk</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+    <groupId>cn.lalaframework</groupId>
+    <artifactId>nad-sdk</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -56,3 +56,17 @@ npx nad http://localhost:8080 -o src/api.ts
 You can use the IDE to open `src/api.ts` to see the interface definition,
 and then import the corresponding module in the business code to use it.
 If the backend code has enough detailed annotaitons, the generated code is theoretically protected from all details.
+
+## Develop
+
+### Module Structure
+
+| Module        | Type  | Description               |
+| ------------- | ----- | ------------------------- |
+| nad-builder   | TS    | The core of code builder  |
+| nad-cli       | TS    | Command-Line tools        |
+| nad-runtime   | TS    | Frontend network library  |
+| nad-java-core | Java  | The core of the SDK       |
+| nad-java-skd  | Java  | Java SDK                  |
+| nad-ui        | React | UI for rendering api list |
+| nad-home      | React | Intruduction website      |
