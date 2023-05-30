@@ -16,7 +16,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
-    padding-left: 16px;
+    padding: 0 16px;
     .logo {
       fill: #ff6347;
       width: 24px;
@@ -26,6 +26,12 @@ body {
       font-size: 20px;
       margin-left: 1ch;
       color: #ff6347;
+    }
+    .github {
+      font-size: 28px;
+      width: 1em;
+      height: 1em;
+      fill: #333;
     }
   }
 }

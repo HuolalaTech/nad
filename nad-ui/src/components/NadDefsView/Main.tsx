@@ -14,12 +14,12 @@ const langs = [
   { value: 'oc', label: 'Objective-C', exn: 'm' }
 ];
 
-const Header = ({ code }: { code: string }) => {
+const ButtonSet = ({ code }: { code: string }) => {
   const lang = useLang();
   const [usp] = useSearchParams();
   const navigate = useNavigate();
   return (
-    <div className='header'>
+    <div className='button-set'>
       <Select
         onSelect={(key) => {
           const u = new URLSearchParams(usp);
@@ -120,7 +120,7 @@ export const Main = () => {
 
   return (
     <main ref={ref}>
-      <Header code={code} />
+      <ButtonSet code={code} />
       <pre>
         <code dangerouslySetInnerHTML={{ __html: html }}></code>
       </pre>
