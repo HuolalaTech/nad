@@ -1,4 +1,4 @@
-# nad-core
+# nad-core · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../LICENSE.txt)
 
 This library is for collecting all Spring Web routes as a serializable data structure.
 
