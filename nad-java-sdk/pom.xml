@@ -7,7 +7,7 @@
 
     <groupId>cn.lalaframework</groupId>
     <artifactId>nad-sdk</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-RELEASE</version>
 
     <dependencies>
         <dependency>
@@ -89,6 +89,19 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
                 <executions>
@@ -136,6 +149,9 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <name>nad-sdk</name>
+    <description>A Java SDK that produces typed Java definitions, which can be used to create code for another platform.</description>
 
     <developers>
         <developer>
