@@ -36,7 +36,7 @@ nad.enable=true
 #### STEP 1. Install dependencies
 
 ```shell
-npm install @huolala-tect/nad --save
+npm install @huolala-tech/nad-cli --save
 ```
 
 #### STEP 2. Generate the code
