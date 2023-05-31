@@ -33,7 +33,7 @@ nad.enable=true
 ### STEP 1. 安装依赖
 
 ```shell
-npm install @huolala-tect/nad --save
+npm install @huolala-tech/nad-cli --save
 ```
 
 ### STEP 2. 执行命令生成代码
