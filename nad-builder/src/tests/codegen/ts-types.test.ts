@@ -43,7 +43,7 @@ test('java.util.Map<java.lang.Long, java.lang.Long>', () => {
 
 test('Paginition', () => {
   const code = new Builder({ target: 'ts', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
-  expect(code).toContain('new NadInvoker<MetaPaginition<Long[]>>');
+  expect(code).toContain('new Runtime<MetaPaginition<Long[]>>');
   expect(code).toContain(mg`
     export interface Paginition<T> {
       data?: T;
@@ -65,7 +65,7 @@ test('Type alias', () => {
     { name: 'test.B', superclass: 'test.A' },
   ];
   const code = new Builder({ target: 'ts', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
-  expect(code).toContain('new NadInvoker<B>');
+  expect(code).toContain('new Runtime<B>');
   expect(code).toContain(`export type B = A;`);
   expect(code).toContain(mg`
     export interface A {

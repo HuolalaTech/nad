@@ -25,7 +25,7 @@ test('Tree', () => {
     defs: { routes: [getTree], classes: [Node] },
   }).code.replace(/\s+/g, ' ');
 
-  expect(code).toContain(`new NadInvoker<Node>`);
+  expect(code).toContain(`new Runtime<Node>`);
   expect(code).toContain(mg`
     export interface Node {
       parent?: Node;

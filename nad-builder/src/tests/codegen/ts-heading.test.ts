@@ -16,7 +16,7 @@ test('basic', () => {
   expect(code).toContain(mg`
     import { NadInvoker } from '@huolala-tech/nad-runtime';
     import type { Settings } from '@huolala-tech/nad-runtime';
-    const BASE = '';
+    export class Runtime<T = unknown> extends NadInvoker<T> { public static base = ''; }
   `);
 });
 
@@ -28,7 +28,7 @@ test('noHead', () => {
 test('custom base', () => {
   const code = new CodeGenForTs(root, { base: 'http//localhost' }).toString().replace(/\s+/g, ' ');
   expect(code).toContain(mg`
-    const BASE = 'http//localhost';
+    export class Runtime<T = unknown> extends NadInvoker<T> { public static base = 'http//localhost'; }
   `);
 });
 
