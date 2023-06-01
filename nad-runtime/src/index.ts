@@ -8,6 +8,7 @@ export * from './errors';
 declare const global: unknown;
 const globalThis =
   typeof window === 'object' ? window : typeof global === 'object' ? global : /* istanbul ignore next */ null;
+
 if (globalThis) {
   // This key is the MD5 hash of the package name.
   const key = 'e7de5b84066fc28a0206fbac19447bc2';

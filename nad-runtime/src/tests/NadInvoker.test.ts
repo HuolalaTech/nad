@@ -299,3 +299,36 @@ describe('addMultipartFile', () => {
     });
   });
 });
+
+describe('static config', () => {
+  class A<T> extends NadInvoker<T> {}
+  A.base = 'MyBase';
+  A.timeout = 5000;
+  A.headers = { a: '1' };
+
+  test('pure static config', async () => {
+    const res = await new A().open('GET', '/test').execute();
+    expect(res).toMatchObject({
+      method: 'GET',
+      url: `${A.base}/test`,
+      timeout: A.timeout,
+      headers: A.headers,
+    });
+  });
+
+  test('over write by settings', async () => {
+    const res = await new A()
+      .open('GET', '/test', {
+        timeout: 8000,
+        base: 'Settings',
+        headers: { b: '2' },
+      })
+      .execute();
+    expect(res).toMatchObject({
+      method: 'GET',
+      url: `Settings/test`,
+      timeout: 8000,
+      headers: { ...A.headers, b: '2' },
+    });
+  });
+});
