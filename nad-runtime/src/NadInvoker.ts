@@ -1,10 +1,17 @@
-import { InvokeParams, InvokeResult, WWW_FORM_URLENCODED, request } from '@huolala-tech/request';
+import { InvokeParams, InvokeResult, WWW_FORM_URLENCODED, buildQs, request } from '@huolala-tech/request';
 import { HttpError } from './errors/HttpError';
 import { ObjectNestingTooDeepError } from './errors';
 import { joinPath } from './utils/joinPath';
 import { insensitiveGet } from './utils/insensitiveGet';
 import { isSupportingPayload, isForm, isNonNullObject } from './utils/predicates';
 import { NadRuntime, Settings, MultipartFile } from './NadRuntime';
+
+/**
+ * Find all {...} expression in the path, and replace them with values from pathVariables.
+ */
+const buildPath = (rawPath: string, pathVariables: Record<string, unknown>) => {
+  return rawPath.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(pathVariables[key])));
+};
 
 /**
  * An official implementation of NadRuntime.
@@ -43,8 +50,17 @@ export class NadInvoker<T> implements NadRuntime<T> {
 
   /**
    * Create a new instance of NadInvoker with a base URI for the API.
+   *
    * @param base The base URI for the API.
+   * @deprecated
    */
+  constructor(base: string);
+
+  /**
+   * Create a new instance of NadInvoker with a base URI for the API.
+   */
+  constructor();
+
   constructor(base?: string) {
     this.base = base;
     this.rawPath = '/';
@@ -58,6 +74,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
 
   /**
    * Configure certain necessary parameters.
+   *
    * @param method The HTTP method.
    * @param rawPath The raw path, that could contain variable templates such as "/api/users/{id}".
    * @param settings Other settings.
@@ -72,7 +89,9 @@ export class NadInvoker<T> implements NadRuntime<T> {
 
   /**
    * Set a request body, that maps to a Java method parameter which annotated with "@RequestBody".
+   *
    * NOTE: Use the last value, if this method is called multiple times.
+   *
    * @param body A serializable object.
    * @overload
    */
@@ -84,8 +103,11 @@ export class NadInvoker<T> implements NadRuntime<T> {
   /**
    * Replace the variable template in the raw path with the real value.
    * In Java code, a parameter which annotated with "@PathVariable" will receive this value.
+   *
    * NOTE: The value will be encoded as URL encoding.
+   *
    * NOTE: Use the last value, if this method is called mutiple times with same key.
+   *
    * @param key The variable template name in raw path.
    * @param value The real value. Normally, the value should be a string because the HTTP path is also a string.
    *              However, you can present any type here, it will be converted to a string with the JavaScript implicit
@@ -100,9 +122,12 @@ export class NadInvoker<T> implements NadRuntime<T> {
   /**
    * In Java code, some parameters may be annotated with "@RequestParam".
    * This method set some key-value pairs, that finally map with Java parameters.
+   *
    * NOTE: These data will be sent with either HTTP query string or payload.
    *       The specific rules are complex and will not be expended here.
+   *
    * NOTE: Use the last value, if this method is called mutiple times with same key.
+   *
    * @param key The variable name.
    * @param value The value.
    * @overload
@@ -119,8 +144,10 @@ export class NadInvoker<T> implements NadRuntime<T> {
   /**
    * In Java code, some parameters may be annotated with "@ModelAttribute".
    * This method set an object, that will map with Java parameters.
+   *
    * NOTE: These data will be sent with either HTTP query string or payload.
    *       The specific rules are complex and will not be expended here.
+   *
    * @param param A non-null object.
    * @overload
    */
@@ -150,10 +177,14 @@ export class NadInvoker<T> implements NadRuntime<T> {
   /**
    * In Java code, certain parameters may be of the MultipartFile type, which expect to receive a file.
    * This method is used to associate a file object with the key.
+   *
    * NOTE: If this method was called, the request Content-Type will be set to "multipart/form-data".
+   *
    * NOTE: Use the last value, if this method is called mutiple times with same key.
+   *
    * @param key The field name.
    * @param file A file with a type of either Blob (File extends Blob), or string.
+   *
    *             NOTE: In MiniProgram, it is should be a string representing the temporary path.
    * @overload
    */
@@ -168,7 +199,9 @@ export class NadInvoker<T> implements NadRuntime<T> {
 
   /**
    * Add a custom request header (HTTP header).
+   *
    * NOTE: Use the last value, if this method is called mutiple times with same name.
+   *
    * @param name The header name.
    * @param value The value.
    * @overload
@@ -182,41 +215,18 @@ export class NadInvoker<T> implements NadRuntime<T> {
    * Actually execute this request.
    */
   public execute() {
-    const { method, settings, body, files, extensions, constructor } = this;
-    const { timeout } = settings || {};
-    const headers = { ...this.headers, ...settings?.headers };
-
+    const { constructor } = this;
+    const runtime = constructor as typeof NadInvoker;
     // Get the static methods from the current constructor that may be overridden by the derived class.
-    const { postHandler, request } = constructor as typeof NadInvoker;
-
-    const contentType = insensitiveGet(headers, 'Content-Type');
-
-    /**
-     * PRINCIPLE: Make the HTTP header as light as possible.
-     * Spring Web supports reading certain parameters from either QueryString or Form.
-     * Note: The Form includes only MULTIPART_FORM_DATA and WWW_FORM_URLENCODED.
-     * Whenever possible, we should send our parameters with FormData.
-     * The following are the POSSIBLE conditions:
-     * 1. The HTTP method used must support sending payloads (POST, and PUT, and PATCH methods).
-     * 2. No custom body can be provided as it may conflict with other parameters.
-     * 3. The request's Content-Type must be empty or Form. If it's empty, it can be changed to FormData.
-     */
-    if (isSupportingPayload(method) && !body && isForm(contentType)) {
-      const url = this.buildBasePath();
-      const data = this.requestParams;
-      const hasFile = Object.keys(files).length;
-      // If the `files` is not empty, keep the Content-Type header empty, as it will be set by the request library.
-      if (!contentType && !hasFile) headers['Content-Type'] = WWW_FORM_URLENCODED;
-      return request<T>({ method, url, timeout, headers, data, files, ...extensions }).then(postHandler);
-    } else {
-      const url = this.buildUrl();
-      return request<T>({ method, url, timeout, headers, data: Object(body), files, ...extensions }).then(postHandler);
-    }
+    const { postHandler, request } = runtime;
+    return request<T>(this.buildInvokeParams()).then(postHandler);
   }
 
   /**
    * The method allows the upper layer application to pass some additional fields to the underlying network library.
+   *
    * NOTE: Use the last value, if this method is called mutiple times with same name.
+   *
    * @param name The additional field name.
    * @param value The field value.
    */
@@ -225,51 +235,52 @@ export class NadInvoker<T> implements NadRuntime<T> {
     return this;
   }
 
-  /**
-   * Build a query string based on the `requestParams`.
-   * NOTE: This is a stateless method that simply builds a string without concerning how it will be sent.
-   * NOTE: If a value is an array, each value will be joined with same key.
-   *       For instance, the object { a: [ 1, 2 ] } will results in "a=1&a=2".
-   */
-  protected buildQs() {
-    const { requestParams } = this;
-    return Object.keys(requestParams)
-      .map((name) =>
-        []
-          // The requestParams[name] may or may not be an array, [].concat ensures it is always an array.
-          // For array value, the query string builder should separate it and append each item one by one.
-          // For example, if the requestParams is { a: [ 1, 2 ] }, the qs should be "a=1&a=2".
-          .concat(requestParams[name] as unknown as never)
-          .map((v) => `${encodeURIComponent(name)}=${encodeURIComponent(v)}`)
-          .join('&'),
-      )
-      .join('&');
-  }
+  private buildInvokeParams = () => {
+    const { method, settings, requestParams, body, files, extensions, constructor, rawPath, pathVariables } = this;
+    const runtime = constructor as typeof NadInvoker;
 
-  /**
-   * Build a URL string (includes query string).
-   * NOTE: This is a stateless method that simply builds a string without concerning how it will be used.
-   */
-  protected buildUrl() {
-    const qs = this.buildQs();
-    let url = this.buildBasePath();
-    if (qs) url += `?${qs}`;
-    return url;
-  }
+    // Get the "timeout" value, the priority order is 1-settings, 2-runtime.
+    //
+    // Note: The runtime config is a global settings is low priority.
+    //
+    const timeout = settings?.timeout ?? runtime.timeout;
+    const base = settings?.base ?? this.base ?? runtime.base ?? '';
 
-  /**
-   * Build the base string (excluding the query string).
-   * This method joins the base and path, where the path is the result of filling the `pathVariables` into
-   * placeholders in the `rawPath`.
-   * NOTE: The base value is attempted to be read from the settings, and from the instance as a fallback option.
-   */
-  private buildBasePath() {
-    const { rawPath, settings } = this;
-    // Find all {...} expression in the path, and replace them with values from pathVariables.
-    const path = rawPath.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(this.pathVariables[key])));
-    const base = settings?.base ?? this.base ?? '';
-    return joinPath(base, path);
-  }
+    // Get the "headers" value.
+    //
+    // NOTE: All headers will be merged, the priority order is 1-settings, 2-this, 3-runtime.
+    //
+    const headers = { ...runtime.headers, ...this.headers, ...settings?.headers };
+
+    const contentType = insensitiveGet(headers, 'Content-Type');
+
+    const uri = joinPath(base, buildPath(rawPath, pathVariables));
+
+    /**
+     * PRINCIPLE: Make the HTTP header as light as possible.
+     *
+     * Spring Web supports reading certain parameters from either QueryString or Form.
+     *
+     * Note: The Form includes only MULTIPART_FORM_DATA and WWW_FORM_URLENCODED.
+     *
+     * Whenever possible, we should send our parameters with FormData.
+     * The following are the POSSIBLE conditions:
+     *
+     * 1. The HTTP method used must support sending payloads (POST, and PUT, and PATCH methods).
+     * 2. No custom body can be provided as it may conflict with other parameters.
+     * 3. The request's Content-Type must be empty or Form. If it's empty, it can be changed to FormData.
+     */
+    if (isSupportingPayload(method) && !body && isForm(contentType)) {
+      const data = requestParams;
+      const hasFile = Object.keys(files).length;
+      // If the `files` is not empty, keep the Content-Type header empty, as it will be set by the request library.
+      if (!contentType && !hasFile) headers['Content-Type'] = WWW_FORM_URLENCODED;
+      return { method, url: uri, timeout, headers, data, files, ...extensions };
+    } else {
+      const qs = buildQs(requestParams).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
+      return { method, url: uri + qs, timeout, headers, data: Object(body), files, ...extensions };
+    }
+  };
 
   /**
    * To call the network library.
@@ -288,4 +299,20 @@ export class NadInvoker<T> implements NadRuntime<T> {
     if (statusCode >= 200 && statusCode < 300) return data;
     throw new HttpError(res);
   }
+
+  /**
+   * Specify a timeout in milliseconds.
+   */
+  public static base?: Settings['base'];
+
+  /**
+   * Specify the reqeust headers.
+   * @example { Accept: 'application/json' }
+   */
+  public static headers?: Settings['headers'];
+
+  /**
+   * Specify the reqeust base URL.
+   */
+  public static timeout?: Settings['timeout'];
 }

@@ -30,11 +30,15 @@ export class CodeGenForTs extends CodeGen {
       this.write('');
     }
     const runtimePkgName = options.runtimePkgName || '@huolala-tech/nad-runtime';
+    const { base } = this.options;
     this.write(`import { NadInvoker } from '${runtimePkgName}';`);
     this.write(`import type { Settings } from '${runtimePkgName}';`);
     this.write('');
-    const { base } = this.options;
-    this.write(`const BASE = ${ss(base)};`);
+    this.write(`export class Runtime<T = unknown> extends NadInvoker<T> {`);
+    this.writeBlock(() => {
+      this.write(`public static base = ${ss(base)};`);
+    });
+    this.write(`}`);
     this.write('');
     this.writeModules();
     this.writeClasses();
@@ -85,7 +89,7 @@ export class CodeGenForTs extends CodeGen {
     });
     this.write(`async ${a.uniqName}(${pars.join(', ')}) {`);
     this.writeBlock(() => {
-      this.write(`return new NadInvoker<${t2s(a.returnType)}>(BASE)`);
+      this.write(`return new Runtime<${t2s(a.returnType)}>()`);
       this.writeBlock(() => {
         this.write(`.open(${ss(a.method)}, ${ss(a.pattern)}, settings)`);
         if (a.requestContentType) {

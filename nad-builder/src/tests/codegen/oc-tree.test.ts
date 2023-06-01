@@ -25,7 +25,6 @@ test('Tree', () => {
     defs: { routes: [getTree], classes: [Node] },
   }).code.replace(/\s+/g, ' ');
 
-  // expect(code).toContain(`new NadInvoker<Node>`);
   expect(code).toContain(mg`
     @interface Node : NSObject
     @property (nonatomic, assign) Node *parent;
