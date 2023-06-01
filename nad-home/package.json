@@ -9,14 +9,14 @@
     "@huolala-tech/custom-error": "^1.0.0",
     "@huolala-tech/hooks": "^1.0.0",
     "@huolala-tech/nad-builder": ">=0.0.13",
-    "@huolala-tech/request": "^1.1.1",
+    "@huolala-tech/request": "^1.1.2",
     "@types/marked": "^5.0.0",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "ahooks": "^3.7.7",
     "classnames": "^2.3.2",
     "highlight.js": "^11.8.0",
-    "marked": "^5.0.3",
+    "marked": "^5.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.11.2",
@@ -31,7 +31,7 @@
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "echo noop",
+    "test": "GENERATE_SOURCEMAP=false react-scripts build",
     "format": "prettier --write \"**/*.{js,ts,json}\""
   },
   "eslintConfig": {
