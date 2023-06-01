@@ -379,22 +379,22 @@
   resolved "https://registry.yarnpkg.com/@huolala-tech/custom-error/-/custom-error-1.0.0.tgz#962726e0427753e4ebe637d79e69393dca70ed50"
   integrity sha512-VdDs0EWLK/kXUCcYX7kD0ol0tMnjGrTlELl/GG+rrYJVr1wzad7+J4/t71zkvPWp54YAqhCnkq0+Tl6TqJkGgg==
 
-"@huolala-tech/nad-builder@>=0.0.13 <1.0.0":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@huolala-tech/nad-builder/-/nad-builder-0.0.13.tgz#ec6eb87e641e05634c4af145b3c11f3f76a6bec7"
-  integrity sha512-Q5KDR4UMGe7c7ygCq2if1FlgRYhoN/MO6s3ow4XkaSiadttRJl+pZmpjYHO8+F+Sn5OoRbkZNpHYBdDZ2tXfGQ==
+"@huolala-tech/nad-builder@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@huolala-tech/nad-builder/-/nad-builder-1.0.0.tgz#06842769cfcf22ecfdcc3fd92daca65d59f2222a"
+  integrity sha512-6non8YOivff6BrisvYjiC7mKXWB7IKUkvIxzLpYDkrsixlD1aj3hHWJhFjxt6DFvwCEezbOZWgKVdMO1/5/5cg==
   dependencies:
     "@huolala-tech/custom-error" "^1.0.0"
 
 "@huolala-tech/nad-runtime@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@huolala-tech/nad-runtime/-/nad-runtime-1.0.3.tgz#224647663d19296f684de26197e4b3d123487d97"
-  integrity sha512-egLw84rBLxeSEiDLI6jiavE4Mh2qH6DmeS1CrYa14kjOpNzZFG8MRERwCT76mbY9sQx4Js2N8mLpSDuC4t9kqw==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@huolala-tech/nad-runtime/-/nad-runtime-1.0.4.tgz#463b847d9d864e332a78d50b2de644281e001f60"
+  integrity sha512-fPdY1siTWmC0oxFnyp25QG3QWi6hE2qcXVYoNx8qQzlJhyPTWgOPL67nxARQblb5vSA6bk0xAXnw4USYy0FnIA==
   dependencies:
     "@huolala-tech/custom-error" "^1.0.0"
-    "@huolala-tech/request" "^1.0.8"
+    "@huolala-tech/request" "^1.1.2"
 
-"@huolala-tech/request@^1.0.8":
+"@huolala-tech/request@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@huolala-tech/request/-/request-1.1.2.tgz#28bd1ad3816e7cfc2b622a7a3883f4b276a0ee54"
   integrity sha512-6mIVX36oaIKXZW4e9ui200hldbAjw24Qj+kYeoMfs57zzPLWRK3J77yJsQr+4v4s8D1qjuExOsAg07e1jngnkg==
