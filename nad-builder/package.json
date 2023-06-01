@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-builder",
-  "version": "0.0.13",
+  "version": "1.0.0",
   "description": "Convert the Java AST to client-side code",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
