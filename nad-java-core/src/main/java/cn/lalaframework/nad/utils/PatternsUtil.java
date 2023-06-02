@@ -12,7 +12,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class PatternsUtil {
+public class PatternsUtil {
+    private PatternsUtil() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * For spring-boot < 2.6.0
      *

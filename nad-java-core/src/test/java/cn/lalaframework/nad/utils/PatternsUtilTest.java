@@ -2,6 +2,7 @@ package cn.lalaframework.nad.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,9 +27,7 @@ class PatternsUtilTest {
     void v2() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         class B {
             Set<String> getPatterns() {
-                TreeSet<String> set = new TreeSet<>();
-                set.add("hehe");
-                return set;
+                return new TreeSet<>();
             }
         }
         class A {
@@ -38,5 +37,13 @@ class PatternsUtilTest {
         }
         Object res = getPatternsV2(new A());
         Assertions.assertNotNull(res);
+    }
+
+    @Test
+    void construct() {
+        Assertions.assertThrows(
+                IllegalStateException.class,
+                () -> ReflectionUtils.newInstance(PatternsUtil.class)
+        );
     }
 }

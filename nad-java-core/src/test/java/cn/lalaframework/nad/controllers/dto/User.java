@@ -21,4 +21,8 @@ public class User implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String nickName;
+
+    public transient long INS_TEMP_ID = 23333L;
 }

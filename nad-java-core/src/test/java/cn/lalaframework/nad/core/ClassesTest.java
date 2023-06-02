@@ -38,7 +38,7 @@ class ClassesTest {
         NadClass userClass = getNadClass();
         Assertions.assertNotNull(userClass);
         List<NadMember> members = userClass.getMembers();
-        Assertions.assertEquals(2, members.size());
+        Assertions.assertEquals(3, members.size());
 
         NadMember m0 = members.get(0);
         Assertions.assertEquals("id", m0.getName());
@@ -48,6 +48,11 @@ class ClassesTest {
         NadMember m1 = members.get(1);
         Assertions.assertEquals("name", m1.getName());
         Assertions.assertEquals(String.class.getTypeName(), m1.getType());
+        Assertions.assertNotNull(m1.getAnnotations());
+
+        NadMember m2 = members.get(2);
+        Assertions.assertEquals("nickName", m2.getName());
+        Assertions.assertEquals(String.class.getTypeName(), m2.getType());
         Assertions.assertNotNull(m1.getAnnotations());
 
         Assertions.assertEquals(Object.class.getTypeName(), userClass.getSuperclass());
