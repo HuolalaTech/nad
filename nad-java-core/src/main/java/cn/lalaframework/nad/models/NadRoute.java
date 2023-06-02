@@ -1,18 +1,19 @@
 package cn.lalaframework.nad.models;
 
 import cn.lalaframework.nad.NadContext;
-import cn.lalaframework.nad.utils.Reflection;
 import org.springframework.lang.NonNull;
 import org.springframework.util.MimeType;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.util.pattern.PathPattern;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
+
+import static cn.lalaframework.nad.utils.PatternsUtil.getActivePatterns;
 
 public class NadRoute {
     @NonNull
@@ -96,27 +97,6 @@ public class NadRoute {
         );
     }
 
-    @NonNull
-    private List<String> getActivePatterns(@NonNull RequestMappingInfo info) {
-        // Compatible with future versions of the SpringFramework.
-        Object pc1 = Reflection.invokeMethod(info, "getPathPatternsCondition");
-        if (pc1 != null) {
-            Object set = Reflection.invokeMethod(pc1, "getPatterns");
-            if (set instanceof Set) {
-                return ((Set<?>) set).stream().map(i -> {
-                    if (i instanceof PathPattern) return ((PathPattern) i).getPatternString();
-                    return null;
-                }).filter(Objects::nonNull).collect(Collectors.toList());
-            }
-        }
-        PatternsRequestCondition pc2 = info.getPatternsCondition();
-        // It may be null in future version of the SpringFramework.
-        // noinspection ConstantConditions
-        if (pc2 != null) { // nosonar
-            return new ArrayList<>(pc2.getPatterns());
-        }
-        return new ArrayList<>();
-    }
 
     @NonNull
     public List<String> getMethods() {

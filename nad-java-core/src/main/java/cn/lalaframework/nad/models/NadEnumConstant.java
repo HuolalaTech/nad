@@ -4,10 +4,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class NadEnumConstant<T extends Enum<T>> {
     @NonNull
@@ -36,12 +33,10 @@ public class NadEnumConstant<T extends Enum<T>> {
     }
 
     private static List<NadAnnotation> initAnnotations(@NonNull Enum<?> value) {
-        try {
-            Field field = value.getClass().getDeclaredField(value.name());
-            return NadAnnotation.fromAnnotatedElement(field);
-        } catch (NoSuchFieldException e) {
-            return new ArrayList<>();
-        }
+        return Arrays.stream(value.getClass().getDeclaredFields())
+                .filter(field -> field.getName().equals(value.name()))
+                .map(NadAnnotation::fromAnnotatedElement)
+                .findFirst().orElseGet(ArrayList::new);
     }
 
     @NonNull

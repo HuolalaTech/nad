@@ -71,6 +71,7 @@ class RoutesTest {
         NameValuePair header = setRole.getHeaders().get(0);
         Assertions.assertEquals("id", header.getName());
         Assertions.assertEquals("5", header.getValue());
+        Assertions.assertFalse(header.isNegated());
         List<NadParameter> parameters = setRole.getParameters();
         Assertions.assertEquals(1, parameters.size());
         NadParameter role = parameters.get(0);

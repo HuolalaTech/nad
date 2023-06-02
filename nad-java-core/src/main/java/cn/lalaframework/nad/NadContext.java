@@ -129,15 +129,13 @@ public class NadContext {
 
     @NonNull
     public static <R> R run(@NonNull Supplier<R> transaction, ClassFilter classExcluder) {
-        try {
-            classesMapRef.set(new TreeMap<>());
-            enumsMapRef.set(new TreeMap<>());
-            classExcluderRef.set(classExcluder);
-            return transaction.get();
-        } finally {
-            classesMapRef.remove();
-            enumsMapRef.remove();
-            classExcluderRef.remove();
-        }
+        classesMapRef.set(new TreeMap<>());
+        enumsMapRef.set(new TreeMap<>());
+        classExcluderRef.set(classExcluder);
+        R res = transaction.get();
+        classesMapRef.remove();
+        enumsMapRef.remove();
+        classExcluderRef.remove();
+        return res;
     }
 }
