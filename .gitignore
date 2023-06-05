@@ -1,3 +1,31 @@
+##
+# For Global
+##
+
 .*
+*.tgz
+*.log
+
 !.gitignore
 !.github
+
+
+##
+# For Frontend
+##
+
+node_modules
+dist
+coverage
+!.npmrc
+!.prettierrc
+!.prettierignore
+!.eslintrc.*
+!.env.*
+
+
+##
+# For Java
+##
+
+target
