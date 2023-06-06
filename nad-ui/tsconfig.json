@@ -17,6 +17,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "config-overrides", ".eslintrc.js"],
+  "include": ["src", "config-overrides"],
   "exclude": ["node_modules"]
 }
