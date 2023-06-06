@@ -1,5 +1,4 @@
 import { HTMLAttributes } from 'react';
-import { withClassName } from '../../../../utils/withClassName';
 import { buildCodePre } from 'src/utils/buildCodePre';
 
 import './index.scss';
@@ -9,10 +8,7 @@ interface Props extends HTMLAttributes<HTMLDivElement> {
   code: string;
 }
 
-export const CodeSnip = withClassName(
-  'CodeSnip',
-  ({ name, code, ...props }: Props) => {
-    const html = buildCodePre(code, name);
-    return <div dangerouslySetInnerHTML={{ __html: html }} {...props} />;
-  }
-);
+export const CodeSnip = ({ name, code, ...props }: Props) => {
+  const html = buildCodePre(code, name);
+  return <div className='CodeSnip' dangerouslySetInnerHTML={{ __html: html }} {...props} />;
+};
