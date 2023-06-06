@@ -1,0 +1,30 @@
+{
+  "name": "@huolala-tech/nad-runtime",
+  "description": "The runtime lib of the Nad project",
+  "version": "1.0.4",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "scripts": {
+    "test": "jest src --coverage",
+    "lint": "eslint src --fix",
+    "prepublishOnly": "rollup -c",
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "format": "prettier --write \"src/**/*.{js,ts,json}\""
+  },
+  "files": [
+    "dist"
+  ],
+  "author": "YanagiEiichi <576398868@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@huolala-tech/custom-error": "^1.0.0",
+    "@huolala-tech/request": "^1.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HuolalaTech/nad.git",
+    "directory": "packages/runtime"
+  }
+}

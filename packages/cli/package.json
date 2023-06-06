@@ -1,0 +1,38 @@
+{
+  "name": "@huolala-tech/nad-cli",
+  "version": "0.0.4",
+  "description": "The CLI Tools of Nad Project",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "nad": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "yarn build",
+    "fix": "yarn lint && yarn prettier",
+    "lint": "eslint src --fix",
+    "build": "rollup -c",
+    "start": "rollup -c --watch",
+    "prettier": "prettier --write \"src/**/*.{js,ts,md,json}\""
+  },
+  "author": "YanagiEiichi <576398868@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@huolala-tech/custom-error": "^1.0.0",
+    "@huolala-tech/nad-builder": "^1.0.0",
+    "@huolala-tech/nad-runtime": "^1.0.3",
+    "axios": "^1.4.0",
+    "capacitance": "^1.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HuolalaTech/nad.git",
+    "directory": "packages/cli"
+  }
+}

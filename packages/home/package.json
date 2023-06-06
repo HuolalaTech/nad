@@ -1,0 +1,35 @@
+{
+  "name": "nad-home",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "YanagiEiichi <576398868@qq.com>",
+  "scripts": {
+    "start": "GENERATE_SOURCEMAP=false react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "GENERATE_SOURCEMAP=false react-scripts build",
+    "format": "prettier --write \"**/*.{js,ts,json}\""
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HuolalaTech/nad.git",
+    "directory": "packages/home"
+  }
+}

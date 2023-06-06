@@ -1,4 +1,5 @@
-# nad-core · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-core)](https://app.codecov.io/gh/HuolalaTech/nad/tree/main/nad-java-core)
+# nad-core · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../../LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-core)](https://app.codecov.io/gh/HuolalaTech/nad/tree/main/nad-java-core)
+
 This library is for collecting all Spring Web routes as a serializable data structure.
 
 ## GAV
