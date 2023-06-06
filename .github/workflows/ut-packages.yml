@@ -1,0 +1,38 @@
+name: Unit Test for Packages
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "yarn"
+          cache-dependency-path: ./yarn.lock
+      - run: yarn
+
+      - run: cd packages/runtime && yarn build && yarn test
+      - run: cd packages/builder && yarn build && yarn test
+      - run: cd packages/cli && yarn build && yarn test
+
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: packages/runtime
+          flags: nad-runtime
+
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: packages/builder
+          flags: nad-builder
+
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: packages/cli
+          flags: nad-cli
