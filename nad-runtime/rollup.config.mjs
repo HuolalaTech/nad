@@ -1,12 +1,14 @@
 import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import typescript from 'rollup-plugin-typescript2';
+import del from 'rollup-plugin-delete';
 import fs from 'fs';
 
 const pkg = JSON.parse(fs.readFileSync('./package.json'));
 
-const basic = {
+export default {
   input: 'src/index.ts',
   plugins: [
+    del({ targets: ['dist/*'] }),
     typescript({
       tsconfigOverride: {
         compilerOptions: {
@@ -21,9 +23,8 @@ const basic = {
     }),
   ],
   external: Object.keys(pkg.dependencies),
+  output: [
+    { file: pkg.main, format: 'cjs', exports: 'named', sourcemap: true },
+    { file: pkg.module, format: 'es', exports: 'named', sourcemap: true },
+  ],
 };
-
-export default [
-  { ...basic, output: { file: pkg.main, format: 'cjs', exports: 'named', sourcemap: true } },
-  { ...basic, output: { file: pkg.module, format: 'es', exports: 'named', sourcemap: true } },
-];
