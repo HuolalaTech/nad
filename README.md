@@ -57,16 +57,16 @@ You can use the IDE to open `src/api.ts` to see the interface definition,
 and then import the corresponding module in the business code to use it.
 If the backend code has enough detailed annotaitons, the generated code is theoretically protected from all details.
 
-## Develop
+## 2. Develop
 
-### Module Structure
+### 2.1. Module Structure
 
-| Module        | Type  | Description               |
-| ------------- | ----- | ------------------------- |
-| nad-builder   | TS    | The core of code builder  |
-| nad-cli       | TS    | Command-Line tools        |
-| nad-runtime   | TS    | Frontend network library  |
-| nad-java-core | Java  | The core of the SDK       |
-| nad-java-skd  | Java  | Java SDK                  |
-| nad-ui        | React | UI for rendering api list |
-| nad-home      | React | Intruduction website      |
+| Module           | Type  | Description               |
+| ---------------- | ----- | ------------------------- |
+| packages/builder | TS    | The core of code builder  |
+| packages/cli     | TS    | Command-Line tools        |
+| packages/runtime | TS    | Frontend network library  |
+| packages/ui      | React | UI for rendering api list |
+| packages/home    | React | Intruduction website      |
+| nad-java-core    | Java  | The core of the SDK       |
+| nad-java-skd     | Java  | Java SDK                  |
