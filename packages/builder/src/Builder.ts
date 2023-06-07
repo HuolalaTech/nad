@@ -17,6 +17,11 @@ export interface BuilderParams {
    * TS Only
    */
   runtimePkgName?: string;
+
+  /**
+   * TS Only
+   */
+  properties?: Record<string, string | number>;
 }
 
 export class Builder {
@@ -25,13 +30,15 @@ export class Builder {
   public readonly base;
   public readonly apis;
   public readonly runtimePkgName;
+  public readonly properties;
 
-  constructor({ target, defs, base, apis, runtimePkgName = '@huolala-tech/nad-runtime' }: BuilderParams) {
+  constructor({ target, defs, base, apis, runtimePkgName = '@huolala-tech/nad-runtime', properties }: BuilderParams) {
     this.target = target;
     this.defs = defs;
     this.base = base;
     this.apis = apis;
     this.runtimePkgName = runtimePkgName;
+    this.properties = properties;
   }
 
   /**
@@ -57,12 +64,12 @@ export class Builder {
    * It's generated lazily, only when it is actually used.
    */
   get code() {
-    const { target, base, defs, runtimePkgName } = this;
+    const { target, base, defs, properties, runtimePkgName } = this;
     let value;
     if (target === 'oc') {
       value = new CodeGenForOc(this.root, { base }).toString();
     } else if (target === 'ts') {
-      value = new CodeGenForTs(this.root, { base, runtimePkgName }).toString();
+      value = new CodeGenForTs(this.root, { base, properties, runtimePkgName }).toString();
     } else if (target === 'raw') {
       value = JSON.stringify(defs, null, 2);
     } else throw neverReachHere(target, `Invalid target "${target}"`);

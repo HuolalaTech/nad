@@ -4,11 +4,21 @@ import type { Root } from '../models/Root';
 import type { Route } from '../models/Route';
 
 interface Options {
+  /**
+   * API Base URI
+   */
   base: string;
+
+  /**
+   * Appended static properties
+   */
+  properties?: Record<string, string | number>;
+
   /**
    * @default false;
    */
   noHead?: boolean;
+
   /**
    * @default "@huolala-tech/nad-runtime"
    */
@@ -30,13 +40,18 @@ export class CodeGenForTs extends CodeGen {
       this.write('');
     }
     const runtimePkgName = options.runtimePkgName || '@huolala-tech/nad-runtime';
-    const { base } = this.options;
+    const { base, properties } = this.options;
     this.write(`import { NadInvoker } from '${runtimePkgName}';`);
     this.write(`import type { Settings } from '${runtimePkgName}';`);
     this.write('');
     this.write(`export class Runtime<T = unknown> extends NadInvoker<T> {`);
     this.writeBlock(() => {
       this.write(`public static base = ${ss(base)};`);
+      if (properties) {
+        Object.keys(properties).forEach((key) => {
+          this.write(`public static ${key} = ${ss(properties[key])};`);
+        });
+      }
     });
     this.write(`}`);
     this.write('');
