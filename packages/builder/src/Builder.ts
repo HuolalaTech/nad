@@ -10,7 +10,7 @@ export type SupportedTarget = (typeof supportedTargets)[number];
 export interface BuilderParams {
   defs: RawDefs;
   target: SupportedTarget;
-  base: string;
+  base?: string;
   apis?: string[];
 
   /**
@@ -21,7 +21,7 @@ export interface BuilderParams {
   /**
    * TS Only
    */
-  properties?: Record<string, string | number>;
+  properties?: Record<string, string | number | boolean | undefined>;
 }
 
 export class Builder {

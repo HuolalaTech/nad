@@ -7,12 +7,12 @@ interface Options {
   /**
    * API Base URI
    */
-  base: string;
+  base?: string;
 
   /**
    * Appended static properties
    */
-  properties?: Record<string, string | number>;
+  properties?: Record<string, string | number | boolean | undefined>;
 
   /**
    * @default false;
@@ -46,10 +46,11 @@ export class CodeGenForTs extends CodeGen {
     this.write('');
     this.write(`export class Runtime<T = unknown> extends NadInvoker<T> {`);
     this.writeBlock(() => {
-      this.write(`public static base = ${ss(base)};`);
+      if (base !== undefined) this.write(`public static base = ${ss(base)};`);
       if (properties) {
         Object.keys(properties).forEach((key) => {
-          this.write(`public static ${key} = ${ss(properties[key])};`);
+          const value = properties[key];
+          if (value !== undefined) this.write(`public static ${key} = ${ss(value)};`);
         });
       }
     });
