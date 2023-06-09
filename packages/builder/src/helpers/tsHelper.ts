@@ -14,17 +14,20 @@ import {
 } from './javaHelper';
 
 // Convert value to safe string in code
-export const ss = (s: string | number) => {
-  if (typeof s === 'string') {
-    return `'${String(s).replace(/['\\\r\n]/g, (char) => {
+export const ss = (u: string | number | boolean) => {
+  if (typeof u === 'string') {
+    return `'${String(u).replace(/['\\\r\n]/g, (char) => {
       const code = char.charCodeAt(0);
       return code < 0x10 ? `\\x0${code.toString(16)}` : `\\x${code.toString(16)}`;
     })}'`;
   }
-  if (typeof s === 'number') {
-    return String(s);
+  if (typeof u === 'number') {
+    return String(u);
   }
-  throw neverReachHere(s);
+  if (typeof u === 'boolean') {
+    return String(u);
+  }
+  throw neverReachHere(u);
 };
 
 export const t2s = (type: Type): string => {

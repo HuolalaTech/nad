@@ -5,7 +5,7 @@ import { checkSuper, ss, t2s } from '../helpers/ocHelper';
 import { isJavaVoid } from '../helpers/javaHelper';
 
 interface Options {
-  base: string;
+  base?: string;
   noHead?: boolean;
 }
 
@@ -97,7 +97,7 @@ export class CodeGenForOc extends CodeGen {
     gen.writeBlock(() => {
       const rt = this.buildReturnType(a);
       gen.write(`NadInvoker *req = [[NadInvoker new] init];`);
-      gen.write(`[req initAppId:${ss(this.options.base)} method:${ss(a.method)} path:${ss(a.pattern)}];`);
+      gen.write(`[req initAppId:${ss(this.options.base || '')} method:${ss(a.method)} path:${ss(a.pattern)}];`);
       if (a.requestContentType) {
         gen.write(`[req addHeader:${ss('Content-Type')} value:${ss(a.requestContentType)}];`);
       }
