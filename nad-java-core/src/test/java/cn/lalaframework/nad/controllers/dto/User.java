@@ -25,4 +25,20 @@ public class User implements Serializable {
     public String nickName;
 
     public transient long INS_TEMP_ID = 23333L;
+
+    public boolean isActive() {
+        return true;
+    }
+
+    public Boolean isEnabled() {
+        return true;
+    }
+
+    public boolean isNotMember1(Void a) {
+        return true;
+    }
+
+    public String isNotMember2() {
+        return "";
+    }
 }

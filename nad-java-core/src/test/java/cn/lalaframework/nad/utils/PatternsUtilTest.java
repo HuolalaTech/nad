@@ -6,37 +6,59 @@ import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 class PatternsUtilTest {
-    Object getPatternsV2(Object info) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Class<PatternsUtil> clz = PatternsUtil.class;
-        Method method = clz.getDeclaredMethod("getPatternsV2", Object.class);
-        method.setAccessible(true);
-        return method.invoke(clz, info);
+    private static Object invoke(String getPatternsV1, Object info) {
+        try {
+            Class<PatternsUtil> clz = PatternsUtil.class;
+            Method method = clz.getDeclaredMethod(getPatternsV1, Object.class);
+            method.setAccessible(true);
+            return method.invoke(clz, info);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    Object getPatternsV2(Object info) {
+        return invoke("getPatternsV2", info);
+    }
+
+    Object getPatternsV1(Object info) {
+        return invoke("getPatternsV1", info);
     }
 
     @Test
-    void v2Null() throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        Object res = getPatternsV2(new Object());
-        Assertions.assertNull(res);
+    void v1() {
+        Assertions.assertNull(getPatternsV1(new Object()));
+        RequestMappingInfo info = new RequestMappingInfo();
+        Assertions.assertNull(getPatternsV1(info));
+        info.patterns = new PatternsRequestCondition();
+        Assertions.assertNull(getPatternsV1(info));
+        info.patterns.patterns = new HashSet<>();
+        Assertions.assertNotNull(getPatternsV1(info));
+        // getActivePatterns
+        Assertions.assertNotNull(PatternsUtil.getActivePatterns(info));
     }
 
     @Test
-    void v2() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        class B {
-            Set<String> getPatterns() {
-                return new TreeSet<>();
-            }
-        }
-        class A {
-            B getPathPatternsCondition() {
-                return new B();
-            }
-        }
-        Object res = getPatternsV2(new A());
-        Assertions.assertNotNull(res);
+    void v2() {
+        Assertions.assertNull(getPatternsV2(new Object()));
+        RequestMappingInfo info = new RequestMappingInfo();
+        Assertions.assertNull(getPatternsV2(info));
+        info.pathPatterns = new PatternsRequestCondition();
+        Assertions.assertNull(getPatternsV2(info));
+        info.pathPatterns.patterns = new HashSet<>();
+        Assertions.assertNotNull(getPatternsV2(info));
+        // getActivePatterns
+        Assertions.assertNotNull(PatternsUtil.getActivePatterns(info));
+    }
+
+    @Test
+    void getNull() {
+        Assertions.assertNotNull(PatternsUtil.getActivePatterns(null));
     }
 
     @Test
@@ -45,5 +67,28 @@ class PatternsUtilTest {
                 IllegalStateException.class,
                 () -> ReflectionUtils.newInstance(PatternsUtil.class)
         );
+    }
+
+    static class RequestMappingInfo {
+
+        public PatternsRequestCondition pathPatterns;
+
+        public PatternsRequestCondition patterns;
+
+        PatternsRequestCondition getPathPatternsCondition() {
+            return pathPatterns;
+        }
+
+        PatternsRequestCondition getPatternsCondition() {
+            return patterns;
+        }
+    }
+
+    static class PatternsRequestCondition {
+        public Set<Object> patterns;
+
+        Set<Object> getPatterns() {
+            return patterns;
+        }
     }
 }

@@ -33,27 +33,25 @@ class ClassesTest {
                 .findAny().orElse(null);
     }
 
+    private static void assertMember(List<NadMember> members, String id, String TypeName) {
+        NadMember member = members.stream().filter(i -> id.equals(i.getName())).findFirst().orElse(null);
+        Assertions.assertNotNull(member);
+        Assertions.assertEquals(TypeName, member.getType());
+        Assertions.assertNotNull(member.getAnnotations());
+    }
+
     @Test
     void getUser() {
         NadClass userClass = getNadClass();
         Assertions.assertNotNull(userClass);
         List<NadMember> members = userClass.getMembers();
-        Assertions.assertEquals(3, members.size());
+        Assertions.assertEquals(5, members.size());
 
-        NadMember m0 = members.get(0);
-        Assertions.assertEquals("id", m0.getName());
-        Assertions.assertEquals(Long.class.getTypeName(), m0.getType());
-        Assertions.assertNotNull(m0.getAnnotations());
-
-        NadMember m1 = members.get(1);
-        Assertions.assertEquals("name", m1.getName());
-        Assertions.assertEquals(String.class.getTypeName(), m1.getType());
-        Assertions.assertNotNull(m1.getAnnotations());
-
-        NadMember m2 = members.get(2);
-        Assertions.assertEquals("nickName", m2.getName());
-        Assertions.assertEquals(String.class.getTypeName(), m2.getType());
-        Assertions.assertNotNull(m1.getAnnotations());
+        assertMember(members, "id", Long.class.getTypeName());
+        assertMember(members, "name", String.class.getTypeName());
+        assertMember(members, "nickName", String.class.getTypeName());
+        assertMember(members, "active", boolean.class.getTypeName());
+        assertMember(members, "enabled", Boolean.class.getTypeName());
 
         Assertions.assertEquals(Object.class.getTypeName(), userClass.getSuperclass());
 

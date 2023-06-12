@@ -21,6 +21,12 @@ class ReflectionTest {
     }
 
     @Test
+    void baseNull() {
+        Object res = Reflection.invokeMethod(null, "foo");
+        Assertions.assertNull(res);
+    }
+
+    @Test
     void construct() throws NoSuchMethodException {
         Constructor<Reflection> constructor = Reflection.class.getDeclaredConstructor();
         Assertions.assertTrue(Modifier.isPrivate(constructor.getModifiers()));

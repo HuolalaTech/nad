@@ -69,10 +69,7 @@ public class NadMemberBuilder {
         } else if (field != null) {
             javaType = field.getGenericType();
         } else if (setter != null) {
-            Type[] parameterTypes = setter.getGenericParameterTypes();
-            if (parameterTypes.length > 0) {
-                javaType = parameterTypes[0];
-            }
+            javaType = Arrays.stream(setter.getGenericParameterTypes()).findFirst().orElse(null);
         }
         if (javaType != null) {
             NadContext.collect(javaType);
