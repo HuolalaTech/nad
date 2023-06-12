@@ -2,13 +2,10 @@ package cn.lalaframework.nad.utils;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.util.pattern.PathPattern;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,12 +23,12 @@ public class PatternsUtil {
     @Nullable
     private static List<String> getPatternsV1(@Nullable Object info) {
         Object pc = Reflection.invokeMethod(info, "getPatternsCondition");
-        if (!(pc instanceof PatternsRequestCondition)) return null;
         Object set = Reflection.invokeMethod(pc, "getPatterns");
         if (!(set instanceof Set)) return null;
         return ((Set<?>) set).stream()
-                .map(i -> i instanceof String ? ((String) i) : null)
-                .filter(Objects::nonNull).collect(Collectors.toList());
+                .filter(String.class::isInstance)
+                .map(i -> (String) i)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -47,8 +44,9 @@ public class PatternsUtil {
         Object set = Reflection.invokeMethod(pc, "getPatterns");
         if (!(set instanceof Set)) return null;
         return ((Set<?>) set).stream()
-                .map(i -> i instanceof PathPattern ? ((PathPattern) i).getPatternString() : null)
-                .filter(Objects::nonNull).collect(Collectors.toList());
+                .filter(PathPattern.class::isInstance)
+                .map(i -> ((PathPattern) i).getPatternString())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -58,7 +56,7 @@ public class PatternsUtil {
      * @return active pattern list
      */
     @NonNull
-    public static List<String> getActivePatterns(@NonNull RequestMappingInfo info) {
+    public static List<String> getActivePatterns(@NonNull Object info) {
         List<String> list = getPatternsV2(info);
         if (list == null) list = getPatternsV1(info);
         if (list == null) list = new ArrayList<>();

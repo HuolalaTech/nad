@@ -53,6 +53,12 @@ class NadUiConfigurationTest {
     }
 
     @Test
+    void notFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/nad/404"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
     void resource() throws Exception {
         MvcResult res = mockMvc.perform(MockMvcRequestBuilders.get("/nad/asset-manifest.json"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
