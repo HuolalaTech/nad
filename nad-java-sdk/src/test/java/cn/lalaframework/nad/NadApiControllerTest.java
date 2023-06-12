@@ -1,5 +1,7 @@
 package cn.lalaframework.nad;
 
+import cn.lalaframework.nad.models.NadResult;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +21,9 @@ class NadApiControllerTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private NadApiController nadApiController;
+
     @PostConstruct
     void init() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -34,5 +39,13 @@ class NadApiControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("@.routes").isArray())
                 .andExpect(MockMvcResultMatchers.jsonPath("@.classes").isArray());
+    }
+
+    @Test
+    void sameObject() {
+        NadResult defs = nadApiController.getDefs();
+        Assertions.assertSame(defs, nadApiController.getDefs());
+        nadApiController.initCache();
+        Assertions.assertSame(defs, nadApiController.getDefs());
     }
 }
