@@ -1,14 +1,15 @@
 package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.exceptions.NoHandlerMappingException;
-import cn.lalaframework.nad.models.*;
+import cn.lalaframework.nad.models.NadContext;
+import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.models.SpringRouteHandler;
+import cn.lalaframework.nad.models.SpringRouteInfo;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import java.util.List;
 
 @Component
 public class NadCore {
@@ -25,6 +26,22 @@ public class NadCore {
         return create(null);
     }
 
+    @NonNull
+    private NadResult createFromSpringHandlerMapping() {
+        if (handlerMapping == null) throw new NoHandlerMappingException();
+        handlerMapping.getHandlerMethods().entrySet().stream()
+                // Ignore some classes who are specified by ClassExcluder
+                .filter(e -> NadContext.matchClass(e.getValue().getBeanType()))
+                .forEach(e ->
+                        NadContext.collectRoute(
+                                new SpringRouteInfo(e.getKey()),
+                                new SpringRouteHandler(e.getValue())
+                        )
+                );
+
+        return NadContext.dump();
+    }
+
     /**
      * Find all routes from Spring Web and create a NadResult.
      *
@@ -34,14 +51,7 @@ public class NadCore {
      */
     @NonNull
     public NadResult create(ClassFilter classExcluder) {
-        if (handlerMapping == null) throw new NoHandlerMappingException();
-        return NadContext.run(() -> {
-            List<NadRoute> routes = NadRoute.fromMapping(handlerMapping);
-            List<NadModule> modules = NadModule.fromMapping(handlerMapping);
-            List<NadClass> classes = NadContext.dumpClasses();
-            List<NadEnum> enums = NadContext.dumpEnums();
-            return new NadResult(modules, routes, classes, enums);
-        }, classExcluder);
+        return NadContext.run(this::createFromSpringHandlerMapping, classExcluder);
     }
 }
 

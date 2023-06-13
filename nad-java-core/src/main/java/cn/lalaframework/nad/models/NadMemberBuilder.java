@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.NadContext;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 

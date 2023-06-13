@@ -6,7 +6,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class NadEnumConstant<T extends Enum<T>> {
+public class NadEnumConstant {
     @NonNull
     private final String name;
 
@@ -15,7 +15,7 @@ public class NadEnumConstant<T extends Enum<T>> {
      * this field is used to tall the frontend what the serialized value is.
      */
     @NonNull
-    private final Enum<T> value;
+    private final Enum<?> value;
 
     @NonNull
     private final Map<String, Object> properties;
@@ -23,7 +23,7 @@ public class NadEnumConstant<T extends Enum<T>> {
     @NonNull
     private final List<NadAnnotation> annotations;
 
-    public NadEnumConstant(@NonNull Enum<T> value, @NonNull List<Field> fields) {
+    public NadEnumConstant(@NonNull Enum<?> value, @NonNull List<Field> fields) {
         annotations = initAnnotations(value);
         name = value.name();
         this.value = value;
@@ -50,8 +50,10 @@ public class NadEnumConstant<T extends Enum<T>> {
     }
 
     @NonNull
-    public Enum<T> getValue() {
-        return value;
+    public <E extends Enum<E>> E getValue() {
+        @SuppressWarnings("unchecked")
+        E res = (E) value;
+        return res;
     }
 
     @NonNull
