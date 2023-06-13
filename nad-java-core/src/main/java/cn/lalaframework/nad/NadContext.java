@@ -1,5 +1,6 @@
 package cn.lalaframework.nad;
 
+import cn.lalaframework.nad.exceptions.NadContextRecursionException;
 import cn.lalaframework.nad.exceptions.NoNadContextException;
 import cn.lalaframework.nad.models.NadClass;
 import cn.lalaframework.nad.models.NadEnum;
@@ -127,15 +128,22 @@ public class NadContext {
         return new ArrayList<>(getEnumsMap().values());
     }
 
-    @NonNull
     public static <R> R run(@NonNull Supplier<R> transaction, ClassFilter classExcluder) {
-        classesMapRef.set(new TreeMap<>());
-        enumsMapRef.set(new TreeMap<>());
-        classExcluderRef.set(classExcluder);
-        R res = transaction.get();
-        classesMapRef.remove();
-        enumsMapRef.remove();
-        classExcluderRef.remove();
+        R res = null;
+        try {
+            if (classesMapRef.get() != null) {
+                throw new NadContextRecursionException();
+            }
+            classesMapRef.set(new TreeMap<>());
+            enumsMapRef.set(new TreeMap<>());
+            classExcluderRef.set(classExcluder);
+            // if this code returns directly, the "finally" block will not be covered by junit coverage.
+            res = transaction.get();
+        } finally {
+            classesMapRef.remove();
+            enumsMapRef.remove();
+            classExcluderRef.remove();
+        }
         return res;
     }
 }
