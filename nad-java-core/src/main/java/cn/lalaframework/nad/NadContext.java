@@ -15,26 +15,23 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class NadContext {
-    private static final ThreadLocal<TreeMap<String, NadClass>> classesMapRef = new ThreadLocal<>();
-    private static final ThreadLocal<TreeMap<String, NadEnum>> enumsMapRef = new ThreadLocal<>();
-    private static final ThreadLocal<ClassFilter> classExcluderRef = new ThreadLocal<>();
+    private static final ThreadLocal<NadContext> current = new ThreadLocal<>();
 
-    private NadContext() {
-        throw new IllegalStateException("Utility class");
+    private final TreeMap<String, NadClass> classesMap;
+    private final TreeMap<String, NadEnum> enumsMap;
+    private final ClassFilter classExcluder;
+
+    private NadContext(ClassFilter ce) {
+        classesMap = new TreeMap<>();
+        enumsMap = new TreeMap<>();
+        classExcluder = ce;
     }
 
     @NonNull
-    private static Map<String, NadClass> getClassesMap() {
-        TreeMap<String, NadClass> map = classesMapRef.get();
-        if (map != null) return map;
-        throw new NoNadContextException();
-    }
-
-    @NonNull
-    private static Map<String, NadEnum> getEnumsMap() {
-        TreeMap<String, NadEnum> map = enumsMapRef.get();
-        if (map != null) return map;
-        throw new NoNadContextException();
+    private static NadContext getContext() {
+        NadContext context = current.get();
+        if (context == null) throw new NoNadContextException();
+        return context;
     }
 
     /**
@@ -64,7 +61,7 @@ public class NadContext {
         // Now, The clz is a pure Java class type (not an array).
         String name = clz.getTypeName();
 
-        Map<String, NadClass> map = getClassesMap();
+        Map<String, NadClass> map = getContext().classesMap;
 
         // Don't collect it again, if it has been collected.
         // This is very important to avoid endless recursion, that is the breaking condition for recursion.
@@ -81,7 +78,7 @@ public class NadContext {
     private static void collectEnum(@NonNull Class<? extends Enum<?>> clz) {
         // Ignore some classes which are matched by ClassFilter.
         if (!matchClass(clz)) return;
-        getEnumsMap().computeIfAbsent(clz.getTypeName(), name -> new NadEnum(clz));
+        getContext().enumsMap.computeIfAbsent(clz.getTypeName(), name -> new NadEnum(clz));
     }
 
     /**
@@ -109,7 +106,7 @@ public class NadContext {
     }
 
     public static boolean matchClass(Class<?> clz) {
-        ClassFilter classExcluder = classExcluderRef.get();
+        ClassFilter classExcluder = getContext().classExcluder;
         // If ClassFilter are not provided, all classes are retained.
         if (classExcluder == null) return true;
         // The matchClass specifies which classes can be retained,
@@ -120,29 +117,25 @@ public class NadContext {
 
     @NonNull
     public static List<NadClass> dumpClasses() {
-        return new ArrayList<>(getClassesMap().values());
+        return new ArrayList<>(getContext().classesMap.values());
     }
 
     @NonNull
     public static List<NadEnum> dumpEnums() {
-        return new ArrayList<>(getEnumsMap().values());
+        return new ArrayList<>(getContext().enumsMap.values());
     }
 
     public static <R> R run(@NonNull Supplier<R> transaction, ClassFilter classExcluder) {
         R res = null;
         try {
-            if (classesMapRef.get() != null) {
+            if (current.get() != null) {
                 throw new NadContextRecursionException();
             }
-            classesMapRef.set(new TreeMap<>());
-            enumsMapRef.set(new TreeMap<>());
-            classExcluderRef.set(classExcluder);
+            current.set(new NadContext(classExcluder));
             // if this code returns directly, the "finally" block will not be covered by junit coverage.
             res = transaction.get();
         } finally {
-            classesMapRef.remove();
-            enumsMapRef.remove();
-            classExcluderRef.remove();
+            current.remove();
         }
         return res;
     }
