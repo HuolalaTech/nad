@@ -20,6 +20,7 @@ class ReflectionTest {
         Assertions.assertNull(res);
     }
 
+    @SuppressWarnings("ConstantValue")
     @Test
     void baseNull() {
         Object res = Reflection.invokeMethod(null, "foo");

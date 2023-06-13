@@ -68,6 +68,7 @@ class PatternsUtilTest {
         Assertions.assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void getNull() {
         Assertions.assertNotNull(PatternsUtil.getActivePatterns(null));

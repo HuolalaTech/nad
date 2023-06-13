@@ -126,7 +126,7 @@ public class NadContext {
     }
 
     public static <R> R run(@NonNull Supplier<R> transaction, ClassFilter classExcluder) {
-        R res = null;
+        R res;
         try {
             if (current.get() != null) {
                 throw new NadContextRecursionException();

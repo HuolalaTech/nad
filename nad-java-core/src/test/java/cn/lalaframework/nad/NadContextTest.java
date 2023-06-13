@@ -30,6 +30,7 @@ class NadContextTest {
 
         // Context must be cleared after throw.
         Assertions.assertThrows(RuntimeException.class, () -> {
+            // run
             NadContext.run(() -> {
                 throw new RuntimeException("error");
             }, null);
@@ -38,6 +39,7 @@ class NadContextTest {
 
         // NadContextRecursionException
         Assertions.assertThrows(NadContextRecursionException.class, () -> {
+            // run
             NadContext.run(() -> {
                 NadContext.run(() -> null, null);
                 return null;
