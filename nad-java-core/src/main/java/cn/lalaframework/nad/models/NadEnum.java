@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class NadEnum extends NadDef {
     @NonNull
-    private final List<NadEnumConstant<?>> constants;
+    private final List<NadEnumConstant> constants;
 
     public NadEnum(@NonNull Class<? extends Enum<?>> clz) {
         super(clz);
@@ -21,12 +21,12 @@ public class NadEnum extends NadDef {
         fields.forEach(ReflectionUtils::makeAccessible);
 
         constants = Arrays.stream(clz.getEnumConstants())
-                .map(i -> new NadEnumConstant<>(i, fields))
+                .map(i -> new NadEnumConstant(i, fields))
                 .collect(Collectors.toList());
     }
 
     @NonNull
-    public List<NadEnumConstant<?>> getConstants() {
+    public List<NadEnumConstant> getConstants() {
         return constants;
     }
 }
