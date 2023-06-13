@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 class NadContextTest {
     @Test
     void outOfContext() {
-        Assertions.assertThrows(NoNadContextException.class, NadContext::dumpClasses);
-        Assertions.assertThrows(NoNadContextException.class, NadContext::dumpEnums);
+        Assertions.assertThrows(NoNadContextException.class, NadContext::dump);
     }
 
     @Test
@@ -23,8 +22,7 @@ class NadContextTest {
         // Context must be cleared after run.
         NadContext.run(() -> {
             // Context must be accessible (not null).
-            Assertions.assertNotNull(NadContext.dumpClasses());
-            Assertions.assertNotNull(NadContext.dumpEnums());
+            Assertions.assertNotNull(NadContext.dump());
             return null;
         }, null);
         outOfContext();

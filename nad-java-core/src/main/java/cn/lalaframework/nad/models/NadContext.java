@@ -20,15 +20,37 @@ public class NadContext {
     private final TreeMap<String, NadClass> classesMap;
 
     @NonNull
+    private final TreeMap<String, NadModule> modulesMap;
+
+    @NonNull
     private final TreeMap<String, NadEnum> enumsMap;
+
+    @NonNull
+    private final TreeSet<NadRoute> routes;
 
     @Nullable
     private final ClassFilter classExcluder;
 
     private NadContext(@Nullable ClassFilter excluder) {
+        classExcluder = excluder;
         classesMap = new TreeMap<>();
         enumsMap = new TreeMap<>();
-        classExcluder = excluder;
+        modulesMap = new TreeMap<>();
+
+        // To ensure that uniformity of the results, it is necessary to be sorted.
+        // NOTE: The HandlerMethods object is unsorted.
+        routes = new TreeSet<>(Comparator.comparing(NadRoute::getSortKey));
+    }
+
+    @NonNull
+    public static NadResult dump() {
+        NadContext context = getContext();
+        return new NadResult(
+                new ArrayList<>(context.modulesMap.values()),
+                new ArrayList<>(context.routes),
+                new ArrayList<>(context.classesMap.values()),
+                new ArrayList<>(context.enumsMap.values())
+        );
     }
 
     @NonNull
@@ -85,6 +107,14 @@ public class NadContext {
         getContext().enumsMap.computeIfAbsent(clz.getTypeName(), name -> new NadEnum(clz));
     }
 
+    public static void collectModule(Class<?> clz) {
+        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), (name) -> new NadModule(clz));
+    }
+
+    public static void collectRoute(@NonNull NadRouteInfo info, @NonNull NadRouteHandler method) {
+        getContext().routes.add(new NadRoute(info, method));
+    }
+
     /**
      * Collect all seen types.
      */
@@ -117,16 +147,6 @@ public class NadContext {
         // while the classExcluder indicates which classes should be excluded.
         // Therefore, the NOT operator is necessary here.
         return !classExcluder.matches(clz);
-    }
-
-    @NonNull
-    public static List<NadClass> dumpClasses() {
-        return new ArrayList<>(getContext().classesMap.values());
-    }
-
-    @NonNull
-    public static List<NadEnum> dumpEnums() {
-        return new ArrayList<>(getContext().enumsMap.values());
     }
 
     public static <R> R run(@NonNull Supplier<R> transaction, @Nullable ClassFilter classExcluder) {
