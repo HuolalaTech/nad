@@ -13,13 +13,19 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class NadContext {
+    @NonNull
     private static final ThreadLocal<NadContext> current = new ThreadLocal<>();
 
+    @NonNull
     private final TreeMap<String, NadClass> classesMap;
+
+    @NonNull
     private final TreeMap<String, NadEnum> enumsMap;
+
+    @Nullable
     private final ClassFilter classExcluder;
 
-    private NadContext(ClassFilter excluder) {
+    private NadContext(@Nullable ClassFilter excluder) {
         classesMap = new TreeMap<>();
         enumsMap = new TreeMap<>();
         classExcluder = excluder;
@@ -123,7 +129,7 @@ public class NadContext {
         return new ArrayList<>(getContext().enumsMap.values());
     }
 
-    public static <R> R run(@NonNull Supplier<R> transaction, ClassFilter classExcluder) {
+    public static <R> R run(@NonNull Supplier<R> transaction, @Nullable ClassFilter classExcluder) {
         R res;
         try {
             if (current.get() != null) {
