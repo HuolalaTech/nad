@@ -2,6 +2,7 @@ package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.exceptions.NadContextRecursionException;
 import cn.lalaframework.nad.exceptions.NoNadContextException;
+import cn.lalaframework.nad.models.NadContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

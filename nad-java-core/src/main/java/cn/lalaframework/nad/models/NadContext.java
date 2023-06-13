@@ -1,9 +1,7 @@
-package cn.lalaframework.nad;
+package cn.lalaframework.nad.models;
 
 import cn.lalaframework.nad.exceptions.NadContextRecursionException;
 import cn.lalaframework.nad.exceptions.NoNadContextException;
-import cn.lalaframework.nad.models.NadClass;
-import cn.lalaframework.nad.models.NadEnum;
 import org.springframework.aop.ClassFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -21,10 +19,10 @@ public class NadContext {
     private final TreeMap<String, NadEnum> enumsMap;
     private final ClassFilter classExcluder;
 
-    private NadContext(ClassFilter ce) {
+    private NadContext(ClassFilter excluder) {
         classesMap = new TreeMap<>();
         enumsMap = new TreeMap<>();
-        classExcluder = ce;
+        classExcluder = excluder;
     }
 
     @NonNull

@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.NadContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
