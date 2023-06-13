@@ -1,12 +1,15 @@
 package cn.lalaframework.nad.utils;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
+import org.springframework.web.util.pattern.PathPatternParser;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 class PatternsUtilTest {
@@ -37,10 +40,14 @@ class PatternsUtilTest {
         Assertions.assertNull(getPatternsV1(info));
         info.patterns = new PatternsRequestCondition();
         Assertions.assertNull(getPatternsV1(info));
-        info.patterns.patterns = new HashSet<>();
+        info.patterns.patterns = new LinkedHashSet<>();
+        info.patterns.patterns.add("/test");
+        info.patterns.patterns.add("/user/{id}");
+        info.patterns.patterns.add(123);
         Assertions.assertNotNull(getPatternsV1(info));
         // getActivePatterns
-        Assertions.assertNotNull(PatternsUtil.getActivePatterns(info));
+        List<String> list = PatternsUtil.getActivePatterns(info);
+        Assertions.assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
     }
 
     @Test
@@ -50,10 +57,15 @@ class PatternsUtilTest {
         Assertions.assertNull(getPatternsV2(info));
         info.pathPatterns = new PatternsRequestCondition();
         Assertions.assertNull(getPatternsV2(info));
-        info.pathPatterns.patterns = new HashSet<>();
+        info.pathPatterns.patterns = new LinkedHashSet<>();
+        PathPatternParser ppp = new PathPatternParser();
+        info.pathPatterns.patterns.add(ppp.parse("/test"));
+        info.pathPatterns.patterns.add(ppp.parse("/user/{id}"));
+        info.pathPatterns.patterns.add("bad string object");
         Assertions.assertNotNull(getPatternsV2(info));
         // getActivePatterns
-        Assertions.assertNotNull(PatternsUtil.getActivePatterns(info));
+        List<String> list = PatternsUtil.getActivePatterns(info);
+        Assertions.assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
     }
 
     @Test
