@@ -1,17 +1,24 @@
-.Introduction {
+.ArticleView {
   padding-top: var(--header-height);
 
   overflow: hidden;
   aside {
+    box-sizing: border-box;
     font-size: 0.9em;
     position: fixed;
     padding: 0 1em;
+    width: calc((100vw - 800px) / 2);
+    white-space: nowrap;
     ul {
       list-style: none;
       padding: 0;
       line-height: 2;
     }
     li {
+      > div {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
       transition: all 0.3s ease;
       padding: 0 1ch;
       cursor: pointer;
@@ -21,6 +28,11 @@
       }
       &.active {
         font-weight: bold;
+      }
+    }
+    @media (max-width: 1200px) {
+      & {
+        display: none;
       }
     }
   }

@@ -1,5 +1,5 @@
-import { setLanguage, useLang } from '../../i18n';
-import { LanguageIcon } from '../../icons/LanguageIcon';
+import { SUPPORT_LANGS, setLanguage, useLang } from '../../i18n';
+import { LanguageIcon } from 'src/icons/LanguageIcon';
 
 import './index.scss';
 
@@ -9,8 +9,8 @@ export const LangsSwitch = () => {
     <LanguageIcon
       className='LangsSwitch'
       onClick={() => {
-        if (lang.startsWith('en')) setLanguage('zh');
-        else setLanguage('en');
+        const index = (SUPPORT_LANGS.indexOf(lang) + 1) % SUPPORT_LANGS.length;
+        setLanguage(SUPPORT_LANGS[index]);
       }}
     />
   );
