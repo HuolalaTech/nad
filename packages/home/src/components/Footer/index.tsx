@@ -8,7 +8,7 @@ export const Footer = () => {
       <div>
         {renderTemplate(
           RELEASED_UNDER_THE_LICENSE,
-          <a href='https://opensource.org/licenses/MIT' target='_blank' rel='noreferrer'>
+          <a href='https://opensource.org/licenses/MIT' target='_blank' rel='noreferrer' translate='no'>
             MIT
           </a>
         )}
