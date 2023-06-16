@@ -4,15 +4,10 @@ import { request } from '@huolala-tech/request';
 import { useLang } from 'src/i18n';
 import { Header } from 'src/components/Header';
 import { Footer } from 'src/components/Footer';
-import { Loading } from 'src/components/Loading';
-import { MdParser } from './MdParser';
-import { Menu } from './Menu';
-import { Article } from './Article';
+import { ArticleView } from 'src/components/ArticleView';
 
 import zh from './zh.md';
 import en from './en.md';
-
-import './index.scss';
 
 export const Introduction = () => {
   const lang = useLang();
@@ -26,7 +21,7 @@ export const Introduction = () => {
         withCredentials: false
       });
       if (statusCode !== 200) throw new Error('error');
-      return new MdParser(data);
+      return data;
     },
     {
       refreshDeps: [lang]
@@ -36,16 +31,7 @@ export const Introduction = () => {
   return (
     <>
       <Header />
-      <div className='Introduction'>
-        {data ? (
-          <>
-            <Menu data={data} />
-            <Article data={data} />
-          </>
-        ) : (
-          <Loading />
-        )}
-      </div>
+      <ArticleView content={data} />
       {data ? <Footer /> : null}
     </>
   );
