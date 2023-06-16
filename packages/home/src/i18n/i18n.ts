@@ -72,5 +72,5 @@ export const useI18N = () => {
 
 export const renderTemplate = (template: string, ...args: ReactNode[]) => {
   const children = template.split(/\$(\d+)/g).map((v, i) => (i % 2 ? args[Number(v) - 1] : v));
-  return createElement(Fragment, { children });
+  return createElement(Fragment, {}, ...children);
 };
