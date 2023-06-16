@@ -25,8 +25,11 @@ init('zh', {
     }
   ],
 
-  MENU_HOME: '首页',
-  MENU_INTRODUCTION: '介绍',
+  NAV_MENU: {
+    HOME: '首页',
+    INTRODUCTION: '介绍'
+  },
+
   COPIED: '已复制',
   HUOLALA_TECH: '货拉拉科技',
   RELEASED_UNDER_THE_LICENSE: '基于 $1 开源协议发布'

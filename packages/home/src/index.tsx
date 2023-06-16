@@ -1,12 +1,11 @@
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { Home } from './pages/Home';
-import { Introduction } from './pages/Introduction';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import hljs from 'highlight.js/lib/core';
 import xml from 'highlight.js/lib/languages/xml';
 import properties from 'highlight.js/lib/languages/properties';
 import shell from 'highlight.js/lib/languages/shell';
+import { navPages } from './constants';
 
 import './index.scss';
 
@@ -17,16 +16,12 @@ hljs.registerLanguage('shell', shell);
 const main = () => {
   const element = document.createElement('react-root');
   document.body.appendChild(element);
+  const router = createBrowserRouter([
+    ...navPages.map((i) => ({ path: i.path, element: i.element })),
+    { path: '*', element: <Navigate to='/' replace /> }
+  ]);
   const root = ReactDOM.createRoot(element);
-  root.render(
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/introduction' element={<Introduction />} />
-        <Route path='*' element={<Navigate to='/' replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  root.render(<RouterProvider router={router} />);
 };
 
 if (document.readyState === 'complete') {

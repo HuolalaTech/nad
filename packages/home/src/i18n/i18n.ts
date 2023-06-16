@@ -1,6 +1,6 @@
 import { Fragment, ReactNode, createElement, useEffect, useState } from 'react';
 
-interface Entires {
+export interface Entires {
   readonly HOME_SLOGAN_H1: string;
   readonly HOME_SLOGAN_H2: string;
   readonly HOME_DESC: string;
@@ -9,8 +9,10 @@ interface Entires {
 
   readonly HOME_DESCS: { icon: string; title: string; description: string }[];
 
-  readonly MENU_HOME: string;
-  readonly MENU_INTRODUCTION: string;
+  readonly NAV_MENU: {
+    readonly HOME: string;
+    readonly INTRODUCTION: string;
+  };
 
   readonly COPIED: string;
   readonly HUOLALA_TECH: string;

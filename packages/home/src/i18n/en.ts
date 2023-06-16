@@ -28,8 +28,11 @@ init('en', {
     }
   ],
 
-  MENU_HOME: 'Home',
-  MENU_INTRODUCTION: 'Introduction',
+  NAV_MENU: {
+    HOME: 'Home',
+    INTRODUCTION: 'Introduction'
+  },
+
   COPIED: 'Copied',
   HUOLALA_TECH: 'HuolalaTech',
   RELEASED_UNDER_THE_LICENSE: 'Released under the $1 license'
