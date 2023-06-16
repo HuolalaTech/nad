@@ -10,6 +10,8 @@ interface ArticleViewProps extends HTMLAttributes<HTMLDivElement> {
   content?: string;
 }
 
+export * from './useArticleSource';
+
 export const ArticleView = ({ content, className, ...rest }: ArticleViewProps) => {
   const mp = useMemo(() => (content !== undefined ? new MdParser(content) : null), [content]);
   return (

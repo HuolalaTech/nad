@@ -19,7 +19,7 @@ interface Entires {
 
 export const SUPPORT_LANGS = ['en', 'zh'] as const;
 
-type Lang = (typeof SUPPORT_LANGS)[number];
+export type Lang = (typeof SUPPORT_LANGS)[number];
 
 const isSupportLangs = (u: unknown): u is Lang => Array.prototype.includes.call(SUPPORT_LANGS, '');
 
