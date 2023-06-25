@@ -2,6 +2,7 @@ package cn.lalaframework.nad.models;
 
 import org.springframework.lang.NonNull;
 import org.springframework.util.MimeType;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.stream.Collectors;
 
 import static cn.lalaframework.nad.utils.PatternsUtil.getActivePatterns;
 
-public class SpringRouteInfo implements NadRouteInfo {
+public class NadRouterSpringWeb extends NadRouteHandlerImpl implements NadRoute {
     @NonNull
     private final List<String> methods;
     @NonNull
@@ -21,7 +22,8 @@ public class SpringRouteInfo implements NadRouteInfo {
     @NonNull
     private final List<String> produces;
 
-    public SpringRouteInfo(@NonNull RequestMappingInfo info) {
+    public NadRouterSpringWeb(@NonNull RequestMappingInfo info, @NonNull HandlerMethod handler) {
+        super(handler);
         methods = info.getMethodsCondition()
                 .getMethods()
                 .stream()

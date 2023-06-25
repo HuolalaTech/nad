@@ -111,8 +111,8 @@ public class NadContext {
         getContext().modulesMap.computeIfAbsent(clz.getTypeName(), (name) -> new NadModule(clz));
     }
 
-    public static void collectRoute(@NonNull NadRouteInfo info, @NonNull NadRouteHandler method) {
-        getContext().routes.add(new NadRoute(info, method));
+    public static void collectRoute(@NonNull NadRoute route) {
+        getContext().routes.add(route);
     }
 
     /**

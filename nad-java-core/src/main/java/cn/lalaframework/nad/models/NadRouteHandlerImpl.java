@@ -3,12 +3,12 @@ package cn.lalaframework.nad.models;
 import org.springframework.lang.NonNull;
 import org.springframework.web.method.HandlerMethod;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SpringRouteHandler implements NadRouteHandler {
+public class NadRouteHandlerImpl implements NadRouteHandler {
     @NonNull
     private final String name;
     @NonNull
@@ -20,16 +20,15 @@ public class SpringRouteHandler implements NadRouteHandler {
     @NonNull
     private final String returnType;
 
-    public SpringRouteHandler(@NonNull HandlerMethod handler) {
-        name = handler.getMethod().getName();
-        Class<?> module = handler.getBeanType();
-        NadContext.collectModule(module);
-        bean = module.getTypeName();
+    public NadRouteHandlerImpl(@NonNull HandlerMethod handler) {
+        Method method = handler.getMethod();
+        name = method.getName();
+        bean = handler.getBeanType().getTypeName();
+        NadContext.collectModule(handler.getBeanType());
         parameters = Arrays.stream(handler.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
-        annotations = NadAnnotation.fromAnnotatedElement(handler.getMethod());
-        Type genericReturnType = handler.getMethod().getGenericReturnType();
-        NadContext.collect(genericReturnType);
-        returnType = genericReturnType.getTypeName();
+        annotations = Arrays.stream(method.getAnnotations()).map(NadAnnotation::new).collect(Collectors.toList());
+        returnType = method.getGenericReturnType().getTypeName();
+        NadContext.collect(method.getGenericReturnType());
     }
 
     @Override
