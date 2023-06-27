@@ -5,9 +5,13 @@ import './libs/mock-xhr';
 
 const base = 'http://localhost';
 
+class Localhost<T> extends NadInvoker<T> {
+  public readonly base = base;
+}
+
 describe('basic', () => {
   test('get', async () => {
-    const res = await new NadInvoker(base).open('GET', '/test').execute();
+    const res = await new Localhost().open('GET', '/test').execute();
     expect(res).toMatchObject({
       method: 'GET',
       url: `${base}/test`,
@@ -15,7 +19,7 @@ describe('basic', () => {
   });
 
   test('post', async () => {
-    const res = await new NadInvoker(base).open('POST', '/test').execute();
+    const res = await new Localhost().open('POST', '/test').execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test`,
@@ -23,7 +27,7 @@ describe('basic', () => {
   });
 
   test('http error', async () => {
-    const res = new NadInvoker(base)
+    const res = new Localhost()
       .open('POST', '/test')
       .addHeader('response-body', '{"reason":"xswl"}')
       .addHeader('status-code', '500')
@@ -38,7 +42,7 @@ describe('basic', () => {
   });
 
   test('base in settings', async () => {
-    const res = await new NadInvoker().open('POST', '/test', { base: base }).execute();
+    const res = await new Localhost().open('POST', '/test', { base: base }).execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test`,
@@ -56,7 +60,7 @@ describe('basic', () => {
 
 describe('addPathVariable', () => {
   test('number in path', async () => {
-    const res = await new NadInvoker(base).open('POST', '/test/{id}').addPathVariable('id', 123).execute();
+    const res = await new Localhost().open('POST', '/test/{id}').addPathVariable('id', 123).execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test/123`,
@@ -64,7 +68,7 @@ describe('addPathVariable', () => {
   });
 
   test('string in path', async () => {
-    const res = await new NadInvoker(base).open('POST', '/test/{id}').addPathVariable('id', '123').execute();
+    const res = await new Localhost().open('POST', '/test/{id}').addPathVariable('id', '123').execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test/123`,
@@ -72,7 +76,7 @@ describe('addPathVariable', () => {
   });
 
   test('multiple variables', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('GET', '/test/{id}/{name}')
       .addPathVariable('id', '123')
       .addPathVariable('name', 'hehe')
@@ -84,7 +88,7 @@ describe('addPathVariable', () => {
   });
 
   test('conflict keys', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test/{id}')
       .addPathVariable('id', '123')
       .addPathVariable('id', '456')
@@ -98,7 +102,7 @@ describe('addPathVariable', () => {
 
 describe('addRequestParam', () => {
   test('GET', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('GET', '/test')
       .addRequestParam('id', 123)
       .addRequestParam('name', 'hehe')
@@ -112,7 +116,7 @@ describe('addRequestParam', () => {
   });
 
   test('POST', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test')
       .addRequestParam('id', 123)
       .addRequestParam('name', 'hehe')
@@ -127,7 +131,7 @@ describe('addRequestParam', () => {
   });
 
   test('Array', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('GET', '/test')
       .addRequestParam('before', 'before')
       .addRequestParam('a', [1, 2, 3])
@@ -142,7 +146,7 @@ describe('addRequestParam', () => {
 
 describe('addRequestBody', () => {
   test('json object in body', async () => {
-    const res = await new NadInvoker(base).open('POST', '/test').addRequestBody({ a: 1 }).execute();
+    const res = await new Localhost().open('POST', '/test').addRequestBody({ a: 1 }).execute();
     expect(res).toMatchObject({
       method: 'POST',
       data: { a: 1 },
@@ -151,7 +155,7 @@ describe('addRequestBody', () => {
   });
 
   test('qs data object in body', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test', { headers: { 'Content-Type': WWW_FORM_URLENCODED } })
       .addRequestBody({ a: 1 })
       .execute();
@@ -163,7 +167,7 @@ describe('addRequestBody', () => {
   });
 
   test('form data object in body', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test', { headers: { 'Content-Type': MULTIPART_FORM_DATA } })
       .addRequestBody({ a: 1 })
       .execute();
@@ -177,7 +181,7 @@ describe('addRequestBody', () => {
 
 describe('addModelAttribute', () => {
   test('add one object', async () => {
-    const res = await new NadInvoker(base).open('GET', '/test').addModelAttribute({ a: 1 }).execute();
+    const res = await new Localhost().open('GET', '/test').addModelAttribute({ a: 1 }).execute();
     expect(res).toMatchObject({
       method: 'GET',
       url: `${base}/test?a=1`,
@@ -185,7 +189,7 @@ describe('addModelAttribute', () => {
   });
 
   test('with file', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test')
       .addMultipartFile('file', new Blob())
       .addModelAttribute({ a: 1, b: { c: 2 } })
@@ -201,7 +205,7 @@ describe('addModelAttribute', () => {
   });
 
   test('with json', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test')
       .addHeader('Content-Type', APPLICATION_JSON)
       .addModelAttribute({ a: 1, b: { c: 2 } })
@@ -215,7 +219,7 @@ describe('addModelAttribute', () => {
   });
 
   test('add two objects', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('GET', '/test')
       .addModelAttribute({ a: 1 })
       .addModelAttribute({ b: 2 })
@@ -227,7 +231,7 @@ describe('addModelAttribute', () => {
   });
 
   test('conflict keys', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('GET', '/test')
       .addModelAttribute({ a: 1, c: 3 })
       .addModelAttribute({ b: 2, c: 4 })
@@ -239,7 +243,7 @@ describe('addModelAttribute', () => {
   });
 
   test('non-object value', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('GET', '/test')
       .addModelAttribute(undefined)
       .addModelAttribute(null)
@@ -253,7 +257,7 @@ describe('addModelAttribute', () => {
   });
 
   test('nested object', async () => {
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test')
       .addModelAttribute({ user: { name: 'hehe', age: 18, v: [1, 2] } })
       .execute();
@@ -269,7 +273,7 @@ describe('addModelAttribute', () => {
     const a = { a: new Object() };
     a.a = a;
     expect(() => {
-      new NadInvoker(base).open('GET', '/test').addModelAttribute(a);
+      new Localhost().open('GET', '/test').addModelAttribute(a);
     }).toThrowError(ObjectNestingTooDeepError);
   });
 });
@@ -277,7 +281,7 @@ describe('addModelAttribute', () => {
 describe('addMultipartFile', () => {
   test('add one object', async () => {
     const f1 = new File([], 'xx.txt');
-    const res = await new NadInvoker(base).open('POST', '/test').addMultipartFile('f1', f1).execute();
+    const res = await new Localhost().open('POST', '/test').addMultipartFile('f1', f1).execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test`,
@@ -287,7 +291,7 @@ describe('addMultipartFile', () => {
 
   test('delete object', async () => {
     const f1 = new File([], 'xx.txt');
-    const res = await new NadInvoker(base)
+    const res = await new Localhost()
       .open('POST', '/test')
       .addMultipartFile('f1', f1)
       .addMultipartFile('f1', null)
@@ -298,6 +302,20 @@ describe('addMultipartFile', () => {
       files: {},
     });
   });
+});
+
+test('addCustomFlags', async () => {
+  class Runtime<T> extends Localhost<T> {
+    get flags() {
+      return this.customFlags;
+    }
+  }
+  const runtime = new Runtime().open('POST', '/test');
+  expect(runtime.flags).toMatchObject([]);
+  runtime.addCustomFlags('soa');
+  expect(runtime.flags).toMatchObject(['soa']);
+  runtime.addCustomFlags('hehe', 'haha');
+  expect(runtime.flags).toMatchObject(['soa', 'hehe', 'haha']);
 });
 
 describe('static config', () => {
