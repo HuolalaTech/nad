@@ -143,8 +143,8 @@ public class NadContext {
     /**
      * Collect a route, you must first create a NadRoute object within the NadContext transaction.
      */
-    public static void collectRoute(@NonNull NadRoute route) {
-        getContext().routes.add(route);
+    public static void collectRoute(@Nullable NadRoute route) {
+        Optional.ofNullable(route).ifPresent(getContext().routes::add);
     }
 
     /**

@@ -20,6 +20,8 @@ class ClassExcluderTest {
         filter.addRule("java.*");
         Assertions.assertTrue(filter.matches(String.class));
         Assertions.assertFalse(filter.matches(NadResult.class));
+
+        Assertions.assertFalse(filter.matches(null));
     }
 
     @Test
