@@ -1,4 +1,4 @@
-package cn.lalaframework.nad.dto;
+package cn.lalaframework.nad.interfaces;
 
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

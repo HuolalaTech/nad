@@ -1,4 +1,4 @@
-package cn.lalaframework.nad.dto;
+package cn.lalaframework.nad.interfaces;
 
 import cn.lalaframework.nad.models.NameValuePair;
 import org.springframework.lang.NonNull;

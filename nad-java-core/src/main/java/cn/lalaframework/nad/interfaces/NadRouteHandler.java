@@ -1,20 +1,22 @@
-package cn.lalaframework.nad.dto;
+package cn.lalaframework.nad.interfaces;
 
 import org.springframework.lang.NonNull;
 
 import java.util.List;
-import java.util.Map;
 
-public interface NadEnumConstant {
+public interface NadRouteHandler {
     @NonNull
     String getName();
 
     @NonNull
-    Map<String, Object> getProperties();
+    String getBean();
 
     @NonNull
-    <E extends Enum<E>> E getValue();
+    List<NadParameter> getParameters();
 
     @NonNull
     List<NadAnnotation> getAnnotations();
+
+    @NonNull
+    String getReturnType();
 }

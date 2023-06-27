@@ -1,7 +1,7 @@
-package cn.lalaframework.nad.dto.impl;
+package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.NadAnnotation;
-import cn.lalaframework.nad.dto.NadMember;
+import cn.lalaframework.nad.interfaces.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadMember;
 import org.springframework.lang.NonNull;
 
 import java.util.List;

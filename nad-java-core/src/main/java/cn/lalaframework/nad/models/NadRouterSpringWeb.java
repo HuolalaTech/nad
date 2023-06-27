@@ -1,7 +1,6 @@
 package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.NadRoute;
-import cn.lalaframework.nad.dto.impl.NadRouteHandlerImpl;
+import cn.lalaframework.nad.interfaces.NadRoute;
 import org.springframework.lang.NonNull;
 import org.springframework.util.MimeType;
 import org.springframework.web.method.HandlerMethod;

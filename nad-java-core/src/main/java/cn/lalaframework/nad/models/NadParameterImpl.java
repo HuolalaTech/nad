@@ -1,8 +1,7 @@
-package cn.lalaframework.nad.dto.impl;
+package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.NadAnnotation;
-import cn.lalaframework.nad.dto.NadParameter;
-import cn.lalaframework.nad.models.NadContext;
+import cn.lalaframework.nad.interfaces.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadParameter;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;

@@ -1,6 +1,6 @@
-package cn.lalaframework.nad.dto.impl;
+package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadAnnotation;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.NonNull;
 
@@ -22,11 +22,24 @@ public class NadAnnotationImpl implements NadAnnotation {
         attributes = AnnotationUtils.getAnnotationAttributes(a);
     }
 
+    /**
+     * Create a NadAnnotation list from an annotation list.
+     *
+     * @param annotations An annotation list object.
+     * @return A list of NadAnnotation object.
+     */
     @NonNull
     public static List<NadAnnotation> fromArray(Annotation[] annotations) {
         return Arrays.stream(annotations).map(NadAnnotationImpl::new).collect(Collectors.toList());
     }
 
+    /**
+     * Create a NadAnnotation list from an annotated element.
+     * NOTE: This method will call the getDeclaredAnnotations method to get all annotations.
+     *
+     * @param annotatedElement An annotated element object.
+     * @return A list of NadAnnotation object.
+     */
     @NonNull
     public static List<NadAnnotation> fromAnnotatedElement(@NonNull AnnotatedElement annotatedElement) {
         return fromArray(annotatedElement.getDeclaredAnnotations());

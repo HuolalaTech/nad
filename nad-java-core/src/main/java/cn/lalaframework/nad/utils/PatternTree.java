@@ -10,7 +10,7 @@ import java.util.TreeMap;
  * Build string patterns to a tree.
  */
 
-public class PatternTree {
+class PatternTree {
     private boolean isWildcard = false;
 
     @Nullable
@@ -39,11 +39,11 @@ public class PatternTree {
         return node.match(path, offset + 1);
     }
 
-    public void add(@NonNull String path) {
+    protected void add(@NonNull String path) {
         add(path, 0);
     }
 
-    public boolean match(@NonNull String path) {
+    protected boolean match(@NonNull String path) {
         return match(path, 0);
     }
 }

@@ -1,6 +1,6 @@
-package cn.lalaframework.nad.dto.impl;
+package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.*;
+import cn.lalaframework.nad.interfaces.*;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -15,7 +15,12 @@ public class NadResultImpl implements NadResult {
     @NonNull
     private final List<NadEnum> enums;
 
-    public NadResultImpl(@NonNull List<NadModule> modules, @NonNull List<NadRoute> routes, @NonNull List<NadClass> classes, @NonNull List<NadEnum> enums) {
+    public NadResultImpl(
+            @NonNull List<NadModule> modules,
+            @NonNull List<NadRoute> routes,
+            @NonNull List<NadClass> classes,
+            @NonNull List<NadEnum> enums
+    ) {
         this.modules = modules;
         this.routes = routes;
         this.classes = classes;

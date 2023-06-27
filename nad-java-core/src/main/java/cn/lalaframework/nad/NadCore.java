@@ -1,8 +1,8 @@
 package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.exceptions.NoHandlerMappingException;
+import cn.lalaframework.nad.interfaces.NadResult;
 import cn.lalaframework.nad.models.NadContext;
-import cn.lalaframework.nad.dto.NadResult;
 import cn.lalaframework.nad.models.NadRouterSpringWeb;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;

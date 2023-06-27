@@ -1,7 +1,7 @@
-package cn.lalaframework.nad.dto.impl;
+package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.NadEnum;
-import cn.lalaframework.nad.dto.NadEnumConstant;
+import cn.lalaframework.nad.interfaces.NadEnum;
+import cn.lalaframework.nad.interfaces.NadEnumConstant;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 

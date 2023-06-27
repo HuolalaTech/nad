@@ -1,4 +1,4 @@
-package cn.lalaframework.nad.dto;
+package cn.lalaframework.nad.interfaces;
 
 public interface NadModule extends NadDef {
 }

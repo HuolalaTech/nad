@@ -1,7 +1,7 @@
-package cn.lalaframework.nad.dto.impl;
+package cn.lalaframework.nad.models;
 
-import cn.lalaframework.nad.dto.NadAnnotation;
-import cn.lalaframework.nad.dto.NadEnumConstant;
+import cn.lalaframework.nad.interfaces.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadEnumConstant;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
@@ -35,10 +35,14 @@ public class NadEnumConstantImpl implements NadEnumConstant {
     }
 
     private static List<NadAnnotation> initAnnotations(@NonNull Enum<?> value) {
-        return Arrays.stream(value.getClass().getDeclaredFields())
+        return Arrays
+                // Find the field by specified enum value name.
+                .stream(value.getClass().getDeclaredFields())
                 .filter(field -> field.getName().equals(value.name()))
+                .findFirst()
+                // Convert to NadAnnotation list
                 .map(NadAnnotationImpl::fromAnnotatedElement)
-                .findFirst().orElseGet(ArrayList::new);
+                .orElseGet(ArrayList::new);
     }
 
     @Override
