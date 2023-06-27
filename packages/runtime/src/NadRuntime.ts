@@ -75,6 +75,14 @@ export interface NadRuntime<T> {
   addMultipartFile(key: string, file?: MultipartFile | null | undefined): this;
 
   /**
+   * Custom flags, just store them, and do nothing else.
+   * Custom implementation can use this flags to handler some special logic.
+   *
+   * @param flags Some custom flags.
+   */
+  addCustomFlags(...flags: string[]): this;
+
+  /**
    * Add a custom request header (HTTP header).
    *
    * @param name The header name.
