@@ -1,6 +1,6 @@
 import fs from 'fs';
 import axios, { AxiosError } from 'axios';
-import { Writable } from 'stream';
+import { Writable, Readable } from 'stream';
 import { Builder, RawDefs } from '@huolala-tech/nad-builder';
 import { CodeGen, Root } from '@huolala-tech/nad-builder';
 import { green, red, bold } from './ansi';
@@ -45,6 +45,11 @@ export function fixUrl(url: string) {
   return u.toString();
 }
 
+const isRemoteURL = (s: unknown): s is string => {
+  if (typeof s !== 'string') return false;
+  return /^(https?:)?\/\//.test(s);
+};
+
 const getDefsFromRemote = async (url: string) => {
   const fixedUrl = fixUrl(url);
   try {
@@ -63,6 +68,24 @@ const getDefsFromRemote = async (url: string) => {
   }
 };
 
+const getDefs = async (url: string) => {
+  if (isRemoteURL(url)) return getDefsFromRemote(url);
+
+  const input: Readable = url === '-' ? process.stdin : fs.createReadStream(url);
+  return new Promise<RawDefs>((resolve, reject) => {
+    const buffers: Buffer[] = [];
+    input.on('data', (data) => buffers.push(data));
+    input.on('error', reject);
+    input.on('end', () => {
+      try {
+        resolve(JSON.parse(Buffer.concat(buffers).toString('utf-8')));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+};
+
 const createWriteStream = (path: string) =>
   new Promise<Writable>((resolve, reject) => {
     const out = fs.createWriteStream(path);
@@ -74,7 +97,7 @@ const createWriteStream = (path: string) =>
 
 export const processByConfig = async (config: Config, io: IO = process) => {
   const { url, output, apis, target } = config;
-  const defs = await getDefsFromRemote(url);
+  const defs = await getDefs(url);
   const { root, code } = new Builder({ defs, target, base: url, apis });
   const out = output ? await createWriteStream(output) : io.stdout;
   out.write(code);
