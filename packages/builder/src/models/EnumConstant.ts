@@ -3,7 +3,7 @@ import { Dubious, u2o } from '../utils';
 import { Annotated } from './Annotated';
 import type { Enum } from './Enum';
 
-type EnumConstantRaw = Dubious<NadEnumConstant<unknown>>;
+type EnumConstantRaw = Dubious<NadEnumConstant>;
 
 export class EnumConstant extends Annotated<EnumConstantRaw> {
   readonly owner: Enum;

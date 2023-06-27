@@ -5,7 +5,7 @@ import { DeepPartial } from '../../utils';
 
 const config = { base: 'test', target: 'oc' } as const;
 
-const buildEnum = (...constants: Partial<NadEnumConstant<unknown>>[]) => {
+const buildEnum = (...constants: Partial<NadEnumConstant>[]) => {
   const foo: Partial<NadRoute> = {
     name: 'foo',
     bean: 'test.Demo',
