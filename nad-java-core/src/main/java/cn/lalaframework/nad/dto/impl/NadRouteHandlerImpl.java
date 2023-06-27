@@ -1,12 +1,14 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.dto.impl;
 
+import cn.lalaframework.nad.dto.NadAnnotation;
+import cn.lalaframework.nad.dto.NadParameter;
+import cn.lalaframework.nad.dto.NadRouteHandler;
+import cn.lalaframework.nad.models.NadContext;
 import org.springframework.lang.NonNull;
 import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class NadRouteHandlerImpl implements NadRouteHandler {
     @NonNull
@@ -25,8 +27,8 @@ public class NadRouteHandlerImpl implements NadRouteHandler {
         name = method.getName();
         bean = handler.getBeanType().getTypeName();
         NadContext.collectModule(handler.getBeanType());
-        parameters = NadParameter.fromHandler(handler);
-        annotations = NadAnnotation.fromAnnotatedElement(method);
+        parameters = NadParameterImpl.fromHandler(handler);
+        annotations = NadAnnotationImpl.fromAnnotatedElement(method);
         returnType = method.getGenericReturnType().getTypeName();
         NadContext.collect(method.getGenericReturnType());
     }

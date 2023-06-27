@@ -1,6 +1,6 @@
 package cn.lalaframework.nad.utils;
 
-import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.dto.NadResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.ClassFilter;

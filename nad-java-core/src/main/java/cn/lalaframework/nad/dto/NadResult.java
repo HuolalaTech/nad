@@ -1,4 +1,4 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.dto;
 
 import org.springframework.lang.NonNull;
 

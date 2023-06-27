@@ -1,7 +1,12 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.dto.*;
 import cn.lalaframework.nad.exceptions.NadContextRecursionException;
 import cn.lalaframework.nad.exceptions.NoNadContextException;
+import cn.lalaframework.nad.dto.impl.NadClassImpl;
+import cn.lalaframework.nad.dto.impl.NadEnumImpl;
+import cn.lalaframework.nad.dto.impl.NadModuleImpl;
+import cn.lalaframework.nad.dto.impl.NadResultImpl;
 import org.springframework.aop.ClassFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -92,7 +97,7 @@ public class NadContext {
 
         // IMPORTANT: new NadClass(...) may potentially call collectClass recursively.
         // noinspection OverwrittenKey
-        map.put(name, new NadClass(clz)); // NOSONAR
+        map.put(name, new NadClassImpl(clz)); // NOSONAR
     }
 
     /**
@@ -102,7 +107,7 @@ public class NadContext {
     private static void collectEnum(@NonNull Class<? extends Enum<?>> clz) {
         // Ignore some classes which are matched by ClassFilter.
         if (!matchClass(clz)) return;
-        getContext().enumsMap.computeIfAbsent(clz.getTypeName(), name -> new NadEnum(clz));
+        getContext().enumsMap.computeIfAbsent(clz.getTypeName(), name -> new NadEnumImpl(clz));
     }
 
     /**
@@ -110,8 +115,8 @@ public class NadContext {
      * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      * NOTE: this method is only used in cn.lalaframework.nad.models, so it is defined as protected.
      */
-    protected static void collectModule(Class<?> clz) {
-        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), (name) -> new NadModule(clz));
+    public static void collectModule(Class<?> clz) {
+        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), (name) -> new NadModuleImpl(clz));
     }
 
     /**
@@ -119,7 +124,7 @@ public class NadContext {
      * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      * NOTE: this method is only used in cn.lalaframework.nad.models, so it is defined as protected.
      */
-    protected static void collect(@Nullable Type what) {
+    public static void collect(@Nullable Type what) {
         // For ParameterizedType such as Map<String, Integer>, we need to collect all raw types and type arguments.
         // For example, collect(A<B, C>) is equals to collect(A), and collect(B), and collect(C).
         if (what instanceof ParameterizedType) {

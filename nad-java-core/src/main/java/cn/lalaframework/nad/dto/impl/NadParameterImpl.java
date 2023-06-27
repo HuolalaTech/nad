@@ -1,5 +1,8 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.dto.impl;
 
+import cn.lalaframework.nad.dto.NadAnnotation;
+import cn.lalaframework.nad.dto.NadParameter;
+import cn.lalaframework.nad.models.NadContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
@@ -12,7 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NadParameter {
+public class NadParameterImpl implements NadParameter {
+    public NadParameterImpl(@NonNull MethodParameter p) {
+        p.initParameterNameDiscovery(getParameterNameDiscoverer());
+        name = p.getParameterName();
+        Type parameterType = p.getGenericParameterType();
+        NadContext.collect(parameterType);
+        type = parameterType.getTypeName();
+        annotations = NadAnnotationImpl.fromArray(p.getParameterAnnotations());
+    }
+
     @Nullable
     private static ParameterNameDiscoverer parameterNameDiscoverer;
     @Nullable
@@ -22,13 +34,8 @@ public class NadParameter {
     @NonNull
     private final List<NadAnnotation> annotations;
 
-    public NadParameter(@NonNull MethodParameter p) {
-        p.initParameterNameDiscovery(getParameterNameDiscoverer());
-        name = p.getParameterName();
-        Type parameterType = p.getGenericParameterType();
-        NadContext.collect(parameterType);
-        type = parameterType.getTypeName();
-        annotations = NadAnnotation.fromArray(p.getParameterAnnotations());
+    static List<NadParameter> fromHandler(HandlerMethod handler) {
+        return Arrays.stream(handler.getMethodParameters()).map(NadParameterImpl::new).collect(Collectors.toList());
     }
 
     @NonNull
@@ -42,22 +49,21 @@ public class NadParameter {
         return parameterNameDiscoverer;
     }
 
+    @Override
     @Nullable
     public String getName() {
         return name;
     }
 
+    @Override
     @NonNull
     public String getType() {
         return type;
     }
 
+    @Override
     @NonNull
     public List<NadAnnotation> getAnnotations() {
         return annotations;
-    }
-
-    protected static List<NadParameter> fromHandler(HandlerMethod handler) {
-        return Arrays.stream(handler.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
     }
 }

@@ -1,10 +1,11 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.dto.impl;
 
+import cn.lalaframework.nad.dto.*;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
 
-class NadResultImpl implements NadResult {
+public class NadResultImpl implements NadResult {
     @NonNull
     private final List<NadModule> modules;
     @NonNull

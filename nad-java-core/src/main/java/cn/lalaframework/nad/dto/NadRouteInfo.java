@@ -1,5 +1,6 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.dto;
 
+import cn.lalaframework.nad.models.NameValuePair;
 import org.springframework.lang.NonNull;
 
 import java.util.List;

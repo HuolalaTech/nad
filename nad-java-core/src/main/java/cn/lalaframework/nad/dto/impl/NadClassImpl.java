@@ -1,5 +1,9 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.dto.impl;
 
+import cn.lalaframework.nad.dto.NadClass;
+import cn.lalaframework.nad.models.NadContext;
+import cn.lalaframework.nad.dto.NadMember;
+import cn.lalaframework.nad.models.NadMemberBuilder;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -8,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NadClass extends NadDef {
+public class NadClassImpl extends NadDefImpl implements NadClass {
     @NonNull
     private final List<String> typeParameters;
 
@@ -21,7 +25,7 @@ public class NadClass extends NadDef {
     @NonNull
     private final List<String> interfaces;
 
-    public NadClass(Class<?> clz) {
+    public NadClassImpl(Class<?> clz) {
         super(clz);
         typeParameters = Arrays.stream(clz.getTypeParameters()).map(type -> {
             NadContext.collect(type);
@@ -44,21 +48,25 @@ public class NadClass extends NadDef {
         }).collect(Collectors.toList());
     }
 
+    @Override
     @Nullable
     public String getSuperclass() {
         return superclass;
     }
 
+    @Override
     @NonNull
     public List<NadMember> getMembers() {
         return members;
     }
 
+    @Override
     @NonNull
     public List<String> getTypeParameters() {
         return typeParameters;
     }
 
+    @Override
     @NonNull
     public List<String> getInterfaces() {
         return interfaces;

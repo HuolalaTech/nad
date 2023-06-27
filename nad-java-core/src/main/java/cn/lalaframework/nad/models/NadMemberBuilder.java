@@ -1,5 +1,9 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.dto.NadAnnotation;
+import cn.lalaframework.nad.dto.NadMember;
+import cn.lalaframework.nad.dto.impl.NadAnnotationImpl;
+import cn.lalaframework.nad.dto.impl.NadMemberImpl;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -51,7 +55,7 @@ public class NadMemberBuilder {
     private List<List<NadAnnotation>> buildAnnotations() {
 
         return Stream.of(field, getter, setter)
-                .map(i -> i != null ? NadAnnotation.fromAnnotatedElement(i) : null)
+                .map(i -> i != null ? NadAnnotationImpl.fromAnnotatedElement(i) : null)
                 .collect(Collectors.toList());
     }
 
@@ -109,6 +113,6 @@ public class NadMemberBuilder {
      */
     @NonNull
     public NadMember build() {
-        return new NadMember(name, buildType(), buildAnnotations());
+        return new NadMemberImpl(name, buildType(), buildAnnotations());
     }
 }
