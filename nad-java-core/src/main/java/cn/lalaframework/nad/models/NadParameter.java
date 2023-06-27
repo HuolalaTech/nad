@@ -5,9 +5,12 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class NadParameter {
     @Nullable
@@ -52,5 +55,9 @@ public class NadParameter {
     @NonNull
     public List<NadAnnotation> getAnnotations() {
         return annotations;
+    }
+
+    protected static List<NadParameter> fromHandler(HandlerMethod handler) {
+        return Arrays.stream(handler.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
     }
 }

@@ -22,12 +22,12 @@ public class NadAnnotation {
     }
 
     @NonNull
-    public static List<NadAnnotation> fromArray(Annotation[] annotations) {
+    protected static List<NadAnnotation> fromArray(Annotation[] annotations) {
         return Arrays.stream(annotations).map(NadAnnotation::new).collect(Collectors.toList());
     }
 
     @NonNull
-    public static List<NadAnnotation> fromAnnotatedElement(@NonNull AnnotatedElement annotatedElement) {
+    protected static List<NadAnnotation> fromAnnotatedElement(@NonNull AnnotatedElement annotatedElement) {
         return fromArray(annotatedElement.getDeclaredAnnotations());
     }
 

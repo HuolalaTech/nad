@@ -25,8 +25,8 @@ public class NadRouteHandlerImpl implements NadRouteHandler {
         name = method.getName();
         bean = handler.getBeanType().getTypeName();
         NadContext.collectModule(handler.getBeanType());
-        parameters = Arrays.stream(handler.getMethodParameters()).map(NadParameter::new).collect(Collectors.toList());
-        annotations = Arrays.stream(method.getAnnotations()).map(NadAnnotation::new).collect(Collectors.toList());
+        parameters = NadParameter.fromHandler(handler);
+        annotations = NadAnnotation.fromAnnotatedElement(method);
         returnType = method.getGenericReturnType().getTypeName();
         NadContext.collect(method.getGenericReturnType());
     }
