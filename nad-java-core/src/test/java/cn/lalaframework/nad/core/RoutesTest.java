@@ -64,6 +64,7 @@ class RoutesTest {
         List<String> produces = ui.getProduces();
         Assertions.assertEquals(1, produces.size());
         Assertions.assertEquals(MediaType.TEXT_HTML_VALUE, produces.get(0));
+        Assertions.assertTrue(ui.getCustomFlags().isEmpty());
     }
 
     @Test

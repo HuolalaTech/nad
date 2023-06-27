@@ -20,4 +20,7 @@ public interface NadRouteInfo {
 
     @NonNull
     List<String> getProduces();
+
+    @NonNull
+    List<String> getCustomFlags();
 }

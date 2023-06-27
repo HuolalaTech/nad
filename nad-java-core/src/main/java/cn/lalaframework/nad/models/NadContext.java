@@ -111,7 +111,7 @@ public class NadContext {
      * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      */
     protected static void collectModule(Class<?> clz) {
-        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), (name) -> new NadModuleImpl(clz));
+        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), n -> new NadModuleImpl(clz));
     }
 
     /**

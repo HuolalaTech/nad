@@ -6,6 +6,7 @@ import org.springframework.util.MimeType;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,8 @@ public class NadRouterSpringWeb extends NadRouteHandlerImpl implements NadRoute 
     private final List<String> consumes;
     @NonNull
     private final List<String> produces;
+    @NonNull
+    private final List<String> customFlags;
 
     public NadRouterSpringWeb(@NonNull RequestMappingInfo info, @NonNull HandlerMethod handler) {
         super(handler);
@@ -46,6 +49,7 @@ public class NadRouterSpringWeb extends NadRouteHandlerImpl implements NadRoute 
                 .map(MimeType::toString)
                 .collect(Collectors.toList());
         patterns = getActivePatterns(info);
+        customFlags = new ArrayList<>();
     }
 
     @Override
@@ -76,5 +80,11 @@ public class NadRouterSpringWeb extends NadRouteHandlerImpl implements NadRoute 
     @NonNull
     public List<String> getProduces() {
         return produces;
+    }
+
+    @Override
+    @NonNull
+    public List<String> getCustomFlags() {
+        return customFlags;
     }
 }
