@@ -1,5 +1,6 @@
-package cn.lalaframework.nad.models;
+package cn.lalaframework.nad.interfaces;
 
+import cn.lalaframework.nad.models.NameValuePair;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface NadRouteInfo {
 
     @NonNull
     List<String> getProduces();
+
+    @NonNull
+    List<String> getCustomFlags();
 }

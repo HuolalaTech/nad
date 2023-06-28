@@ -1,5 +1,7 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.interfaces.NadEnum;
+import cn.lalaframework.nad.interfaces.NadEnumConstant;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
@@ -9,11 +11,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NadEnum extends NadDef {
+public class NadEnumImpl extends NadDefImpl implements NadEnum {
     @NonNull
     private final List<NadEnumConstant> constants;
 
-    public NadEnum(@NonNull Class<? extends Enum<?>> clz) {
+    public NadEnumImpl(@NonNull Class<? extends Enum<?>> clz) {
         super(clz);
         List<Field> fields = Arrays.stream(clz.getDeclaredFields())
                 .filter(i -> !Modifier.isStatic(i.getModifiers()))
@@ -21,7 +23,7 @@ public class NadEnum extends NadDef {
         fields.forEach(ReflectionUtils::makeAccessible);
 
         constants = Arrays.stream(clz.getEnumConstants())
-                .map(i -> new NadEnumConstant(i, fields))
+                .map(i -> new NadEnumConstantImpl(i, fields))
                 .collect(Collectors.toList());
     }
 

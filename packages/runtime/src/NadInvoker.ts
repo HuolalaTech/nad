@@ -47,6 +47,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
   protected readonly files: Record<string, MultipartFile>;
   protected readonly extensions: Record<string, unknown>;
   protected readonly headers: Record<string, string>;
+  protected readonly customFlags: string[];
 
   /**
    * Create a new instance of NadInvoker with a base URI for the API.
@@ -70,6 +71,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
     this.files = Object.create(null);
     this.headers = Object.create(null);
     this.extensions = Object.create(null);
+    this.customFlags = [];
   }
 
   /**
@@ -232,6 +234,17 @@ export class NadInvoker<T> implements NadRuntime<T> {
    */
   public addExtension(name: string, value: unknown) {
     this.extensions[name] = value;
+    return this;
+  }
+
+  /**
+   * Custom flags, just store them, and do nothing else.
+   * Custom implementation can use this flags to handler some special logic.
+   *
+   * @param flags Some custom flags.
+   */
+  public addCustomFlags(...flags: string[]): this {
+    this.customFlags.push(...flags);
     return this;
   }
 

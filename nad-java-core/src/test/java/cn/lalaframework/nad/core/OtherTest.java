@@ -2,7 +2,7 @@ package cn.lalaframework.nad.core;
 
 import cn.lalaframework.nad.NadCore;
 import cn.lalaframework.nad.TestApplication;
-import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.interfaces.NadResult;
 import cn.lalaframework.nad.utils.ClassExcluder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -20,6 +20,7 @@ export class Route extends Annotated<RouteRaw> {
   public readonly method;
   public readonly pattern;
   public readonly requestContentType;
+  public readonly customFlags;
 
   constructor(raw: RouteRaw | undefined, module: Module) {
     super(raw);
@@ -43,6 +44,8 @@ export class Route extends Annotated<RouteRaw> {
     this.pattern = u2a(this.raw.patterns, u2s)[0] || '';
 
     this.requestContentType = new RouteConsumes(this.raw.consumes).getTheBest();
+
+    this.customFlags = u2a(this.raw.customFlags, u2s);
 
     this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
     this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this)).filter(notEmpty);

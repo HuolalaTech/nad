@@ -1,6 +1,6 @@
 package cn.lalaframework.nad.utils;
 
-import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.interfaces.NadResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.ClassFilter;
@@ -20,6 +20,8 @@ class ClassExcluderTest {
         filter.addRule("java.*");
         Assertions.assertTrue(filter.matches(String.class));
         Assertions.assertFalse(filter.matches(NadResult.class));
+
+        Assertions.assertFalse(filter.matches(null));
     }
 
     @Test

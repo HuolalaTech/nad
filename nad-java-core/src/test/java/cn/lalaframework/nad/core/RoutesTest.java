@@ -5,7 +5,11 @@ import cn.lalaframework.nad.TestApplication;
 import cn.lalaframework.nad.controllers.MyController;
 import cn.lalaframework.nad.controllers.dto.Role;
 import cn.lalaframework.nad.controllers.dto.User;
-import cn.lalaframework.nad.models.*;
+import cn.lalaframework.nad.interfaces.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadParameter;
+import cn.lalaframework.nad.interfaces.NadResult;
+import cn.lalaframework.nad.interfaces.NadRoute;
+import cn.lalaframework.nad.models.NameValuePair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +64,7 @@ class RoutesTest {
         List<String> produces = ui.getProduces();
         Assertions.assertEquals(1, produces.size());
         Assertions.assertEquals(MediaType.TEXT_HTML_VALUE, produces.get(0));
+        Assertions.assertTrue(ui.getCustomFlags().isEmpty());
     }
 
     @Test

@@ -1,15 +1,18 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.interfaces.NadRoute;
 import org.springframework.lang.NonNull;
 import org.springframework.util.MimeType;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static cn.lalaframework.nad.utils.PatternsUtil.getActivePatterns;
 
-public class SpringRouteInfo implements NadRouteInfo {
+public class NadRouterSpringWeb extends NadRouteHandlerImpl implements NadRoute {
     @NonNull
     private final List<String> methods;
     @NonNull
@@ -20,8 +23,11 @@ public class SpringRouteInfo implements NadRouteInfo {
     private final List<String> consumes;
     @NonNull
     private final List<String> produces;
+    @NonNull
+    private final List<String> customFlags;
 
-    public SpringRouteInfo(@NonNull RequestMappingInfo info) {
+    public NadRouterSpringWeb(@NonNull RequestMappingInfo info, @NonNull HandlerMethod handler) {
+        super(handler);
         methods = info.getMethodsCondition()
                 .getMethods()
                 .stream()
@@ -43,6 +49,7 @@ public class SpringRouteInfo implements NadRouteInfo {
                 .map(MimeType::toString)
                 .collect(Collectors.toList());
         patterns = getActivePatterns(info);
+        customFlags = new ArrayList<>();
     }
 
     @Override
@@ -73,5 +80,11 @@ public class SpringRouteInfo implements NadRouteInfo {
     @NonNull
     public List<String> getProduces() {
         return produces;
+    }
+
+    @Override
+    @NonNull
+    public List<String> getCustomFlags() {
+        return customFlags;
     }
 }

@@ -111,6 +111,9 @@ export class CodeGenForTs extends CodeGen {
         if (a.requestContentType) {
           this.write(`.addHeader(${ss('Content-Type')}, ${ss(a.requestContentType)})`);
         }
+        if (a.customFlags.length) {
+          this.write(`.addCustomFlags(${a.customFlags.map(ss).join(', ')})`);
+        }
         for (const p of a.parameters) {
           for (const [m, ...args] of p.actions) {
             if (args.length) {

@@ -1,12 +1,14 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.interfaces.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadEnumConstant;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class NadEnumConstant {
+public class NadEnumConstantImpl implements NadEnumConstant {
     @NonNull
     private final String name;
 
@@ -23,7 +25,7 @@ public class NadEnumConstant {
     @NonNull
     private final List<NadAnnotation> annotations;
 
-    public NadEnumConstant(@NonNull Enum<?> value, @NonNull List<Field> fields) {
+    public NadEnumConstantImpl(@NonNull Enum<?> value, @NonNull List<Field> fields) {
         annotations = initAnnotations(value);
         name = value.name();
         this.value = value;
@@ -33,22 +35,29 @@ public class NadEnumConstant {
     }
 
     private static List<NadAnnotation> initAnnotations(@NonNull Enum<?> value) {
-        return Arrays.stream(value.getClass().getDeclaredFields())
+        return Arrays
+                // Find the field by specified enum value name.
+                .stream(value.getClass().getDeclaredFields())
                 .filter(field -> field.getName().equals(value.name()))
-                .map(NadAnnotation::fromAnnotatedElement)
-                .findFirst().orElseGet(ArrayList::new);
+                .findFirst()
+                // Convert to NadAnnotation list
+                .map(NadAnnotationImpl::fromAnnotatedElement)
+                .orElseGet(ArrayList::new);
     }
 
+    @Override
     @NonNull
     public String getName() {
         return name;
     }
 
+    @Override
     @NonNull
     public Map<String, Object> getProperties() {
         return properties;
     }
 
+    @Override
     @NonNull
     public <E extends Enum<E>> E getValue() {
         @SuppressWarnings("unchecked")
@@ -56,6 +65,7 @@ public class NadEnumConstant {
         return res;
     }
 
+    @Override
     @NonNull
     public List<NadAnnotation> getAnnotations() {
         return annotations;

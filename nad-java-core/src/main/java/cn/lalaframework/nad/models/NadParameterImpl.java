@@ -1,15 +1,29 @@
 package cn.lalaframework.nad.models;
 
+import cn.lalaframework.nad.interfaces.NadAnnotation;
+import cn.lalaframework.nad.interfaces.NadParameter;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.web.method.HandlerMethod;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class NadParameter {
+public class NadParameterImpl implements NadParameter {
+    public NadParameterImpl(@NonNull MethodParameter p) {
+        p.initParameterNameDiscovery(getParameterNameDiscoverer());
+        name = p.getParameterName();
+        Type parameterType = p.getGenericParameterType();
+        NadContext.collect(parameterType);
+        type = parameterType.getTypeName();
+        annotations = NadAnnotationImpl.fromArray(p.getParameterAnnotations());
+    }
+
     @Nullable
     private static ParameterNameDiscoverer parameterNameDiscoverer;
     @Nullable
@@ -19,13 +33,8 @@ public class NadParameter {
     @NonNull
     private final List<NadAnnotation> annotations;
 
-    public NadParameter(@NonNull MethodParameter p) {
-        p.initParameterNameDiscovery(getParameterNameDiscoverer());
-        name = p.getParameterName();
-        Type parameterType = p.getGenericParameterType();
-        NadContext.collect(parameterType);
-        type = parameterType.getTypeName();
-        annotations = NadAnnotation.fromArray(p.getParameterAnnotations());
+    static List<NadParameter> fromHandler(HandlerMethod handler) {
+        return Arrays.stream(handler.getMethodParameters()).map(NadParameterImpl::new).collect(Collectors.toList());
     }
 
     @NonNull
@@ -39,16 +48,19 @@ public class NadParameter {
         return parameterNameDiscoverer;
     }
 
+    @Override
     @Nullable
     public String getName() {
         return name;
     }
 
+    @Override
     @NonNull
     public String getType() {
         return type;
     }
 
+    @Override
     @NonNull
     public List<NadAnnotation> getAnnotations() {
         return annotations;

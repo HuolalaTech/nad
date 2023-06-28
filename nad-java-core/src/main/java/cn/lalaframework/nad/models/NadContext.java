@@ -2,6 +2,7 @@ package cn.lalaframework.nad.models;
 
 import cn.lalaframework.nad.exceptions.NadContextRecursionException;
 import cn.lalaframework.nad.exceptions.NoNadContextException;
+import cn.lalaframework.nad.interfaces.*;
 import org.springframework.aop.ClassFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -42,17 +43,10 @@ public class NadContext {
         routes = new TreeSet<>(Comparator.comparing(NadRoute::getSortKey));
     }
 
-    @NonNull
-    public static NadResult dump() {
-        NadContext context = getContext();
-        return new NadResult(
-                new ArrayList<>(context.modulesMap.values()),
-                new ArrayList<>(context.routes),
-                new ArrayList<>(context.classesMap.values()),
-                new ArrayList<>(context.enumsMap.values())
-        );
-    }
-
+    /**
+     * Get current context instance and asserts that it is not null.
+     * Note: if this method is called outside a NadContext transaction, an error will occur.
+     */
     @NonNull
     private static NadContext getContext() {
         NadContext context = current.get();
@@ -61,7 +55,8 @@ public class NadContext {
     }
 
     /**
-     * Collect all seen classes and that contained types.
+     * Collect a Class type.
+     * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      */
     private static void collectClass(@NonNull Class<?> clz) {
         // Don't collect primitive types.
@@ -96,29 +91,34 @@ public class NadContext {
         // noinspection OverwrittenKey
         map.put(name, null); // NOSONAR
 
-        // IMPORTANT: new NadClass(...) may potentially call collectClass recursively.
+        // IMPORTANT: new NadClassImpl(...) may potentially call collectClass recursively.
         // noinspection OverwrittenKey
-        map.put(name, new NadClass(clz)); // NOSONAR
+        map.put(name, new NadClassImpl(clz)); // NOSONAR
     }
 
+    /**
+     * Collect an Enum type.
+     * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
+     */
     private static void collectEnum(@NonNull Class<? extends Enum<?>> clz) {
         // Ignore some classes which are matched by ClassFilter.
         if (!matchClass(clz)) return;
-        getContext().enumsMap.computeIfAbsent(clz.getTypeName(), name -> new NadEnum(clz));
+        getContext().enumsMap.computeIfAbsent(clz.getTypeName(), name -> new NadEnumImpl(clz));
     }
 
-    public static void collectModule(Class<?> clz) {
-        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), (name) -> new NadModule(clz));
-    }
-
-    public static void collectRoute(@NonNull NadRouteInfo info, @NonNull NadRouteHandler method) {
-        getContext().routes.add(new NadRoute(info, method));
+    /**
+     * Collect module bean.
+     * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
+     */
+    protected static void collectModule(Class<?> clz) {
+        getContext().modulesMap.computeIfAbsent(clz.getTypeName(), n -> new NadModuleImpl(clz));
     }
 
     /**
      * Collect all seen types.
+     * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      */
-    public static void collect(@Nullable Type what) {
+    protected static void collect(@Nullable Type what) {
         // For ParameterizedType such as Map<String, Integer>, we need to collect all raw types and type arguments.
         // For example, collect(A<B, C>) is equals to collect(A), and collect(B), and collect(C).
         if (what instanceof ParameterizedType) {
@@ -139,6 +139,17 @@ public class NadContext {
         }
     }
 
+    /**
+     * Collect a route, you must first create a NadRoute object within the NadContext transaction.
+     */
+    public static void collectRoute(@Nullable NadRoute route) {
+        Optional.ofNullable(route).ifPresent(getContext().routes::add);
+    }
+
+    /**
+     * Check if the classes match.
+     * NOTE: only matching classes can be collected (by classExcluder exclusion).
+     */
     public static boolean matchClass(Class<?> clz) {
         ClassFilter classExcluder = getContext().classExcluder;
         // If ClassFilter are not provided, all classes are retained.
@@ -149,6 +160,10 @@ public class NadContext {
         return !classExcluder.matches(clz);
     }
 
+    /**
+     * Execute a transaction within a NadContext.
+     * NOTE: context information is stored in a ThreadLocal, do not call this method recursively.
+     */
     public static <R> R run(@NonNull Supplier<R> transaction, @Nullable ClassFilter classExcluder) {
         R res;
         try {
@@ -162,5 +177,19 @@ public class NadContext {
             current.remove();
         }
         return res;
+    }
+
+    /**
+     * Dump all information of current content into a NadResult.
+     */
+    @NonNull
+    public static NadResult dump() {
+        NadContext context = getContext();
+        return new NadResultImpl(
+                new ArrayList<>(context.modulesMap.values()),
+                new ArrayList<>(context.routes),
+                new ArrayList<>(context.classesMap.values()),
+                new ArrayList<>(context.enumsMap.values())
+        );
     }
 }

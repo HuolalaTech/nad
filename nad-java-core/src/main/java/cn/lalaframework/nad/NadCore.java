@@ -1,10 +1,9 @@
 package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.exceptions.NoHandlerMappingException;
+import cn.lalaframework.nad.interfaces.NadResult;
 import cn.lalaframework.nad.models.NadContext;
-import cn.lalaframework.nad.models.NadResult;
-import cn.lalaframework.nad.models.SpringRouteHandler;
-import cn.lalaframework.nad.models.SpringRouteInfo;
+import cn.lalaframework.nad.models.NadRouterSpringWeb;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -34,8 +33,7 @@ public class NadCore {
                 .filter(e -> NadContext.matchClass(e.getValue().getBeanType()))
                 .forEach(e ->
                         NadContext.collectRoute(
-                                new SpringRouteInfo(e.getKey()),
-                                new SpringRouteHandler(e.getValue())
+                                new NadRouterSpringWeb(e.getKey(), e.getValue())
                         )
                 );
 

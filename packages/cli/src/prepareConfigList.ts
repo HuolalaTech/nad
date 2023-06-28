@@ -40,8 +40,9 @@ export interface Config {
 }
 
 const isURI = (s: unknown): s is string => {
-  if (typeof s !== 'string') return false;
-  return /^(https?:)?\/\//.test(s);
+  if (typeof s !== 'string' || s === '') return false;
+  return true;
+  // return /^(https?:)?\/\/|/.test(s);
 };
 
 const parseConfig = (config: unknown) => {

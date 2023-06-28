@@ -8,43 +8,68 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.TreeMap;
 
-public class NadMemberMap extends TreeMap<String, NadMemberBuilder> {
-    public NadMemberMap() {
+class NadMemberMap extends TreeMap<String, NadMemberBuilder> {
+    protected NadMemberMap() {
         super(String::compareTo);
     }
 
+    /**
+     * Check if the return type of a method is a boolean or Java.lang.Boolean.
+     *
+     * @param method A method.
+     */
     private static boolean isReturnBoolean(@NonNull Method method) {
         Class<?> clz = method.getReturnType();
         return boolean.class == clz || Boolean.class == clz;
     }
 
+    /**
+     * Get or create (if absent) a member by methodName.
+     *
+     * @param methodName    A method name.
+     * @param trimLeftChars How many left characters need to be trimmed.
+     *                      For example, "getFoo" should to be trimmed 3 chars to the left remove leading "get".
+     * @return A NadMemberBuilder object that will never null.
+     */
     @NonNull
-    private NadMemberBuilder getMember(@NonNull String methodName, int beginIndex) {
-        String memberName = StringUtils.uncapitalize(methodName.substring(beginIndex));
+    private NadMemberBuilder createOrGetMember(@NonNull String methodName, int trimLeftChars) {
+        String memberName = StringUtils.uncapitalize(methodName.substring(trimLeftChars));
         return computeIfAbsent(memberName, NadMemberBuilder::new);
     }
 
-    public void addMethod(@NonNull Method method) {
+    /**
+     * Collect a method of the class.
+     * NOTE: this method is used only by NadMemberBuild, so it is defined as protected.
+     *
+     * @param method A method.
+     */
+    protected void addMethod(@NonNull Method method) {
         int m = method.getModifiers();
         if (!Modifier.isPublic(m) || Modifier.isStatic(m)) return;
         String methodName = method.getName();
         int argc = method.getParameters().length;
         // A standard getter method starts with "get" and takes zero arguments.
         if (methodName.startsWith("get") && argc == 0) {
-            getMember(methodName, 3).linkToGetter(method);
+            createOrGetMember(methodName, 3).linkToGetter(method);
         }
         // A standard setter method starts with "set" and takes one argument.
         else if (methodName.startsWith("set") && argc == 1) {
-            getMember(methodName, 3).linkToSetter(method);
+            createOrGetMember(methodName, 3).linkToSetter(method);
         }
         // A boolean getter method starts with "is" and takes zero arguments and return a boolean type.
         else if (methodName.startsWith("is") && argc == 0 && isReturnBoolean(method)) {
-            getMember(methodName, 2).linkToGetter(method);
+            createOrGetMember(methodName, 2).linkToGetter(method);
         }
         // Otherwise, the method is not an accessor, so there is nothing to do.
     }
 
-    public void addField(@NonNull Field field) {
+    /**
+     * Collect a field of the class.
+     * NOTE: this method is used only by NadMemberBuild, so it is defined as protected.
+     *
+     * @param field A field.
+     */
+    protected void addField(@NonNull Field field) {
         int m = field.getModifiers();
         if (Modifier.isStatic(m)) return;
         String name = field.getName();
