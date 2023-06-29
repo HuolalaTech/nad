@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-cli",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "description": "The CLI Tools of Nad Project",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,8 +25,8 @@
   "license": "MIT",
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
-    "@huolala-tech/nad-builder": "^1.0.2",
-    "@huolala-tech/nad-runtime": "^1.0.3",
+    "@huolala-tech/nad-builder": "^1.0.3",
+    "@huolala-tech/nad-runtime": "^1.0.5",
     "axios": "^1.4.0",
     "capacitance": "^1.0.2"
   },
