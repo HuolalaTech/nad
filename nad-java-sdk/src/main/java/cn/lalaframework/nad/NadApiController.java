@@ -1,6 +1,6 @@
 package cn.lalaframework.nad;
 
-import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.interfaces.NadResult;
 import cn.lalaframework.nad.utils.ClassExcluder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

@@ -1,6 +1,6 @@
 package cn.lalaframework.nad;
 
-import cn.lalaframework.nad.models.NadResult;
+import cn.lalaframework.nad.interfaces.NadResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
