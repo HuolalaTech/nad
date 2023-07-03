@@ -6,13 +6,15 @@ import cn.lalaframework.nad.controllers.dto.User;
 import cn.lalaframework.nad.interfaces.NadDef;
 import cn.lalaframework.nad.interfaces.NadResult;
 import cn.lalaframework.nad.utils.ClassExcluder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(classes = TestApplication.class)
 class FilterTest {
@@ -41,22 +43,22 @@ class FilterTest {
     void filterEnum() {
         ClassExcluder filter = getBasicClassExcluder(Role.class.getTypeName());
         NadResult res = core.create(filter);
-        Assertions.assertNotNull(res);
+        assertNotNull(res);
         NadDef role = getNadClass(res.getEnums(), Role.class);
         NadDef user = getNadClass(res.getClasses(), User.class);
-        Assertions.assertNotNull(user);
-        Assertions.assertNull(role);
+        assertNotNull(user);
+        assertNull(role);
     }
 
     @Test
     void filterClazz() {
         ClassExcluder filter = getBasicClassExcluder(User.class.getTypeName());
         NadResult res = core.create(filter);
-        Assertions.assertNotNull(res);
+        assertNotNull(res);
         NadDef role = getNadClass(res.getEnums(), Role.class);
         NadDef user = getNadClass(res.getClasses(), User.class);
-        Assertions.assertNotNull(role);
-        Assertions.assertNull(user);
+        assertNotNull(role);
+        assertNull(user);
     }
 
     @Test
@@ -64,10 +66,10 @@ class FilterTest {
         ClassExcluder filter = getBasicClassExcluder("*");
         filter.addRule(User.class.getTypeName());
         NadResult res = core.create(filter);
-        Assertions.assertNotNull(res);
+        assertNotNull(res);
         NadDef role = getNadClass(res.getEnums(), Role.class);
         NadDef user = getNadClass(res.getClasses(), User.class);
-        Assertions.assertNull(role);
-        Assertions.assertNull(user);
+        assertNull(role);
+        assertNull(user);
     }
 }

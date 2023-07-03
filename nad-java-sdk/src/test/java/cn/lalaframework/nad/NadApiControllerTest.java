@@ -2,7 +2,6 @@ package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.exceptions.NoHandlerMappingException;
 import cn.lalaframework.nad.interfaces.NadResult;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +13,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = TestApplication.class)
 class NadApiControllerTest {
@@ -45,14 +47,14 @@ class NadApiControllerTest {
     @Test
     void sameObject() {
         NadResult defs = nadApiController.getDefs();
-        Assertions.assertSame(defs, nadApiController.getDefs());
+        assertSame(defs, nadApiController.getDefs());
         nadApiController.initCache();
-        Assertions.assertSame(defs, nadApiController.getDefs());
+        assertSame(defs, nadApiController.getDefs());
     }
 
     @Test
     void construct() {
         NadApiController nad = new NadApiController();
-        Assertions.assertThrows(NoHandlerMappingException.class, nad::getDefs);
+        assertThrows(NoHandlerMappingException.class, nad::getDefs);
     }
 }

@@ -2,7 +2,6 @@ package cn.lalaframework.nad;
 
 import cn.lalaframework.nad.models.Manifest;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +15,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = TestApplication.class)
 class NadUiConfigurationTest {
@@ -66,9 +67,9 @@ class NadUiConfigurationTest {
                 .andReturn();
         ObjectMapper mapper = new ObjectMapper();
         Manifest manifest = mapper.readValue(res.getResponse().getContentAsByteArray(), Manifest.class);
-        Assertions.assertNotNull(manifest);
+        assertNotNull(manifest);
         Map<String, String> files = manifest.getFiles();
-        Assertions.assertNotNull(files);
+        assertNotNull(files);
         for (Map.Entry<String, String> entry : files.entrySet()) {
             String path = entry.getValue();
             mockMvc.perform(MockMvcRequestBuilders.get(path))
