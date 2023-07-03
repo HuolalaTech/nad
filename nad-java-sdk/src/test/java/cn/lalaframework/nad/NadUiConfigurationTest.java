@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -17,6 +17,8 @@ import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
+import static org.springframework.http.MediaType.TEXT_HTML;
 
 @SpringBootTest(classes = TestApplication.class)
 class NadUiConfigurationTest {
@@ -30,26 +32,33 @@ class NadUiConfigurationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    @Test
-    void entry() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/nad/"))
+    private void assertHtml(MockHttpServletRequestBuilder requestBuilder) throws Exception {
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().string("Cache-Control", "no-cache"))
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.TEXT_HTML));
+                .andExpect(MockMvcResultMatchers.header().string(CACHE_CONTROL, "no-cache"))
+                .andExpect(MockMvcResultMatchers.content().contentType(TEXT_HTML));
     }
 
-    @Test
-    void logo() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/nad/logo.svg"))
+    private void assertSvg(MockHttpServletRequestBuilder requestBuilder) throws Exception {
+        mockMvc.perform(requestBuilder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header().string("Cache-Control", "max-age=3600"))
+                .andExpect(MockMvcResultMatchers.header().string(CACHE_CONTROL, "max-age=3600"))
                 .andExpect(MockMvcResultMatchers.content().contentType("image/svg+xml"));
     }
 
     @Test
-    void notFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/nad/404"))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    void nad() throws Exception {
+        assertHtml(MockMvcRequestBuilders.get("/nad/"));
+    }
+
+    @Test
+    void nadWithoutEndingSlash() throws Exception {
+        assertHtml(MockMvcRequestBuilders.get("/nad"));
+    }
+
+    @Test
+    void spa() throws Exception {
+        assertHtml(MockMvcRequestBuilders.get("/nad/spa"));
     }
 
     @Test
@@ -63,10 +72,23 @@ class NadUiConfigurationTest {
         assertNotNull(manifest);
         Map<String, String> files = manifest.getFiles();
         assertNotNull(files);
-        for (Map.Entry<String, String> entry : files.entrySet()) {
-            String path = entry.getValue();
+
+        // mockMvc.perform may throw errors, so do not use functionally style here.
+        for (String path : files.values()) {
+            if (!path.startsWith("/static/")) continue;
             mockMvc.perform(MockMvcRequestBuilders.get(path))
-                    .andExpect(MockMvcResultMatchers.status().isOk());
+                    .andExpect(MockMvcResultMatchers.status().isOk())
+                    .andExpect(MockMvcResultMatchers.header().string(CACHE_CONTROL, "max-age=8640000"));
         }
+    }
+
+    @Test
+    void favicon() throws Exception {
+        assertSvg(MockMvcRequestBuilders.get("/nad/favicon.svg"));
+    }
+
+    @Test
+    void logo() throws Exception {
+        assertSvg(MockMvcRequestBuilders.get("/nad/logo.svg"));
     }
 }
