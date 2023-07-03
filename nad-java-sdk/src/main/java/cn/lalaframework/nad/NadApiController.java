@@ -26,7 +26,6 @@ public class NadApiController {
     @Nullable
     private NadResult defsCache;
 
-    @NonNull
     synchronized void initCache() {
         if (rhMapping == null) throw new NoHandlerMappingException();
         if (defsCache == null) {
