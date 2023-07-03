@@ -57,7 +57,7 @@ public class NadMemberBuilder {
             javaType = Arrays.stream(setter.getGenericParameterTypes()).findFirst().orElse(null);
         }
         if (javaType != null) {
-            NadContext.collect(javaType);
+            NadContext.collectType(javaType);
             return javaType.getTypeName();
         }
         return "unknown";

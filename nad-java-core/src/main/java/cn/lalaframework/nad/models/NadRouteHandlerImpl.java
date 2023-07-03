@@ -29,7 +29,7 @@ public class NadRouteHandlerImpl implements NadRouteHandler {
         parameters = NadParameterImpl.fromHandler(handler);
         annotations = NadAnnotationImpl.fromAnnotatedElement(method);
         returnType = method.getGenericReturnType().getTypeName();
-        NadContext.collect(method.getGenericReturnType());
+        NadContext.collectType(method.getGenericReturnType());
     }
 
     @Override

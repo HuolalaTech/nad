@@ -65,7 +65,7 @@ public class NadContext {
 
         // Find the T of T[].
         if (clz.isArray()) {
-            collect(clz.getComponentType());
+            collectType(clz.getComponentType());
             return;
         }
 
@@ -119,19 +119,19 @@ public class NadContext {
      * Collect all seen types.
      * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      */
-    protected static void collect(@Nullable Type what) {
+    protected static void collectType(@Nullable Type what) {
         // For ParameterizedType such as Map<String, Integer>, we need to collect all raw types and type arguments.
         // For example, collect(A<B, C>) is equals to collect(A), and collect(B), and collect(C).
         if (what instanceof ParameterizedType) {
             ParameterizedType pt = (ParameterizedType) what;
-            collect(pt.getRawType());
-            Arrays.stream(pt.getActualTypeArguments()).forEach(NadContext::collect);
+            collectType(pt.getRawType());
+            Arrays.stream(pt.getActualTypeArguments()).forEach(NadContext::collectType);
             return;
         }
 
         // Find the type of array items, such as find List<Long> from List<Long>[].
         if (what instanceof GenericArrayType) {
-            collect(((GenericArrayType) what).getGenericComponentType());
+            collectType(((GenericArrayType) what).getGenericComponentType());
             return;
         }
 
