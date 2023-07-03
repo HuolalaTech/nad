@@ -31,13 +31,6 @@ class NadUiConfigurationTest {
     }
 
     @Test
-    void redirect() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/nad"))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.header().string("Location", "/nad/"));
-    }
-
-    @Test
     void entry() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/nad/"))
                 .andExpect(MockMvcResultMatchers.status().isOk())

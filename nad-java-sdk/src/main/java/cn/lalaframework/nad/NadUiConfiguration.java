@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.concurrent.TimeUnit;
@@ -12,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @ConditionalOnProperty(prefix = "nad", value = "ui", havingValue = "true", matchIfMissing = true)
 public class NadUiConfiguration implements WebMvcConfigurer {
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/nad/404")
@@ -42,13 +42,5 @@ public class NadUiConfiguration implements WebMvcConfigurer {
                 .setCacheControl(CacheControl.noCache())
                 .resourceChain(true)
                 .addResolver(new NadResourceResolver());
-    }
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // Although RFC2616 stipulates that the Location header must be an absolute URI,
-        // the more recent specification RFC7231 has been revised to allow the use of a relative URI,
-        // which is also supported by major browsers.
-        registry.addRedirectViewController("/nad", "/nad/");
     }
 }
