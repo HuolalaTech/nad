@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project:
-          - nad-java-core
-          - nad-java-sdk
         prepare:
           # Spring Boot 2.2.6.RELEASE (by default)
           - ":"
@@ -28,8 +25,17 @@ jobs:
         with:
           distribution: "zulu"
           java-version: "17"
-      - run: cd ${{ matrix.project }} && ${{ matrix.prepare }} && mvn -B test
+
+      # For nad-java-core
+      - run: cd nad-java-core && ${{ matrix.prepare }} && mvn install
       - uses: codecov/codecov-action@v3
         with:
-          directory: ${{ matrix.project }}
-          flags: ${{ matrix.project }}
+          directory: nad-java-core
+          flags: nad-java-core
+
+      # For nad-java-sdk
+      - run: cd nad-java-sdk && ${{ matrix.prepare }} && mvn -B test
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: nad-java-sdk
+          flags: nad-java-sdk
