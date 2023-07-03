@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.core;
 
-import cn.lalaframework.nad.NadCore;
 import cn.lalaframework.nad.TestApplication;
 import cn.lalaframework.nad.controllers.MyController;
 import cn.lalaframework.nad.controllers.dto.Role;
@@ -25,7 +24,7 @@ import java.util.List;
 @SpringBootTest(classes = TestApplication.class)
 class RoutesTest {
     @Autowired
-    private NadCore core;
+    private Core core;
     private NadResult res;
 
     @PostConstruct

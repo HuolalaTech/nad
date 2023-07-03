@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.core;
 
-import cn.lalaframework.nad.NadCore;
 import cn.lalaframework.nad.TestApplication;
 import cn.lalaframework.nad.controllers.dto.Role;
 import cn.lalaframework.nad.controllers.dto.User;
@@ -18,7 +17,7 @@ import java.util.List;
 @SpringBootTest(classes = TestApplication.class)
 class FilterTest {
     @Autowired
-    private NadCore core;
+    private Core core;
 
     private static ClassExcluder getBasicClassExcluder(String... args) {
         ClassExcluder filter = new ClassExcluder();

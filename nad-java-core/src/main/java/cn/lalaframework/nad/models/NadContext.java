@@ -6,6 +6,7 @@ import cn.lalaframework.nad.interfaces.*;
 import org.springframework.aop.ClassFilter;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
@@ -144,6 +145,14 @@ public class NadContext {
      */
     public static void collectRoute(@Nullable NadRoute route) {
         Optional.ofNullable(route).ifPresent(getContext().routes::add);
+    }
+
+    public static void collectSpringWeb(@NonNull RequestMappingHandlerMapping mapping) {
+        mapping.getHandlerMethods().entrySet().stream()
+                // Ignore some classes who are specified by ClassExcluder
+                .filter(e -> NadContext.matchClass(e.getValue().getBeanType()))
+                .map(e -> new NadRouterSpringWeb(e.getKey(), e.getValue()))
+                .forEach(NadContext::collectRoute);
     }
 
     /**

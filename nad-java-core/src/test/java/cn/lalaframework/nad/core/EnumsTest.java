@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.core;
 
-import cn.lalaframework.nad.NadCore;
 import cn.lalaframework.nad.TestApplication;
 import cn.lalaframework.nad.controllers.dto.Role;
 import cn.lalaframework.nad.interfaces.NadEnum;
@@ -17,7 +16,7 @@ import java.util.List;
 @SpringBootTest(classes = TestApplication.class)
 class EnumsTest {
     @Autowired
-    private NadCore core;
+    private Core core;
     private NadResult res;
 
     @PostConstruct

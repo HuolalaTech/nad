@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.core;
 
-import cn.lalaframework.nad.NadCore;
 import cn.lalaframework.nad.TestApplication;
 import cn.lalaframework.nad.interfaces.NadResult;
 import cn.lalaframework.nad.utils.ClassExcluder;
@@ -12,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = TestApplication.class)
 class OtherTest {
     @Autowired
-    private NadCore core;
+    private Core core;
 
 
     @Test

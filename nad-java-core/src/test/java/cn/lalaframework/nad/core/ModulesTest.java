@@ -1,6 +1,5 @@
 package cn.lalaframework.nad.core;
 
-import cn.lalaframework.nad.NadCore;
 import cn.lalaframework.nad.TestApplication;
 import cn.lalaframework.nad.controllers.MyController;
 import cn.lalaframework.nad.interfaces.NadAnnotation;
@@ -18,7 +17,7 @@ import java.util.Map;
 @SpringBootTest(classes = TestApplication.class)
 class ModulesTest {
     @Autowired
-    private NadCore core;
+    private Core core;
     private NadResult res;
 
     @PostConstruct

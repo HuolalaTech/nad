@@ -1,5 +1,6 @@
 package cn.lalaframework.nad;
 
+import cn.lalaframework.nad.exceptions.NoHandlerMappingException;
 import cn.lalaframework.nad.interfaces.NadResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,5 +48,11 @@ class NadApiControllerTest {
         Assertions.assertSame(defs, nadApiController.getDefs());
         nadApiController.initCache();
         Assertions.assertSame(defs, nadApiController.getDefs());
+    }
+
+    @Test
+    void construct() {
+        NadApiController nad = new NadApiController();
+        Assertions.assertThrows(NoHandlerMappingException.class, nad::getDefs);
     }
 }
