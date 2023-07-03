@@ -15,8 +15,11 @@ jobs:
           - nad-java-core
           - nad-java-sdk
         prepare:
-          - :
+          # Spring Boot 2.2.6.RELEASE (by default)
+          - ":"
+          # Spring Boot 2.7.13
           - sed -i 's/2\.2\.6.RELEASE/2.7.13/' pom.xml && sed -i 's/5\.2\.5.RELEASE/5.3.28/' pom.xml
+          # Spring Boot 3.1.1
           - sed -i 's/2\.2\.6.RELEASE/3.1.1/' pom.xml && sed -i 's/5\.2\.5.RELEASE/6.0.10/' pom.xml
 
     steps:
