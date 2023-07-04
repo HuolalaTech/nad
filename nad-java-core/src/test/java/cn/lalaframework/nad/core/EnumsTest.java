@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,17 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class EnumsTest {
     @Autowired
     private Core core;
-    private NadResult res;
-
-    @PostConstruct
-    void init() {
-        res = core.create();
-    }
-
 
     @Test
     void getEnums() {
-        assertNotNull(res);
+        NadResult res = core.create();
         NadEnum ne = res.getEnums().stream()
                 .filter(i -> i.getName().endsWith(Role.class.getTypeName()))
                 .findAny().orElse(null);

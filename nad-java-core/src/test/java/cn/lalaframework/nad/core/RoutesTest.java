@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -26,14 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class RoutesTest {
     @Autowired
     private Core core;
-    private NadResult res;
-
-    @PostConstruct
-    void init() {
-        res = core.create();
-    }
 
     private NadRoute getNadRoute(@NonNull String name) {
+        NadResult res = core.create();
         assertNotNull(res);
         return res.getRoutes().stream().filter(i -> name.equals(i.getName())).findAny().orElse(null);
     }

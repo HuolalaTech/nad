@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,16 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ModulesTest {
     @Autowired
     private Core core;
-    private NadResult res;
-
-    @PostConstruct
-    void init() {
-        res = core.create();
-    }
 
     @Test
     void getModules() {
-        assertNotNull(res);
+        NadResult res = core.create();
         NadModule my = res.getModules().stream()
                 .filter(i -> i.getName().equals(MyController.class.getName()))
                 .findAny().orElse(null);

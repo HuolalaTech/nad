@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,12 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ClassesTest {
     @Autowired
     private Core core;
-    private NadResult res;
-
-    @PostConstruct
-    void init() {
-        res = core.create();
-    }
 
     private static void assertMember(List<NadMember> members, String id, String TypeName) {
         NadMember member = members.stream().filter(i -> id.equals(i.getName())).findFirst().orElse(null);
@@ -35,7 +28,7 @@ class ClassesTest {
     }
 
     private NadClass getNadClass() {
-        assertNotNull(res);
+        NadResult res = core.create();
         return res.getClasses().stream()
                 .filter(i -> User.class.getTypeName().equals(i.getName()))
                 .findAny().orElse(null);
