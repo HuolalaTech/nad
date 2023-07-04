@@ -11,13 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        prepare:
-          # Spring Boot 2.2.6.RELEASE (by default)
-          - ":"
-          # Spring Boot 2.7.13
-          - sed -i 's/2\.2\.6.RELEASE/2.7.13/' pom.xml && sed -i 's/5\.2\.5.RELEASE/5.3.28/' pom.xml
-          # Spring Boot 3.1.1
-          - sed -i 's/2\.2\.6.RELEASE/3.1.1/' pom.xml && sed -i 's/5\.2\.5.RELEASE/6.0.10/' pom.xml
+        sb:
+          - spring-boot-2.2
+          - spring-boot-2.7
+          - spring-boot-3.1
 
     steps:
       - uses: actions/checkout@v3
@@ -27,15 +24,15 @@ jobs:
           java-version: "17"
 
       # For nad-java-core
-      - run: cd nad-java-core && ${{ matrix.prepare }} && mvn install
+      - run: cd nad-java-core && mvn install -f ${{ matrix.sb }}.pom.xml
       - uses: codecov/codecov-action@v3
         with:
           directory: nad-java-core
-          flags: nad-java-core
+          flags: nad-java-core-${{ matrix.sb }}
 
       # For nad-java-sdk
-      - run: cd nad-java-sdk && ${{ matrix.prepare }} && mvn -B test
+      - run: cd nad-java-sdk && mvn test -f ${{ matrix.sb }}.pom.xml
       - uses: codecov/codecov-action@v3
         with:
           directory: nad-java-sdk
-          flags: nad-java-sdk
+          flags: nad-java-sdk-${{ matrix.sb }}
