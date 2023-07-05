@@ -15,18 +15,22 @@ This library is for collecting all Spring Web routes as a serializable data stru
 ## Usage
 
 ```java
-import NadCore;
-import NadResult;
+import cn.lalaframework.nad.interfaces.NadResult;
+import cn.lalaframework.nad.models.NadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Component
 class MyComponent {
     @Autowired
-    private NadCore nadCore;
+    private RequestMappingHandlerMapping map;
 
     public void foo() {
-        NadResult result = nadCore.create();
+        NadResult result = NadContext.run(() -> {
+            NadContext.collectSpringWeb(map);
+            return NadContext.dump();
+        }, null);
         // You can serialize this result as a json and transfer it to other services.
     }
 }

@@ -53,7 +53,7 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
      * @return Associated type name string.
      */
     private static String cc(Type type) {
-        NadContext.collect(type);
+        NadContext.collectType(type);
         return type.getTypeName();
     }
 

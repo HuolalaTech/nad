@@ -11,17 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project:
-          - nad-java-core
-          - nad-java-sdk
+        sb:
+          - spring-boot-2.2
+          - spring-boot-2.7
+          - spring-boot-3.1
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: "17"
-      - run: cd ${{ matrix.project }} && mvn -B test
+
+      # For nad-java-core
+      - run: cd nad-java-core && mvn install -f ${{ matrix.sb }}.pom.xml
       - uses: codecov/codecov-action@v3
         with:
-          directory: ${{ matrix.project }}
-          flags: ${{ matrix.project }}
+          directory: nad-java-core
+          flags: nad-java-core-${{ matrix.sb }}
+
+      # For nad-java-sdk
+      - run: cd nad-java-sdk && mvn test -f ${{ matrix.sb }}.pom.xml
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: nad-java-sdk
+          flags: nad-java-sdk-${{ matrix.sb }}

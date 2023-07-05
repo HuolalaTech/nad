@@ -1,7 +1,6 @@
 package cn.lalaframework.nad.utils;
 
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.springframework.web.util.pattern.PathPatternParser;
@@ -11,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class PatternsUtilTest {
     private static Object invoke(String getPatternsV1, Object info) {
@@ -35,48 +36,48 @@ class PatternsUtilTest {
 
     @Test
     void v1() {
-        Assertions.assertNull(getPatternsV1(new Object()));
+        assertNull(getPatternsV1(new Object()));
         RequestMappingInfo info = new RequestMappingInfo();
-        Assertions.assertNull(getPatternsV1(info));
+        assertNull(getPatternsV1(info));
         info.patterns = new PatternsRequestCondition();
-        Assertions.assertNull(getPatternsV1(info));
+        assertNull(getPatternsV1(info));
         info.patterns.patterns = new LinkedHashSet<>();
         info.patterns.patterns.add("/test");
         info.patterns.patterns.add("/user/{id}");
         info.patterns.patterns.add(123);
-        Assertions.assertNotNull(getPatternsV1(info));
+        assertNotNull(getPatternsV1(info));
         // getActivePatterns
         List<String> list = PatternsUtil.getActivePatterns(info);
-        Assertions.assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
+        assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
     }
 
     @Test
     void v2() {
-        Assertions.assertNull(getPatternsV2(new Object()));
+        assertNull(getPatternsV2(new Object()));
         RequestMappingInfo info = new RequestMappingInfo();
-        Assertions.assertNull(getPatternsV2(info));
+        assertNull(getPatternsV2(info));
         info.pathPatterns = new PatternsRequestCondition();
-        Assertions.assertNull(getPatternsV2(info));
+        assertNull(getPatternsV2(info));
         info.pathPatterns.patterns = new LinkedHashSet<>();
         PathPatternParser ppp = new PathPatternParser();
         info.pathPatterns.patterns.add(ppp.parse("/test"));
         info.pathPatterns.patterns.add(ppp.parse("/user/{id}"));
         info.pathPatterns.patterns.add("bad string object");
-        Assertions.assertNotNull(getPatternsV2(info));
+        assertNotNull(getPatternsV2(info));
         // getActivePatterns
         List<String> list = PatternsUtil.getActivePatterns(info);
-        Assertions.assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
+        assertIterableEquals(Lists.list("/test", "/user/{id}"), list);
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
     void getNull() {
-        Assertions.assertNotNull(PatternsUtil.getActivePatterns(null));
+        assertNotNull(PatternsUtil.getActivePatterns(null));
     }
 
     @Test
     void construct() {
-        Assertions.assertThrows(
+        assertThrows(
                 IllegalStateException.class,
                 () -> ReflectionUtils.newInstance(PatternsUtil.class)
         );

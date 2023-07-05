@@ -19,7 +19,7 @@ public class NadParameterImpl implements NadParameter {
         p.initParameterNameDiscovery(getParameterNameDiscoverer());
         name = p.getParameterName();
         Type parameterType = p.getGenericParameterType();
-        NadContext.collect(parameterType);
+        NadContext.collectType(parameterType);
         type = parameterType.getTypeName();
         annotations = NadAnnotationImpl.fromArray(p.getParameterAnnotations());
     }
