@@ -1,6 +1,12 @@
-# nad-sdk · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../../LICENSE.txt) [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-sdk)](https://app.codecov.io/gh/HuolalaTech/nad/tree/main/nad-java-sdk)
+# nad-sdk · [![LICENSE](https://img.shields.io/github/license/HuolalaTech/nad)](../../LICENSE.txt)
 
 A Java SDK that produces typed Java definitions, which can be used to create code for another platform.
+
+| Framework                                                                                                                                                                                                              | Coverage                                                                                                                                                                                                                        |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [![2.2.6.RELEASE](https://img.shields.io/badge/Spring%20Boot-2.2.6.RELEASE-gray?logo=spring&logoColor=white&labelColor=6DB33F)](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot/2.2.6.RELEASE) | [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-sdk-spring-boot-2.2)](https://app.codecov.io/gh/HuolalaTech/nad/flags?flags%5B0%5D=nad-java-sdk-spring-boot-2.2) |
+| [![2.7.13](https://img.shields.io/badge/Spring%20Boot-2.7.13-gray?logo=spring&logoColor=white&labelColor=6DB33F)](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot/2.7.13)                      | [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-sdk-spring-boot-2.7)](https://app.codecov.io/gh/HuolalaTech/nad/flags?flags%5B0%5D=nad-java-sdk-spring-boot-2.7) |
+| [![3.1.0](https://img.shields.io/badge/Spring%20Boot-3.1.0-gray?logo=spring&logoColor=white&labelColor=6DB33F)](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot/3.1.0)                         | [![codecov](https://codecov.io/gh/HuolalaTech/nad/branch/main/graph/badge.svg?token=3YnCtwfAzL&flag=nad-java-sdk-spring-boot-3.1)](https://app.codecov.io/gh/HuolalaTech/nad/flags?flags%5B0%5D=nad-java-sdk-spring-boot-3.1) |
 
 ## GAV
 
