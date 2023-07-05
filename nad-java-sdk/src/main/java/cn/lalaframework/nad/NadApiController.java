@@ -32,6 +32,7 @@ public class NadApiController {
             ClassExcluder filter = new ClassExcluder();
             filter.addRule("java.*");
             filter.addRule("javax.*");
+            filter.addRule("jakarta.*");
             filter.addRule("org.springframework.*");
             filter.addRule("com.alibaba.fastjson.*");
             filter.addRule("com.fasterxml.jackson.*");
