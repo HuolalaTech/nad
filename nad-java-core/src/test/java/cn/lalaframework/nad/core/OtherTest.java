@@ -14,7 +14,6 @@ class OtherTest {
     @Autowired
     private Core core;
 
-
     @Test
     void getRoutes() {
         ClassExcluder ce = new ClassExcluder();
@@ -22,5 +21,4 @@ class OtherTest {
         NadResult res = core.create(ce);
         assertEquals(0, res.getClasses().size());
     }
-
 }

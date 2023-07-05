@@ -5,18 +5,14 @@ import cn.lalaframework.nad.models.NadContext;
 import org.springframework.aop.ClassFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-
-import java.util.Objects;
 
 @Component
 class Core {
     @Autowired
     private RequestMappingHandlerMapping rhMapping;
 
-    @Nullable
     private volatile NadResult cache;
 
     @NonNull
@@ -28,7 +24,7 @@ class Core {
                 }
             }
         }
-        return Objects.requireNonNull(cache);
+        return cache;
     }
 
     protected NadResult create(ClassFilter filter) {
