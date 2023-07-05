@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 @SuppressWarnings("ALL")
 public class User implements Serializable {
+    public String nickName;
+    public transient long INS_TEMP_ID = 23333L;
     private Long id;
     private String name;
 
@@ -22,10 +24,6 @@ public class User implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public String nickName;
-
-    public transient long INS_TEMP_ID = 23333L;
 
     public boolean isActive() {
         return true;

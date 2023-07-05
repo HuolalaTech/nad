@@ -15,15 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class NadParameterImpl implements NadParameter {
-    public NadParameterImpl(@NonNull MethodParameter p) {
-        p.initParameterNameDiscovery(getParameterNameDiscoverer());
-        name = p.getParameterName();
-        Type parameterType = p.getGenericParameterType();
-        NadContext.collectType(parameterType);
-        type = parameterType.getTypeName();
-        annotations = NadAnnotationImpl.fromArray(p.getParameterAnnotations());
-    }
-
     @Nullable
     private static ParameterNameDiscoverer parameterNameDiscoverer;
     @Nullable
@@ -32,6 +23,14 @@ public class NadParameterImpl implements NadParameter {
     private final String type;
     @NonNull
     private final List<NadAnnotation> annotations;
+    public NadParameterImpl(@NonNull MethodParameter p) {
+        p.initParameterNameDiscovery(getParameterNameDiscoverer());
+        name = p.getParameterName();
+        Type parameterType = p.getGenericParameterType();
+        NadContext.collectType(parameterType);
+        type = parameterType.getTypeName();
+        annotations = NadAnnotationImpl.fromArray(p.getParameterAnnotations());
+    }
 
     static List<NadParameter> fromHandler(HandlerMethod handler) {
         return Arrays.stream(handler.getMethodParameters()).map(NadParameterImpl::new).collect(Collectors.toList());

@@ -28,10 +28,31 @@ public class NadMemberBuilder {
     }
 
     /**
+     * Scan the declared fields and methods of specified class, build a NadMember list.
+     *
+     * @param clz A standard java class.
+     */
+    @NonNull
+    public static List<NadMember> buildMemberList(@NonNull Class<?> clz) {
+        // Use a TreeMap to keep the order of the items.
+        NadMemberMap result = new NadMemberMap();
+
+        // Collect the methods and fields.
+        // IMPORTANT: Methods must be collected first before fields.
+        // Because taking out the field alone we cannot know whether it is accessible or not.
+        // We have to determine the accessibility of a field based on the corresponding accessor methods.
+        Arrays.stream(clz.getDeclaredMethods()).forEach(result::addMethod);
+        Arrays.stream(clz.getDeclaredFields()).forEach(result::addField);
+
+        // Build all NadMember classes into a list.
+        return result.values().stream().map(NadMemberBuilder::build).collect(Collectors.toList());
+    }
+
+    /**
      * Calculates the annotations from field and accessor methods.
      *
      * @return A tuple of three items (as a List).
-     *         they represent the annotation list of field, getter, and setter, respectively.
+     * they represent the annotation list of field, getter, and setter, respectively.
      */
     @NonNull
     private List<List<NadAnnotation>> buildAnnotations() {
@@ -61,27 +82,6 @@ public class NadMemberBuilder {
             return javaType.getTypeName();
         }
         return "unknown";
-    }
-
-    /**
-     * Scan the declared fields and methods of specified class, build a NadMember list.
-     *
-     * @param clz A standard java class.
-     */
-    @NonNull
-    public static List<NadMember> buildMemberList(@NonNull Class<?> clz) {
-        // Use a TreeMap to keep the order of the items.
-        NadMemberMap result = new NadMemberMap();
-
-        // Collect the methods and fields.
-        // IMPORTANT: Methods must be collected first before fields.
-        // Because taking out the field alone we cannot know whether it is accessible or not.
-        // We have to determine the accessibility of a field based on the corresponding accessor methods.
-        Arrays.stream(clz.getDeclaredMethods()).forEach(result::addMethod);
-        Arrays.stream(clz.getDeclaredFields()).forEach(result::addField);
-
-        // Build all NadMember classes into a list.
-        return result.values().stream().map(NadMemberBuilder::build).collect(Collectors.toList());
     }
 
     /**
