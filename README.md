@@ -21,7 +21,7 @@ Before using it, make sure the backend API is based on the standard Spring Web a
 <dependency>
     <groupId>cn.lalaframework</groupId>
     <artifactId>nad-sdk</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
 </dependency>
 ```
 
