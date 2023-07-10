@@ -8,6 +8,8 @@ import { NadParameter } from '../types/nad';
 const ignoredTypes = new Set([
   'javax.servlet.http.HttpServletRequest',
   'javax.servlet.http.HttpServletResponse',
+  'jakarta.servlet.http.HttpServletRequest',
+  'jakarta.servlet.http.HttpServletResponse',
   'org.springframework.http.HttpEntity',
 ]);
 

@@ -103,3 +103,15 @@ test('javax.servlet.http.HttpServletResponse', () => {
   const code = buildOcFoo({ name: 'body', type });
   expect(code).toContain(`- (NSNumber*)foo {`);
 });
+
+test('jakarta.servlet.http.HttpServletRequest', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildOcFoo({ name: 'body', type });
+  expect(code).toContain(`- (NSNumber*)foo {`);
+});
+
+test('jakarta.servlet.http.HttpServletResponse', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildOcFoo({ name: 'body', type });
+  expect(code).toContain(`- (NSNumber*)foo {`);
+});
