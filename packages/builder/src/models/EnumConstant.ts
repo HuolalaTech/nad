@@ -1,5 +1,6 @@
 import { NadEnumConstant } from '../types/nad';
-import { Dubious, u2o } from '../utils';
+import { Dubious } from '../utils';
+import { u2o } from 'u2x';
 import { Annotated } from './Annotated';
 import type { Enum } from './Enum';
 

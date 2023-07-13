@@ -1,9 +1,10 @@
-import { Dubious, u2o, u2s } from '../utils';
+import { Dubious } from '../utils';
 import { Annotated } from './Annotated';
 import { Type } from './Type';
 import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
+import { u2o, u2s } from 'u2x';
 
 const ignoredTypes = new Set([
   'javax.servlet.http.HttpServletRequest',

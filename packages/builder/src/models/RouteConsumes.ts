@@ -1,5 +1,6 @@
 import { APPLICATION_JSON, MULTIPART_FORM_DATA, WWW_FORM_URLENCODED } from '../constants';
-import { Dubious, notEmpty, u2a } from '../utils';
+import { Dubious, notEmpty } from '../utils';
+import { u2a } from 'u2x';
 import { MediaType } from './MediaType';
 
 export class RouteConsumes {

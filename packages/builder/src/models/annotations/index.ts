@@ -1,5 +1,6 @@
 import { NadAnnotation } from '../../types/nad';
-import { Dubious, notEmpty, u2a, u2o } from '../../utils';
+import { Dubious, notEmpty } from '../../utils';
+import { u2a, u2o } from 'u2x';
 import { JsonAnnotations } from './JsonAnnotations';
 
 import { SwaggerAnnotations } from './SwaggerAnnotations';

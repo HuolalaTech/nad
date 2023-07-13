@@ -1,4 +1,5 @@
-import { Dubious, u2a } from '../utils';
+import { Dubious } from '../utils';
+import { u2a } from 'u2x';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
 import { EnumConstant } from './EnumConstant';

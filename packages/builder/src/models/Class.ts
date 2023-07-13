@@ -1,6 +1,7 @@
 import { Member } from './Member';
 import { Type } from './Type';
-import { Dubious, u2a, u2s } from '../utils';
+import { Dubious } from '../utils';
+import { u2a, u2s } from 'u2x';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
 import { NadClass } from '../types/nad';

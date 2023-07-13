@@ -1,7 +1,7 @@
 import { Annotations } from '.';
-import { u2b } from '../../utils';
+import { u2b } from 'u2x';
 import { AnnotationBase } from './AnnotationBase';
-import { u2s } from '../../utils';
+import { u2s } from 'u2x';
 
 abstract class ValueAliasName extends AnnotationBase<string> {
   get value(): string {
