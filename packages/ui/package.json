@@ -7,8 +7,7 @@
   "scripts": {
     "start": "GENERATE_SOURCEMAP=false react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "GENERATE_SOURCEMAP=false react-scripts build",
-    "format": "prettier --write \"**/*.{js,ts,json}\""
+    "format": "prettier --write \"src/**/*.{js,ts,json}\""
   },
   "eslintConfig": {
     "extends": [
