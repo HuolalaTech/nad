@@ -1,4 +1,4 @@
-import { u2b, u2s } from '../../utils';
+import { u2b, u2s } from 'u2x';
 import { Annotations } from '.';
 import { AnnotationBase } from './AnnotationBase';
 

@@ -1,7 +1,8 @@
 import { Annotated } from './Annotated';
 import type { Module } from './Module';
 import { Type } from './Type';
-import { Dubious, notEmpty, UniqueName, u2a, u2s } from '../utils';
+import { Dubious, notEmpty, UniqueName } from '../utils';
+import { u2a, u2s } from 'u2x';
 import { Parameter } from './Parameter';
 import { NadRoute } from '../types/nad';
 import { RouteConsumes } from './RouteConsumes';
@@ -37,15 +38,15 @@ export class Route extends Annotated<RouteRaw> {
     // 2. Compared to GET method, the POST method can take payload.
     // Therefore, use the POST method as the first preferred option in case the route supports it.
     // Otherwise use the first method in the supported list.
-    const methods = u2a(this.raw.methods, u2s);
+    const methods = u2a(this.raw.methods, u2s).filter(notEmpty);
     if (methods.length > 0 && !methods.includes('POST')) this.method = methods[0];
     else this.method = 'POST';
 
-    this.pattern = u2a(this.raw.patterns, u2s)[0] || '';
+    this.pattern = u2a(this.raw.patterns, u2s).filter(notEmpty)[0] || '';
 
     this.requestContentType = new RouteConsumes(this.raw.consumes).getTheBest();
 
-    this.customFlags = u2a(this.raw.customFlags, u2s);
+    this.customFlags = u2a(this.raw.customFlags, u2s).filter(notEmpty);
 
     this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
     this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this)).filter(notEmpty);

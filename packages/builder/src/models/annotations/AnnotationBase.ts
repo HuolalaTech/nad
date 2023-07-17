@@ -1,4 +1,4 @@
-import { u2o } from '../../utils';
+import { u2o } from 'u2x';
 import { Annotations } from '.';
 
 export class AnnotationBase<V> {

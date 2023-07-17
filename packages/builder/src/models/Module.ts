@@ -1,5 +1,6 @@
 import { Route, RouteRaw } from './Route';
-import { Dubious, u2a, u2o, u2s, UniqueName } from '../utils';
+import { Dubious, UniqueName } from '../utils';
+import { u2a, u2o, u2s } from 'u2x';
 import type { Root } from './Root';
 import { Annotated } from './Annotated';
 import { NadModule } from '../types/nad';
@@ -16,7 +17,7 @@ export class Module extends Annotated<ModuleRaw> {
     super(raw);
     this.builder = builder;
     const defs = u2o(raw);
-    this.name = u2s(defs.name);
+    this.name = u2s(defs.name) ?? '';
     this.moduleName = UniqueName.createFor(
       this.builder,
       // For example, convert "cn.xxx.xxx.People$$wtf23333" to "People"

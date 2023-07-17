@@ -38,11 +38,9 @@ test('json', () => {
 });
 
 test('bad annotations', () => {
-  expect(() => {
-    new Annotations(null as unknown as NadAnnotation[]);
-  }).not.toThrow();
+  expect(Annotations.create(null as unknown as NadAnnotation[])).toBeUndefined();
 
-  const ans = new Annotations([
+  const ans = Annotations.create([
     null,
     '',
     {},

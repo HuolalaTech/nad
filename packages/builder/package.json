@@ -21,7 +21,8 @@
   "author": "YanagiEiichi <576398868@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "@huolala-tech/custom-error": "^1.0.0"
+    "@huolala-tech/custom-error": "^1.0.0",
+    "u2x": "^1.1.0"
   },
   "repository": {
     "type": "git",

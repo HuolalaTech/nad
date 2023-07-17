@@ -1,4 +1,4 @@
-import { u2o } from '../utils';
+import { u2o } from 'u2x';
 
 const isIterable = (what: unknown): what is Iterable<unknown> => {
   return !!what && typeof u2o(what)[Symbol.iterator] === 'function';

@@ -1,7 +1,7 @@
 import { Annotations } from '.';
-import { u2b } from '../../utils';
+import { u2b } from 'u2x';
 import { AnnotationBase } from './AnnotationBase';
-import { u2s } from '../../utils';
+import { u2s } from 'u2x';
 
 abstract class ValueAliasName extends AnnotationBase<string> {
   get value(): string {
@@ -15,7 +15,7 @@ abstract class ValueAliasName extends AnnotationBase<string> {
 export class RequestParam extends ValueAliasName {
   public static iface = 'org.springframework.web.bind.annotation.RequestParam';
   get required() {
-    return u2b(this.raw.required, true);
+    return u2b(this.raw.required) ?? true;
   }
 }
 
@@ -25,7 +25,7 @@ export class RequestParam extends ValueAliasName {
 export class PathVariable extends ValueAliasName {
   public static iface = 'org.springframework.web.bind.annotation.PathVariable';
   get required() {
-    return u2b(this.raw.required, true);
+    return u2b(this.raw.required) ?? true;
   }
 }
 
@@ -35,7 +35,7 @@ export class PathVariable extends ValueAliasName {
 export class RequestBody extends ValueAliasName {
   public static iface = 'org.springframework.web.bind.annotation.RequestBody';
   get required() {
-    return u2b(this.raw.required, true);
+    return u2b(this.raw.required) ?? true;
   }
 }
 
@@ -44,6 +44,13 @@ export class RequestBody extends ValueAliasName {
  */
 export class ModelAttribute extends ValueAliasName {
   public static iface = 'org.springframework.web.bind.annotation.ModelAttribute';
+}
+
+/**
+ * @see https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/CookieValue.html
+ */
+export class CookieValue extends ValueAliasName {
+  public static iface = 'org.springframework.web.bind.annotation.CookieValue';
 }
 
 export class WebAnnotations {
@@ -63,5 +70,8 @@ export class WebAnnotations {
   }
   getModelAttribute() {
     return ModelAttribute.create(this.annotations);
+  }
+  getCookieValue() {
+    return CookieValue.create(this.annotations);
   }
 }

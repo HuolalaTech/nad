@@ -1,6 +1,7 @@
 import { Module } from './Module';
 import { Class } from './Class';
-import { computeIfAbsent, Dubious, u2o, u2a, u2s } from '../utils';
+import { computeIfAbsent, Dubious } from '../utils';
+import { u2o, u2a, u2s } from 'u2x';
 import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
 import { RouteRaw } from './Route';
