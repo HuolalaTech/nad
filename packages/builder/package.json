@@ -5,21 +5,21 @@
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/cjs/index.d.ts",
+  "author": "YanagiEiichi <576398868@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "test": "jest src --coverage",
+    "fix": "yarn lint && yarn format",
+    "lint": "eslint src --fix",
+    "format": "prettier --write \"src/**/*.{js,ts,json}\"",
+    "prepublishOnly": "rollup -c"
+  },
   "files": [
     "dist",
     "CHANGELOG.md"
   ],
-  "scripts": {
-    "test": "jest src --coverage",
-    "fix": "yarn lint && yarn prettier",
-    "lint": "eslint src --fix",
-    "start": "rollup -c --watch",
-    "build": "rollup -c",
-    "prepublishOnly": "rollup -c",
-    "prettier": "prettier --write \"src/**/*.{js,ts,json}\""
-  },
-  "author": "YanagiEiichi <576398868@qq.com>",
-  "license": "MIT",
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
     "u2x": "^1.1.0"
