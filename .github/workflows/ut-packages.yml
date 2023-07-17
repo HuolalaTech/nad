@@ -18,9 +18,8 @@ jobs:
           cache-dependency-path: ./yarn.lock
       - run: yarn
 
-      - run: cd packages/runtime && yarn build && yarn test
-      - run: cd packages/builder && yarn build && yarn test
-      - run: cd packages/cli && yarn build && yarn test
+      - run: yarn lerna run build --scope '@huolala-tech/*'
+      - run: yarn lerna run test
 
       - uses: codecov/codecov-action@v3
         with:
@@ -31,8 +30,3 @@ jobs:
         with:
           directory: packages/builder
           flags: nad-builder
-
-      - uses: codecov/codecov-action@v3
-        with:
-          directory: packages/cli
-          flags: nad-cli
