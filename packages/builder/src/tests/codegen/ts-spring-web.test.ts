@@ -80,34 +80,24 @@ test('MultipartFile rename', () => {
   expect(code).toContain(`.addMultipartFile('hehe', myFile)`);
 });
 
-test('org.springframework.http.HttpEntity<String>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'body', type });
-  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
+const testIgnoredTypes = test.each([
+  ['javax.servlet.http.HttpServletRequest'],
+  ['javax.servlet.http.HttpServletResponse'],
+  ['jakarta.servlet.http.HttpServletRequest'],
+  ['jakarta.servlet.http.HttpServletResponse'],
+  ['org.springframework.http.HttpEntity<Object>'],
+  ['org.springframework.http.HttpEntity<String>'],
+  ['org.springframework.http.HttpEntity'],
+]);
+
+testIgnoredTypes('Only ignored type %p', (type) => {
+  const c = buildTsFoo({ name: 'body', type });
+  expect(c).toContain(`async foo(settings?: Partial<Settings>)`);
 });
 
-test('org.springframework.http.HttpEntity<Object>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'body', type });
-  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
-});
-
-test('javax.servlet.http.HttpServletRequest', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'body', type });
-  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
-});
-
-test('javax.servlet.http.HttpServletResponse', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'body', type });
-  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
-});
-
-test('javax.servlet.http.HttpServletResponse', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'body', type });
-  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
+testIgnoredTypes('Ignored type %p and Long', (type) => {
+  const c = buildTsFoo({ name: 'body', type }, { name: 'l', type: 'long' });
+  expect(c).toContain(`async foo(l: Long, settings?: Partial<Settings>)`);
 });
 
 test('org.springframework.web.bind.annotation.CookieValue', () => {

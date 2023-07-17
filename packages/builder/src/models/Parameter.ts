@@ -36,7 +36,6 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
-    const cv = this.annotations.web.getCookieValue();
 
     this.description = ap?.value || ap?.name || '';
 
