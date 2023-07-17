@@ -22,7 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
-    "u2x": "^1.0.1"
+    "u2x": "^1.1.0"
   },
   "repository": {
     "type": "git",

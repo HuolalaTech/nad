@@ -17,7 +17,7 @@ export class Module extends Annotated<ModuleRaw> {
     super(raw);
     this.builder = builder;
     const defs = u2o(raw);
-    this.name = u2s(defs.name, () => '');
+    this.name = u2s(defs.name) ?? '';
     this.moduleName = UniqueName.createFor(
       this.builder,
       // For example, convert "cn.xxx.xxx.People$$wtf23333" to "People"

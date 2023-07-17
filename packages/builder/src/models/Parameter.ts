@@ -5,6 +5,7 @@ import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
 import { u2o, u2s } from 'u2x';
+import { Annotations } from './annotations';
 
 const ignoredTypes = new Set([
   'javax.servlet.http.HttpServletRequest',
@@ -14,9 +15,7 @@ const ignoredTypes = new Set([
   'org.springframework.http.HttpEntity',
 ]);
 
-type ParameterRaw = Dubious<NadParameter>;
-
-export class Parameter extends Annotated<ParameterRaw> {
+export class Parameter extends Annotated<Dubious<NadParameter>> {
   public readonly type;
   public readonly owner;
   public readonly builder;
@@ -26,7 +25,7 @@ export class Parameter extends Annotated<ParameterRaw> {
   public readonly isFile;
   public readonly hasBody;
 
-  constructor(raw: ParameterRaw | undefined, owner: Route) {
+  constructor(raw: Dubious<NadParameter> | undefined, owner: Route) {
     super(raw);
     this.owner = owner;
     this.builder = owner.builder;
@@ -37,6 +36,7 @@ export class Parameter extends Annotated<ParameterRaw> {
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
+    const cv = this.annotations.web.getCookieValue();
 
     this.description = ap?.value || ap?.name || '';
 
@@ -95,9 +95,18 @@ export class Parameter extends Annotated<ParameterRaw> {
     }
   }
 
-  static create(raw: ParameterRaw | undefined, owner: Route) {
-    const { type } = u2o(raw);
+  static create(raw: Dubious<NadParameter> | undefined, owner: Route) {
+    if (!raw) return null;
+
+    const { type, annotations } = u2o(raw);
+
+    // Do not create if matching ignoredTypes.
     if (typeof type === 'string' && ignoredTypes.has(type.replace(/<.*/, ''))) return null;
+
+    // Do not create if annotated with @CookieValue.
+    const cv = Annotations.create(annotations)?.web.getCookieValue();
+    if (cv) return null;
+
     return new Parameter(raw, owner);
   }
 }

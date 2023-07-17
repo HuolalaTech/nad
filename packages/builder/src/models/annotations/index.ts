@@ -1,5 +1,5 @@
 import { NadAnnotation } from '../../types/nad';
-import { Dubious, notEmpty } from '../../utils';
+import { Dubious, computeIfAbsent, notEmpty } from '../../utils';
 import { u2a, u2o } from 'u2x';
 import { JsonAnnotations } from './JsonAnnotations';
 
@@ -10,9 +10,15 @@ export interface NotNull {
   message: string;
 }
 
+const cache = new WeakMap<Dubious<NadAnnotation>[], Annotations>();
+
 export class Annotations {
   private readonly map;
-  constructor(raw: Dubious<NadAnnotation>[]) {
+
+  /**
+   * Do not construct this class directly, use Annotations.create to instread.
+   */
+  private constructor(raw: Dubious<NadAnnotation>[]) {
     const entries = u2a(raw, (u) => {
       if (!u) return null;
       const { type, attributes } = u2o(u);
@@ -60,5 +66,12 @@ export class Annotations {
       if (key.endsWith(name)) return value as T;
     }
     return null;
+  }
+
+  static create(raw: Dubious<NadAnnotation>[]): Annotations;
+  static create(raw: Dubious<NadAnnotation>[] | undefined): Annotations | undefined;
+  static create(raw?: Dubious<NadAnnotation>[] | undefined) {
+    if (typeof raw !== 'object' || raw === null) return undefined;
+    return computeIfAbsent(cache, raw, () => new this(raw));
   }
 }

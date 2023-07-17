@@ -103,3 +103,15 @@ test('javax.servlet.http.HttpServletResponse', () => {
   const code = buildTsFoo({ name: 'body', type });
   expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
 });
+
+test('javax.servlet.http.HttpServletResponse', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildTsFoo({ name: 'body', type });
+  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
+});
+
+test('org.springframework.web.bind.annotation.CookieValue', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildTsFoo({ name: 'cookieValue', annotations: [{ type }] });
+  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
+});
