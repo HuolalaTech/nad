@@ -80,24 +80,26 @@ test('MultipartFile rename', () => {
   expect(code).toContain(`.addMultipartFile('hehe', myFile)`);
 });
 
-const testIgnoredTypes = test.each([
-  ['javax.servlet.http.HttpServletRequest'],
-  ['javax.servlet.http.HttpServletResponse'],
-  ['jakarta.servlet.http.HttpServletRequest'],
-  ['jakarta.servlet.http.HttpServletResponse'],
-  ['org.springframework.http.HttpEntity<Object>'],
-  ['org.springframework.http.HttpEntity<String>'],
-  ['org.springframework.http.HttpEntity'],
-]);
+describe('Ignored type', () => {
+  const testIgnoredTypes = test.each([
+    ['javax.servlet.http.HttpServletRequest'],
+    ['javax.servlet.http.HttpServletResponse'],
+    ['jakarta.servlet.http.HttpServletRequest'],
+    ['jakarta.servlet.http.HttpServletResponse'],
+    ['org.springframework.http.HttpEntity<Object>'],
+    ['org.springframework.http.HttpEntity<String>'],
+    ['org.springframework.http.HttpEntity'],
+  ]);
 
-testIgnoredTypes('Only ignored type %p', (type) => {
-  const c = buildTsFoo({ name: 'body', type });
-  expect(c).toContain(`async foo(settings?: Partial<Settings>)`);
-});
+  testIgnoredTypes('Only %p', (type) => {
+    const c = buildTsFoo({ name: 'body', type });
+    expect(c).toContain(`async foo(settings?: Partial<Settings>)`);
+  });
 
-testIgnoredTypes('Ignored type %p and Long', (type) => {
-  const c = buildTsFoo({ name: 'body', type }, { name: 'l', type: 'long' });
-  expect(c).toContain(`async foo(l: Long, settings?: Partial<Settings>)`);
+  testIgnoredTypes('Long and %p', (type) => {
+    const c = buildTsFoo({ name: 'body', type }, { name: 'l', type: 'long' });
+    expect(c).toContain(`async foo(l: Long, settings?: Partial<Settings>)`);
+  });
 });
 
 test('org.springframework.web.bind.annotation.CookieValue', () => {
