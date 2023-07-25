@@ -5,7 +5,6 @@ import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
 import { u2o, u2s } from 'u2x';
-import { Annotations } from './annotations';
 
 const ignoredTypes = new Set([
   'javax.servlet.http.HttpServletRequest',
@@ -36,6 +35,7 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
+    const cv = this.annotations.web.getCookieValue();
 
     this.description = ap?.value || ap?.name || '';
 
@@ -78,7 +78,7 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     }
 
     // If not annotations are present, the method that to be called can be automatically detected.
-    if (!pv && !rb && !rp && !ma) {
+    if (!pv && !rb && !rp && !ma && !cv) {
       // For the file upload.
       if (this.isFile) {
         this.actions.push(['addMultipartFile', this.name]);
@@ -97,15 +97,16 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
   static create(raw: Dubious<NadParameter> | undefined, owner: Route) {
     if (!raw) return null;
 
-    const { type, annotations } = u2o(raw);
+    const { type } = u2o(raw);
 
     // Do not create if matching ignoredTypes.
     if (typeof type === 'string' && ignoredTypes.has(type.replace(/<.*/, ''))) return null;
 
-    // Do not create if annotated with @CookieValue.
-    const cv = Annotations.create(annotations)?.web.getCookieValue();
-    if (cv) return null;
+    const parameter = new Parameter(raw, owner);
 
-    return new Parameter(raw, owner);
+    // If the action list is empty, it means that this parameter is not used and should therefore be ignored.
+    if (parameter.actions.length === 0) return null;
+
+    return parameter;
   }
 }

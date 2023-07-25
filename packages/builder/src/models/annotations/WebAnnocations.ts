@@ -51,6 +51,9 @@ export class ModelAttribute extends ValueAliasName {
  */
 export class CookieValue extends ValueAliasName {
   public static iface = 'org.springframework.web.bind.annotation.CookieValue';
+  get required() {
+    return u2b(this.raw.required) ?? true;
+  }
 }
 
 export class WebAnnotations {

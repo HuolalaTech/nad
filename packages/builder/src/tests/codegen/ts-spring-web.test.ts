@@ -102,8 +102,22 @@ describe('Ignored type', () => {
   });
 });
 
-test('org.springframework.web.bind.annotation.CookieValue', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'cookieValue', annotations: [{ type }] });
-  expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
+describe.each([['org.springframework.web.bind.annotation.CookieValue']])('%p', (type) => {
+  const arg1 = { name: 'arg1', type: 'java.lang.Long' };
+  test('sginle', () => {
+    const code = buildTsFoo({
+      ...arg1,
+      annotations: [{ type }],
+    });
+    expect(code).toContain(`async foo(settings?: Partial<Settings>)`);
+  });
+
+  test('with RequestParam together', () => {
+    const code = buildTsFoo({
+      ...arg1,
+      annotations: [{ type }, { type: 'org.springframework.web.bind.annotation.RequestParam' }],
+    });
+    expect(code).toContain(`async foo(arg1: Long, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.addRequestParam('arg1', arg1)`);
+  });
 });
