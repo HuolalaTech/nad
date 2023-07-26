@@ -35,6 +35,7 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
+    const rh = this.annotations.web.getRequestHeader();
     const cv = this.annotations.web.getCookieValue();
 
     this.description = ap?.value || ap?.name || '';
@@ -48,6 +49,7 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
       rp?.required ||
       pv?.required ||
       rb?.required ||
+      rh?.required ||
       this.annotations.hasNonNull() ||
       isJavaPrimitive(this.type.name)
         ? ('' as const)
@@ -72,13 +74,16 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
       }
     }
 
+    // If a parameter is annotated with `@RequestHeader`, ...
+    if (rh) this.actions.push(['addHeader', rh.value || this.name]);
+
     // If a parameter ins annotated with `@ModelAttribute`, the `addModelAttribute` method must be called.
     if (ma) {
       this.actions.push(['addModelAttribute']);
     }
 
     // If not annotations are present, the method that to be called can be automatically detected.
-    if (!pv && !rb && !rp && !ma && !cv) {
+    if (!pv && !rb && !rp && !ma && !rh && !cv) {
       // For the file upload.
       if (this.isFile) {
         this.actions.push(['addMultipartFile', this.name]);

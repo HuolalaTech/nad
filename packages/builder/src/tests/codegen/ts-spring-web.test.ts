@@ -9,6 +9,7 @@ const buildA = (...annotations: DeepPartial<NadAnnotation>[]) => {
 describe.each([
   ['org.springframework.web.bind.annotation.PathVariable', 'addPathVariable'],
   ['org.springframework.web.bind.annotation.RequestParam', 'addRequestParam'],
+  ['org.springframework.web.bind.annotation.RequestHeader', 'addHeader'],
 ])('%p', (type, method) => {
   test('basic', () => {
     const code = buildA({ type });
