@@ -6,29 +6,41 @@ const buildA = (...annotations: DeepPartial<NadAnnotation>[]) => {
   return buildTsFoo({ name: 'id', type: 'java.lang.Long', annotations });
 };
 
-test('RequestParam auto', () => {
-  const code = buildA();
-  expect(code).toContain(`.addRequestParam('id', id)`);
+describe.each([
+  ['org.springframework.web.bind.annotation.PathVariable', 'addPathVariable'],
+  ['org.springframework.web.bind.annotation.RequestParam', 'addRequestParam'],
+])('%p', (type, method) => {
+  test('basic', () => {
+    const code = buildA({ type });
+    expect(code).toContain(`async foo(id: Long, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}('id', id)`);
+  });
+
+  test('rename with value', () => {
+    const code = buildA({ type, attributes: { value: 'x' } });
+    expect(code).toContain(`async foo(id: Long, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}('x', id)`);
+  });
+
+  test('rename', () => {
+    const code = buildA({ type, attributes: { name: 'x' } });
+    expect(code).toContain(`async foo(id: Long, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}('x', id)`);
+  });
+
+  test('optional', () => {
+    const code = buildA({ type, attributes: { required: false } });
+    expect(code).toContain(`async foo(id?: Long, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}('id', id)`);
+  });
 });
 
-test('RequestParam', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.RequestParam' });
-  expect(code).toContain(`.addRequestParam('id', id)`);
-});
-
-test('RequestParam rename', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: { value: 'x' } });
-  expect(code).toContain(`.addRequestParam('x', id)`);
-});
-
-test('PathVariable', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.PathVariable' });
-  expect(code).toContain(`.addPathVariable('id', id)`);
-});
-
-test('PathVariable rename', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.PathVariable', attributes: { value: 'x' } });
-  expect(code).toContain(`.addPathVariable('x', id)`);
+describe.each([['org.springframework.web.bind.annotation.RequestParam', 'addRequestParam']])('%p', (_, method) => {
+  test('auto', () => {
+    const code = buildA();
+    expect(code).toContain(`async foo(id?: Long, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}('id', id)`);
+  });
 });
 
 describe.each([['org.springframework.web.bind.annotation.ModelAttribute', 'addModelAttribute']])(
@@ -38,6 +50,11 @@ describe.each([['org.springframework.web.bind.annotation.ModelAttribute', 'addMo
     test('default', () => {
       const code = buildTsFoo({ ...user, annotations: [{ type }] });
       expect(code).toContain(`async foo(user?: User, settings?: Partial<Settings>)`);
+      expect(code).toContain(`.${method}(user)`);
+    });
+
+    test('auto', () => {
+      const code = buildTsFoo(user);
       expect(code).toContain(`.${method}(user)`);
     });
   },
@@ -58,35 +75,24 @@ describe.each([['org.springframework.web.bind.annotation.RequestBody', 'addReque
   });
 });
 
-test('ModelAttribute auto', () => {
-  const code = buildTsFoo({ name: 'people', type: 'test.People' });
-  expect(code).toContain(`.addModelAttribute(people)`);
-});
+describe.each([['org.springframework.web.multipart.MultipartFile', 'addMultipartFile']])('%p', (type, method) => {
+  const myFile = { name: 'myFile', type };
+  const rp = 'org.springframework.web.bind.annotation.RequestParam';
 
-test('MultipartFile without annotation', () => {
-  const code = buildTsFoo({
-    name: 'myFile',
-    type: 'org.springframework.web.multipart.MultipartFile',
+  test('basic', () => {
+    const code = buildTsFoo({ ...myFile, annotations: [{ type: rp }] });
+    expect(code).toContain(`.${method}('myFile', myFile)`);
   });
-  expect(code).toContain(`.addMultipartFile('myFile', myFile)`);
-});
 
-test('MultipartFile', () => {
-  const code = buildTsFoo({
-    name: 'myFile',
-    type: 'org.springframework.web.multipart.MultipartFile',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam' }],
+  test('rename', () => {
+    const code = buildTsFoo({ ...myFile, annotations: [{ type: rp, attributes: { value: 'hehe' } }] });
+    expect(code).toContain(`.${method}('hehe', myFile)`);
   });
-  expect(code).toContain(`.addMultipartFile('myFile', myFile)`);
-});
 
-test('MultipartFile rename', () => {
-  const code = buildTsFoo({
-    name: 'myFile',
-    type: 'org.springframework.web.multipart.MultipartFile',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: { value: 'hehe' } }],
+  test('without annotation', () => {
+    const code = buildTsFoo(myFile);
+    expect(code).toContain(`.${method}('myFile', myFile)`);
   });
-  expect(code).toContain(`.addMultipartFile('hehe', myFile)`);
 });
 
 describe('Ignored type', () => {
