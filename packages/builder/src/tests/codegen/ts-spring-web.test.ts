@@ -31,22 +31,31 @@ test('PathVariable rename', () => {
   expect(code).toContain(`.addPathVariable('x', id)`);
 });
 
-test('RequestBody', () => {
-  const code = buildTsFoo({
-    name: 'user',
-    type: 'test.User',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestBody' }],
-  });
-  expect(code).toContain(`.addRequestBody(user)`);
-});
+describe.each([['org.springframework.web.bind.annotation.ModelAttribute', 'addModelAttribute']])(
+  '%p',
+  (type, method) => {
+    const user = { name: 'user', type: 'test.User' };
+    test('default', () => {
+      const code = buildTsFoo({ ...user, annotations: [{ type }] });
+      expect(code).toContain(`async foo(user?: User, settings?: Partial<Settings>)`);
+      expect(code).toContain(`.${method}(user)`);
+    });
+  },
+);
 
-test('ModelAttribute', () => {
-  const code = buildTsFoo({
-    name: 'user',
-    type: 'test.User',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.ModelAttribute' }],
+describe.each([['org.springframework.web.bind.annotation.RequestBody', 'addRequestBody']])('%p', (type, method) => {
+  const user = { name: 'user', type: 'test.User' };
+  test('default', () => {
+    const code = buildTsFoo({ ...user, annotations: [{ type }] });
+    expect(code).toContain(`async foo(user: User, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}(user)`);
   });
-  expect(code).toContain(`.addModelAttribute(user)`);
+
+  test('optional', () => {
+    const code = buildTsFoo({ ...user, annotations: [{ type, attributes: { required: false } }] });
+    expect(code).toContain(`async foo(user?: User, settings?: Partial<Settings>)`);
+    expect(code).toContain(`.${method}(user)`);
+  });
 });
 
 test('ModelAttribute auto', () => {
