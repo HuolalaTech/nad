@@ -53,6 +53,16 @@ export class CookieValue extends ValueAliasName {
   public static iface = 'org.springframework.web.bind.annotation.CookieValue';
 }
 
+/**
+ * @see https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestHeader.html
+ */
+export class RequestHeader extends ValueAliasName {
+  public static iface = 'org.springframework.web.bind.annotation.RequestHeader';
+  get required() {
+    return u2b(this.raw.required) ?? true;
+  }
+}
+
 export class WebAnnotations {
   private annotations;
   constructor(annotations: Annotations) {
@@ -73,5 +83,8 @@ export class WebAnnotations {
   }
   getCookieValue() {
     return CookieValue.create(this.annotations);
+  }
+  getRequestHeader() {
+    return RequestHeader.create(this.annotations);
   }
 }

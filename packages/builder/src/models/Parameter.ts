@@ -5,7 +5,6 @@ import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
 import { u2o, u2s } from 'u2x';
-import { Annotations } from './annotations';
 
 const ignoredTypes = new Set([
   'javax.servlet.http.HttpServletRequest',
@@ -36,6 +35,8 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     const rb = this.annotations.web.getRequestBody();
     const rp = this.annotations.web.getRequestParam();
     const ma = this.annotations.web.getModelAttribute();
+    const rh = this.annotations.web.getRequestHeader();
+    const cv = this.annotations.web.getCookieValue();
 
     this.description = ap?.value || ap?.name || '';
 
@@ -48,6 +49,7 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
       rp?.required ||
       pv?.required ||
       rb?.required ||
+      rh?.required ||
       this.annotations.hasNonNull() ||
       isJavaPrimitive(this.type.name)
         ? ('' as const)
@@ -72,13 +74,16 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
       }
     }
 
+    // If a parameter is annotated with `@RequestHeader`, ...
+    if (rh) this.actions.push(['addHeader', rh.value || this.name]);
+
     // If a parameter ins annotated with `@ModelAttribute`, the `addModelAttribute` method must be called.
     if (ma) {
       this.actions.push(['addModelAttribute']);
     }
 
     // If not annotations are present, the method that to be called can be automatically detected.
-    if (!pv && !rb && !rp && !ma) {
+    if (!pv && !rb && !rp && !ma && !rh && !cv) {
       // For the file upload.
       if (this.isFile) {
         this.actions.push(['addMultipartFile', this.name]);
@@ -97,15 +102,16 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
   static create(raw: Dubious<NadParameter> | undefined, owner: Route) {
     if (!raw) return null;
 
-    const { type, annotations } = u2o(raw);
+    const { type } = u2o(raw);
 
     // Do not create if matching ignoredTypes.
     if (typeof type === 'string' && ignoredTypes.has(type.replace(/<.*/, ''))) return null;
 
-    // Do not create if annotated with @CookieValue.
-    const cv = Annotations.create(annotations)?.web.getCookieValue();
-    if (cv) return null;
+    const parameter = new Parameter(raw, owner);
 
-    return new Parameter(raw, owner);
+    // If the action list is empty, it means that this parameter is not used and should therefore be ignored.
+    if (parameter.actions.length === 0) return null;
+
+    return parameter;
   }
 }
