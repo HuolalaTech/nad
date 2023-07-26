@@ -6,112 +6,133 @@ const buildA = (...annotations: DeepPartial<NadAnnotation>[]) => {
   return buildOcFoo({ name: 'id', type: 'java.lang.Long', annotations });
 };
 
-test('RequestParam auto', () => {
-  const code = buildA();
-  expect(code).toContain(`[req addRequestParam:@"id" value:id]`);
-});
-
-test('RequestParam', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.RequestParam' });
-  expect(code).toContain(`[req addRequestParam:@"id" value:id]`);
-});
-
-test('RequestParam rename', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: { value: 'x' } });
-  expect(code).toContain(`[req addRequestParam:@"x" value:id]`);
-});
-
-test('PathVariable', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.PathVariable' });
-  expect(code).toContain(`[req addPathVariable:@"id" value:id]`);
-});
-
-test('PathVariable rename', () => {
-  const code = buildA({ type: 'org.springframework.web.bind.annotation.PathVariable', attributes: { value: 'x' } });
-  expect(code).toContain(`[req addPathVariable:@"x" value:id]`);
-});
-
-test('RequestBody', () => {
-  const code = buildOcFoo({
-    name: 'user',
-    type: 'test.User',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestBody' }],
+describe.each([
+  ['org.springframework.web.bind.annotation.PathVariable', 'addPathVariable'],
+  ['org.springframework.web.bind.annotation.RequestParam', 'addRequestParam'],
+])('%p', (type, method) => {
+  test('basic', () => {
+    const code = buildA({ type });
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)id;');
+    expect(code).toContain(`[req ${method}:@"id" value:id]`);
   });
-  expect(code).toContain(`[req addRequestBody:user]`);
-});
 
-test('ModelAttribute', () => {
-  const code = buildOcFoo({
-    name: 'user',
-    type: 'test.User',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.ModelAttribute' }],
+  test('rename with value', () => {
+    const code = buildA({ type, attributes: { value: 'x' } });
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)id;');
+    expect(code).toContain(`[req ${method}:@"x" value:id]`);
   });
-  expect(code).toContain(`[req addModelAttribute:user]`);
-});
 
-test('ModelAttribute auto', () => {
-  const code = buildOcFoo({ name: 'people', type: 'test.People' });
-  expect(code).toContain(`[req addModelAttribute:people]`);
-});
-
-test('MultipartFile without annotation', () => {
-  const code = buildOcFoo({
-    name: 'myFile',
-    type: 'org.springframework.web.multipart.MultipartFile',
+  test('rename', () => {
+    const code = buildA({ type, attributes: { name: 'x' } });
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)id;');
+    expect(code).toContain(`[req ${method}:@"x" value:id]`);
   });
-  expect(code).toContain(`[req addMultipartFile:@"myFile" value:myFile]`);
-});
 
-test('MultipartFile', () => {
-  const code = buildOcFoo({
-    name: 'myFile',
-    type: 'org.springframework.web.multipart.MultipartFile',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam' }],
+  test('optional', () => {
+    const code = buildA({ type, attributes: { required: false } });
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)id;');
+    expect(code).toContain(`[req ${method}:@"id" value:id]`);
   });
-  expect(code).toContain(`[req addMultipartFile:@"myFile" value:myFile]`);
 });
 
-test('MultipartFile rename', () => {
-  const code = buildOcFoo({
-    name: 'myFile',
-    type: 'org.springframework.web.multipart.MultipartFile',
-    annotations: [{ type: 'org.springframework.web.bind.annotation.RequestParam', attributes: { value: 'hehe' } }],
+describe.each([['org.springframework.web.bind.annotation.RequestParam', 'addRequestParam']])('%p', (_, method) => {
+  test('auto', () => {
+    const code = buildA();
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)id;');
+    expect(code).toContain(`[req ${method}:@"id" value:id]`);
   });
-  expect(code).toContain(`[req addMultipartFile:@"hehe" value:myFile]`);
 });
 
-test('org.springframework.http.HttpEntity<String>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcFoo({ name: 'body', type });
-  expect(code).toContain(`- (NSNumber*)foo {`);
+describe.each([['org.springframework.web.bind.annotation.ModelAttribute', 'addModelAttribute']])(
+  '%p',
+  (type, method) => {
+    const user = { name: 'user', type: 'test.User' };
+    test('default', () => {
+      const code = buildOcFoo({ ...user, annotations: [{ type }] });
+      expect(code).toContain('- (NSNumber*)foo:(User*)user;');
+      expect(code).toContain(`[req ${method}:user]`);
+    });
+
+    test('auto', () => {
+      const code = buildOcFoo(user);
+      expect(code).toContain(`[req ${method}:user]`);
+    });
+  },
+);
+
+describe.each([['org.springframework.web.bind.annotation.RequestBody', 'addRequestBody']])('%p', (type, method) => {
+  const user = { name: 'user', type: 'test.User' };
+  test('default', () => {
+    const code = buildOcFoo({ ...user, annotations: [{ type }] });
+    expect(code).toContain('- (NSNumber*)foo:(User*)user;');
+    expect(code).toContain(`[req ${method}:user]`);
+  });
+
+  test('optional', () => {
+    const code = buildOcFoo({ ...user, annotations: [{ type, attributes: { required: false } }] });
+    expect(code).toContain('- (NSNumber*)foo:(User*)user;');
+    expect(code).toContain(`[req ${method}:user]`);
+  });
 });
 
-test('org.springframework.http.HttpEntity<Object>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcFoo({ name: 'body', type });
-  expect(code).toContain(`- (NSNumber*)foo {`);
+describe.each([['org.springframework.web.multipart.MultipartFile', 'addMultipartFile']])('%p', (type, method) => {
+  const myFile = { name: 'myFile', type };
+  const rp = 'org.springframework.web.bind.annotation.RequestParam';
+
+  test('basic', () => {
+    const code = buildOcFoo({ ...myFile, annotations: [{ type: rp }] });
+    expect(code).toContain(`[req ${method}:@"myFile" value:myFile]`);
+  });
+
+  test('rename', () => {
+    const code = buildOcFoo({ ...myFile, annotations: [{ type: rp, attributes: { value: 'hehe' } }] });
+    expect(code).toContain(`[req ${method}:@"hehe" value:myFile]`);
+  });
+
+  test('without annotation', () => {
+    const code = buildOcFoo(myFile);
+    expect(code).toContain(`[req ${method}:@"myFile" value:myFile]`);
+  });
 });
 
-test('javax.servlet.http.HttpServletRequest', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcFoo({ name: 'body', type });
-  expect(code).toContain(`- (NSNumber*)foo {`);
+describe('Ignored type', () => {
+  const testIgnoredTypes = test.each([
+    ['javax.servlet.http.HttpServletRequest'],
+    ['javax.servlet.http.HttpServletResponse'],
+    ['jakarta.servlet.http.HttpServletRequest'],
+    ['jakarta.servlet.http.HttpServletResponse'],
+    ['org.springframework.http.HttpEntity<Object>'],
+    ['org.springframework.http.HttpEntity<String>'],
+    ['org.springframework.http.HttpEntity'],
+  ]);
+
+  testIgnoredTypes('Only %p', (type) => {
+    const code = buildOcFoo({ name: 'body', type });
+    expect(code).toContain('- (NSNumber*)foo;');
+  });
+
+  testIgnoredTypes('Long and %p', (type) => {
+    const code = buildOcFoo({ name: 'body', type }, { name: 'id', type: 'long' });
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)id;');
+  });
 });
 
-test('javax.servlet.http.HttpServletResponse', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcFoo({ name: 'body', type });
-  expect(code).toContain(`- (NSNumber*)foo {`);
-});
+describe.each([['org.springframework.web.bind.annotation.CookieValue']])('%p', (type) => {
+  const arg1 = { name: 'arg1', type: 'java.lang.Long' };
+  test('sginle', () => {
+    const code = buildOcFoo({
+      ...arg1,
+      annotations: [{ type }],
+    });
+    expect(code).toContain('- (NSNumber*)foo;');
+  });
 
-test('jakarta.servlet.http.HttpServletRequest', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcFoo({ name: 'body', type });
-  expect(code).toContain(`- (NSNumber*)foo {`);
-});
-
-test('jakarta.servlet.http.HttpServletResponse', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcFoo({ name: 'body', type });
-  expect(code).toContain(`- (NSNumber*)foo {`);
+  test('with RequestParam together', () => {
+    const code = buildOcFoo({
+      ...arg1,
+      annotations: [{ type }, { type: 'org.springframework.web.bind.annotation.RequestParam' }],
+    });
+    expect(code).toContain('- (NSNumber*)foo:(NSNumber*)arg1;');
+    expect(code).toContain(`[req addRequestParam:@"arg1" value:arg1]`);
+  });
 });
