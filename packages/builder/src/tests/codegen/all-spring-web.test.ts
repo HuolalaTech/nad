@@ -1,6 +1,13 @@
 import { DeepPartial } from '../../utils';
 import { NadAnnotation } from '../../types/nad';
-import { buildTsFoo, buildOcFoo } from '../test-tools/buildFoo';
+import {
+  buildTsMethodWithParameters,
+  buildOcMethodWithParameters,
+  buildTsMethodWithAnnotations,
+  buildOcMethodWithAnnotations,
+} from '../test-tools/buildMethodWithParameters';
+import { ss as ocSs } from '../../helpers/ocHelper';
+import { ss as tsSs } from '../../helpers/tsHelper';
 
 const assertMethodForTs = (code: string, method: string, ...args: [string, string] | [string]) => {
   if (args.length === 1) {
@@ -36,9 +43,21 @@ const assertParameterForOc = (code: string, ...args: [string, string, '?' | ''] 
   }
 };
 
+const assertConstForTs = (code: string, method: string, ...args: [string, string][]) => {
+  for (const [key, value] of args) {
+    expect(code).toContain(`.${method}(${tsSs(key)}, ${tsSs(value)})`);
+  }
+};
+
+const assertConstForOc = (code: string, method: string, ...args: [string, string][]) => {
+  for (const [key, value] of args) {
+    expect(code).toContain(`[req ${method}:${ocSs(key)} value:${ocSs(value)}];`);
+  }
+};
+
 describe.each([
-  ['ts', buildTsFoo, assertMethodForTs, assertParameterForTs],
-  ['oc', buildOcFoo, assertMethodForOc, assertParameterForOc],
+  ['ts', buildTsMethodWithParameters, assertMethodForTs, assertParameterForTs],
+  ['oc', buildOcMethodWithParameters, assertMethodForOc, assertParameterForOc],
 ])('%p', (target, buildFoo, assertMethod, assertParameter) => {
   const buildA = (...annotations: DeepPartial<NadAnnotation>[]) => {
     return buildFoo({ name: 'user', type: 'test.User', annotations });
@@ -174,6 +193,25 @@ describe.each([
       });
       assertParameter(code, 'arg1', 'User', '');
       assertMethod(code, 'addRequestParam', 'arg1', 'arg1');
+    });
+  });
+});
+
+describe.each([
+  ['ts', buildTsMethodWithAnnotations, assertConstForTs],
+  ['oc', buildOcMethodWithAnnotations, assertConstForOc],
+])('%p', (target, buildFoo, assertConst) => {
+  describe.each([['org.springframework.web.bind.annotation.RequestMapping']])('%p', (type) => {
+    test('sginle', () => {
+      const code = buildFoo({
+        type,
+        attributes: {
+          params: ['a=1', 'c!=3', null],
+          headers: ['b=2', 'd!=4', 'wtf'],
+        },
+      });
+      assertConst(code, 'addRequestParam', ['a', '1']);
+      assertConst(code, 'addHeader', ['b', '2']);
     });
   });
 });

@@ -1,9 +1,9 @@
 import { DeepPartial } from '../../utils';
 import { NadAnnotation } from '../../types/nad';
-import { buildTsFoo } from '../test-tools/buildFoo';
+import { buildTsMethodWithParameters } from '../test-tools/buildMethodWithParameters';
 
 const buildA = (...annotations: DeepPartial<NadAnnotation>[]) => {
-  return buildTsFoo({ name: 'a', type: 'java.lang.Long', annotations });
+  return buildTsMethodWithParameters({ name: 'a', type: 'java.lang.Long', annotations });
 };
 
 test('lombok.NonNull', () => {
@@ -50,12 +50,12 @@ test('org.springframework.web.bind.annotation.PathVariable', () => {
 
 test('long', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type });
+  const code = buildTsMethodWithParameters({ name: 'a', type });
   expect(code).toContain(`async foo(a: Long, settings?: Partial<Settings>)`);
 });
 
 test('java.lang.Long', () => {
   const { currentTestName: type = '' } = expect.getState();
-  const code = buildTsFoo({ name: 'a', type });
+  const code = buildTsMethodWithParameters({ name: 'a', type });
   expect(code).toContain(`async foo(a?: Long, settings?: Partial<Settings>)`);
 });

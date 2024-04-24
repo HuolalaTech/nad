@@ -1,5 +1,6 @@
 import { NadAnnotation } from '../../types/nad';
 import { Annotations, Class, Root } from '../../models';
+import { RequestMappingConditionExpression } from '../../models/annotations/RequestMapping';
 
 const root = new Root({});
 
@@ -48,4 +49,15 @@ test('bad annotations', () => {
     { type: '123', attributes: { a: 'good' } },
   ] as unknown as NadAnnotation[]);
   expect(ans.find('123')?.a).toBe('good');
+});
+
+test('RequestMappingConditionExpression', () => {
+  const { create } = RequestMappingConditionExpression;
+  expect(create('a=1')).toMatchObject({ key: 'a', value: '1', negative: false });
+  expect(create('a!=1')).toMatchObject({ key: 'a', value: '1', negative: true });
+  expect(create('a!=1=1')).toMatchObject({ key: 'a', value: '1=1', negative: true });
+  expect(create('a=1!=1')).toMatchObject({ key: 'a', value: '1!=1', negative: false });
+  expect(create('a')).toBeNull();
+  expect(create(1)).toBeNull();
+  expect(create(null)).toBeNull();
 });

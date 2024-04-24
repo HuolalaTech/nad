@@ -17,6 +17,6 @@ export class MdParser {
       this.menu.push({ id, level, text });
       return `<h${level} id="${id}">${text}</h${level}>`;
     };
-    this.html = marked(md, { renderer });
+    this.html = marked(md, { renderer, async: false }) as string;
   }
 }

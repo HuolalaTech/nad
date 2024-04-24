@@ -2,8 +2,9 @@ import { Annotations } from '.';
 import { u2b } from 'u2x';
 import { AnnotationBase } from './AnnotationBase';
 import { u2s } from 'u2x';
+import { RequestMapping } from './RequestMapping';
 
-abstract class ValueAliasName extends AnnotationBase<string> {
+export abstract class ValueAliasName extends AnnotationBase<string> {
   get value(): string {
     return u2s(this.raw.name || this.raw.value);
   }
@@ -65,6 +66,7 @@ export class RequestHeader extends ValueAliasName {
 
 export class WebAnnotations {
   private annotations;
+
   constructor(annotations: Annotations) {
     this.annotations = annotations;
   }
@@ -86,5 +88,12 @@ export class WebAnnotations {
   }
   getRequestHeader() {
     return RequestHeader.create(this.annotations);
+  }
+  getRequestMapping() {
+    for (const MethodMapping of RequestMapping.alias) {
+      const ins = MethodMapping.create(this.annotations);
+      if (ins) return ins;
+    }
+    return null;
   }
 }
