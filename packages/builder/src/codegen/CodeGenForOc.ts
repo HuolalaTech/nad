@@ -98,8 +98,11 @@ export class CodeGenForOc extends CodeGen {
       const rt = this.buildReturnType(a);
       gen.write(`NadInvoker *req = [[NadInvoker new] init];`);
       gen.write(`[req initAppId:${ss(this.options.base || '')} method:${ss(a.method)} path:${ss(a.pattern)}];`);
-      if (a.requestContentType) {
-        gen.write(`[req addHeader:${ss('Content-Type')} value:${ss(a.requestContentType)}];`);
+      for (const [key, value] of a.requiredHeaders) {
+        gen.write(`[req addHeader:${ss(key)} value:${ss(value)}];`);
+      }
+      for (const [key, value] of a.requiredParams) {
+        gen.write(`[req addRequestParam:${ss(key)} value:${ss(value)}];`);
       }
       for (const p of a.parameters) {
         for (const [m, ...args] of p.actions) {

@@ -108,8 +108,11 @@ export class CodeGenForTs extends CodeGen {
       this.write(`return new Runtime<${t2s(a.returnType)}>()`);
       this.writeBlock(() => {
         this.write(`.open(${ss(a.method)}, ${ss(a.pattern)}, settings)`);
-        if (a.requestContentType) {
-          this.write(`.addHeader(${ss('Content-Type')}, ${ss(a.requestContentType)})`);
+        for (const [key, value] of a.requiredHeaders) {
+          this.write(`.addHeader(${ss(key)}, ${ss(value)})`);
+        }
+        for (const [key, value] of a.requiredParams) {
+          this.write(`.addRequestParam(${ss(key)}, ${ss(value)})`);
         }
         if (a.customFlags.length) {
           this.write(`.addCustomFlags(${a.customFlags.map(ss).join(', ')})`);

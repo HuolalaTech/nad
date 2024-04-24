@@ -20,8 +20,9 @@ export class Route extends Annotated<RouteRaw> {
 
   public readonly method;
   public readonly pattern;
-  public readonly requestContentType;
   public readonly customFlags;
+  public readonly requiredHeaders: [string, string][];
+  public readonly requiredParams: [string, string][];
 
   constructor(raw: RouteRaw | undefined, module: Module) {
     super(raw);
@@ -44,12 +45,29 @@ export class Route extends Annotated<RouteRaw> {
 
     this.pattern = u2a(this.raw.patterns, u2s).filter(notEmpty)[0] || '';
 
-    this.requestContentType = new RouteConsumes(this.raw.consumes).getTheBest();
-
     this.customFlags = u2a(this.raw.customFlags, u2s).filter(notEmpty);
 
     this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
     this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this)).filter(notEmpty);
     this.description = this.annotations.swagger.getApiOperation()?.description || '';
+
+    this.requiredHeaders = [];
+    this.requiredParams = [];
+
+    const requestContentType = new RouteConsumes(this.raw.consumes).getTheBest();
+    if (requestContentType) {
+      this.requiredHeaders.push(['Content-Type', requestContentType]);
+    }
+    const requestMapping = this.annotations.web.getRequestMapping();
+    if (requestMapping) {
+      for (const i of requestMapping.headers) {
+        if (i.negative) continue;
+        this.requiredHeaders.push([i.key, i.value]);
+      }
+      for (const i of requestMapping.params) {
+        if (i.negative) continue;
+        this.requiredParams.push([i.key, i.value]);
+      }
+    }
   }
 }
