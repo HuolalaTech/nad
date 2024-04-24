@@ -2,7 +2,7 @@ import { u2a } from 'u2x';
 import { notEmpty } from '../../utils';
 import { AnnotationBase } from './AnnotationBase';
 
-class RequestMappingConditionExpression {
+export class RequestMappingConditionExpression {
   public readonly key;
   public readonly value;
   public readonly negative;
@@ -15,7 +15,7 @@ class RequestMappingConditionExpression {
 
   static create(raw: unknown) {
     if (typeof raw !== 'string') return null;
-    const m = raw.match(/^(.*)(!?)=(.*)/);
+    const m = raw.match(/^(.*?)(!?)=(.*)/);
     if (!m) return null;
     const [, key, negative, value] = m;
     return new RequestMappingConditionExpression(key, value, !!negative);
