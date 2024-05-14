@@ -6,6 +6,7 @@ import { u2a, u2s } from 'u2x';
 import { Parameter } from './Parameter';
 import { NadRoute } from '../types/nad';
 import { RouteConsumes } from './RouteConsumes';
+import { HTTP_SERVLET_RESPONSE_SET } from '../constants';
 
 export type RouteRaw = Dubious<NadRoute>;
 
@@ -47,7 +48,16 @@ export class Route extends Annotated<RouteRaw> {
 
     this.customFlags = u2a(this.raw.customFlags, u2s).filter(notEmpty);
 
-    this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
+    // If a void method parameter contains HttpServletResponse, the return type is problely a free type.
+    if (
+      this.raw.returnType === 'void' &&
+      u2a(this.raw.parameters, (u) => u2s(u.type)).some((n) => n && HTTP_SERVLET_RESPONSE_SET.has(n))
+    ) {
+      this.returnType = Type.create('?', this.builder);
+    } else {
+      this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
+    }
+
     this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this)).filter(notEmpty);
     this.description = this.annotations.swagger.getApiOperation()?.description || '';
 

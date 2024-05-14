@@ -5,12 +5,12 @@ import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
 import { u2o, u2s } from 'u2x';
+import { HTTP_SERVLET_RESPONSE_SET } from '../constants';
 
 const ignoredTypes = new Set([
+  ...HTTP_SERVLET_RESPONSE_SET,
   'javax.servlet.http.HttpServletRequest',
-  'javax.servlet.http.HttpServletResponse',
   'jakarta.servlet.http.HttpServletRequest',
-  'jakarta.servlet.http.HttpServletResponse',
   'org.springframework.http.HttpEntity',
 ]);
 
