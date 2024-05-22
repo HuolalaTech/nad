@@ -49,7 +49,7 @@ export class Root {
     this.fixClassName = options.fixClassName || ((s: string) => s || 'UnknownClass');
     this.fixModuleName = options.fixModuleName || ((s: string) => s || 'unknownModule');
     this.fixApiName = options.fixApiName || ((s: string) => s || 'unknownApi');
-    this.fixPropertyName = options.fixPropertyName || ((s: string) => s || 'unknownProperty');
+    this.fixPropertyName = options.fixPropertyName || ((s: string) => s);
 
     this.unknownTypes = new Set<string>();
 

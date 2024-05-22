@@ -54,12 +54,44 @@ test('bad class name', () => {
 test('bad member name', () => {
   const clz = new Class(
     {
-      members: [{ name: '$~!@#' }],
+      members: [{ name: '' }],
     },
     root,
   );
 
-  expect(clz.members).toHaveLength(1);
-  const [m1] = clz.members;
-  expect(m1.name).toBe('unknownProperty');
+  expect(clz.members).toHaveLength(0);
+});
+
+test('hidden members', () => {
+  const clz = new Class(
+    {
+      members: [
+        { name: '' },
+        { name: '~!@#' },
+        {
+          name: 'swagger',
+          annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { hidden: true } }]],
+        },
+        {
+          name: 'JsonIgnore',
+          annotations: [[{ type: 'com.fasterxml.jackson.annotation.JsonIgnore', attributes: { value: true } }]],
+        },
+        {
+          name: 'JsonProperty',
+          annotations: [[{ type: 'com.fasterxml.jackson.annotation.JsonProperty', attributes: { value: '~!@#' } }]],
+        },
+        {
+          name: 'fastjson',
+          annotations: [[{ type: 'com.alibaba.fastjson.annotation.JSONField', attributes: { serialize: false } }]],
+        },
+        {
+          name: 'fastjson',
+          annotations: [[{ type: 'com.alibaba.fastjson.annotation.JSONField', attributes: { name: '~!@#' } }]],
+        },
+      ],
+    },
+    root,
+  );
+
+  expect(clz.members).toHaveLength(0);
 });
