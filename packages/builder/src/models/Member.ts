@@ -3,7 +3,7 @@ import { u2a, u2o, u2s } from 'u2x';
 import { Annotations } from './annotations';
 import type { Class } from './Class';
 import { Type } from './Type';
-import { Dubious, notEmpty } from '../utils';
+import { Dubious, notEmpty, toLowerCamel } from '../utils';
 import { NadMember } from '../types/nad';
 
 export class Member {
@@ -13,11 +13,14 @@ export class Member {
   public readonly description;
   public readonly visible: boolean;
   public readonly optional: '' | '?';
-  constructor(raw: Dubious<NadMember>, public readonly owner: Class) {
+  constructor(
+    raw: Dubious<NadMember>,
+    public readonly owner: Class,
+  ) {
     const { name, type, annotations } = raw;
     this.annotations = Annotations.create(u2a(annotations).filter(notEmpty).map(u2o).flat());
     const aliasOrName = this.annotations.json.alias || name;
-    this.name = owner.builder.fixPropertyName(u2s(aliasOrName));
+    this.name = owner.builder.fixPropertyName(toLowerCamel(u2s(aliasOrName)));
     this.type = Type.create(u2s(type), owner);
     const amp = this.annotations.swagger.getApiModelProperty();
     this.description = amp?.value;

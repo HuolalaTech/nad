@@ -125,7 +125,7 @@ test('extending order', () => {
   `);
 });
 
-test('preservedKeywords', () => {
+test('preserved keyword property name', () => {
   const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.Foo', name: 'foo', returnType: 'test.A' }];
   const classes: DeepPartial<NadClass>[] = [{ name: 'test.A', members: [{ name: 'default' }] }];
   const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
@@ -133,6 +133,18 @@ test('preservedKeywords', () => {
   expect(code).toContain(mg`
     @interface A : NSObject
     @property (nonatomic, assign) NSObject *_default;
+    @end
+  `);
+});
+
+test('bad property name', () => {
+  const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.Foo', name: 'foo', returnType: 'test.A' }];
+  const classes: DeepPartial<NadClass>[] = [{ name: 'test.A', members: [{ name: '' }] }];
+  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
+
+  expect(code).toContain(mg`
+    @interface A : NSObject
+    @property (nonatomic, assign) NSObject *unknownProperty;
     @end
   `);
 });

@@ -2,7 +2,9 @@ import { UniqueName } from '../../utils';
 
 test('basic', () => {
   const o = {};
+  expect(UniqueName.lookupFor(o, 'a')).toBeFalsy();
   expect(UniqueName.createFor(o, 'a')).toBe('a');
+  expect(UniqueName.lookupFor(o, 'a')).toBeTruthy();
   expect(UniqueName.createFor(o, 'a')).toBe('a$1');
   expect(UniqueName.createFor(o, 'a')).toBe('a$2');
   expect(UniqueName.createFor(o, 'b')).toBe('b');

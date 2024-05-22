@@ -12,6 +12,7 @@ import {
   isJavaUnknown,
   isJavaVoid,
 } from './javaHelper';
+import { toLowerCamel } from '../utils';
 
 // Convert value to safe string in code
 export const ss = (u: string | number | boolean) => {
@@ -85,5 +86,5 @@ export const t2s = (type: Type): string => {
 
 export const tsBuilderOptions: Partial<BuilderOptions> = {
   uniqueNameSeparator: '$',
-  fixModuleName: (name: string) => name[0].toLowerCase() + name.slice(1),
+  fixModuleName: (s) => toLowerCamel(s) || 'unknownModule',
 };

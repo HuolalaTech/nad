@@ -1,6 +1,6 @@
 import { Module } from './Module';
 import { Class } from './Class';
-import { computeIfAbsent, Dubious } from '../utils';
+import { computeIfAbsent, Dubious, toUpperCamel, parseDsv, UniqueName, removeDynamicSuffix } from '../utils';
 import { u2o, u2a, u2s } from 'u2x';
 import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
@@ -46,10 +46,10 @@ export class Root {
     this.commonDefs = Object.create(null);
     this.uniqueNameSeparator = options.uniqueNameSeparator;
 
-    this.fixClassName = options.fixClassName || ((s: string) => s.replace(/\$.*/, ''));
-    this.fixModuleName = options.fixModuleName || ((s: string) => s.replace(/\$.*/, ''));
-    this.fixApiName = options.fixApiName || ((s: string) => s.replace(/\$.*/, ''));
-    this.fixPropertyName = options.fixPropertyName || ((s: string) => s.replace(/\$.*/, ''));
+    this.fixClassName = options.fixClassName || ((s: string) => s || 'UnknownClass');
+    this.fixModuleName = options.fixModuleName || ((s: string) => s || 'unknownModule');
+    this.fixApiName = options.fixApiName || ((s: string) => s || 'unknownApi');
+    this.fixPropertyName = options.fixPropertyName || ((s: string) => s || 'unknownProperty');
 
     this.unknownTypes = new Set<string>();
 
@@ -123,5 +123,17 @@ export class Root {
 
   public isEnum(name: string) {
     return this.rawEnums.has(name);
+  }
+
+  public takeUniqueName(javaClassPath: string, fixFunction: (s: string) => string) {
+    // Concat the java package path before name, while the class name is already in use.
+    const { uniqueNameSeparator } = this;
+    const path = removeDynamicSuffix(javaClassPath);
+    let name = '';
+    for (const next of parseDsv(path)) {
+      name = toUpperCamel(next) + name;
+      if (name && !UniqueName.lookupFor(this, fixFunction(name))) break;
+    }
+    return UniqueName.createFor(this, fixFunction(name), uniqueNameSeparator);
   }
 }

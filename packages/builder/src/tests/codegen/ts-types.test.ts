@@ -75,7 +75,9 @@ test('Type alias', () => {
 });
 
 test('special controller name', () => {
-  const routes: Partial<NadRoute>[] = [{ bean: 'cn.xxx.xxx.People$$wtf23333', name: 'foo', returnType: 'void' }];
+  const routes: Partial<NadRoute>[] = [
+    { bean: 'cn.xxx.xxx.People$$EnhancerByCGLIB$$wtf23333', name: 'foo', returnType: 'void' },
+  ];
   const code = new Builder({ target: 'ts', base: '', defs: { routes } }).code.replace(/\s+/g, ' ');
   expect(code).toContain(`export const people = {`);
 });
@@ -83,5 +85,5 @@ test('special controller name', () => {
 test('empty bean', () => {
   const routes: Partial<NadRoute>[] = [{ bean: '', name: 'foo', returnType: 'void' }];
   const code = new Builder({ target: 'ts', base: '', defs: { routes } }).code.replace(/\s+/g, ' ');
-  expect(code).toContain(`export const $ = {`);
+  expect(code).toContain(`export const unknownModule = {`);
 });

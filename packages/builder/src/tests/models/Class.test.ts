@@ -1,3 +1,4 @@
+import { isJavaUnknown } from 'src/helpers/javaHelper';
 import { Class, Member, Root, Type } from '../../models';
 
 const root = new Root({});
@@ -43,4 +44,22 @@ test('generic', () => {
   expect(clz.name).toBe('test.MyClass');
   expect(clz.simpleName).toBe('MyClass');
   expect(clz.defName).toBe('MyClass<K, V>');
+});
+
+test('bad class name', () => {
+  const clz = new Class({ name: '$$..' }, root);
+  expect(clz.defName).toBe('UnknownClass');
+});
+
+test('bad member name', () => {
+  const clz = new Class(
+    {
+      members: [{ name: '$~!@#' }],
+    },
+    root,
+  );
+
+  expect(clz.members).toHaveLength(1);
+  const [m1] = clz.members;
+  expect(m1.name).toBe('unknownProperty');
 });

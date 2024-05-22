@@ -80,6 +80,6 @@ export const ocBuilderOptions: Partial<BuilderOptions> = {
   fixPropertyName: (name: string) => {
     const n = name.replace(/\$.*/, '');
     if (preservedKeywords.has(n)) return `_${n}`;
-    return n;
+    return n || 'unknownProperty';
   },
 };
