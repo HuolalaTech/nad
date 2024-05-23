@@ -9,6 +9,7 @@ import {
   isJavaMap,
   isJavaNumber,
   isJavaString,
+  isJavaTuple,
   isJavaUnknown,
   isJavaVoid,
 } from './javaHelper';
@@ -67,6 +68,9 @@ export const t2s = (type: Type): string => {
   }
   if (isJavaList(name)) {
     return `${t2s(parameters[0])}[]`;
+  }
+  if (isJavaTuple(name)) {
+    return `[ ${parameters.map(t2s).join(', ')} ]`;
   }
   if (isJavaUnknown(name)) return 'any';
 

@@ -8,6 +8,7 @@ import {
   isJavaMap,
   isJavaNumber,
   isJavaString,
+  isJavaTuple,
   isJavaUnknown,
   isJavaVoid,
 } from './javaHelper';
@@ -50,6 +51,7 @@ export const t2s = (type: Type): string => {
     return `NSArray<${t}>`;
   }
   if (isJavaMap(name)) return `NSDictionary`;
+  if (isJavaTuple(name)) return 'NSObject';
   if (isJavaUnknown(name)) return 'NSObject';
 
   const { clz, parameters } = type;
