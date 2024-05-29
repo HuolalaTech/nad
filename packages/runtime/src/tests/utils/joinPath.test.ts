@@ -1,4 +1,4 @@
-import { joinPath } from '../utils/joinPath';
+import { joinPath } from '../../utils/joinPath';
 
 test('basic', () => {
   expect(joinPath('aaa', 'bbb')).toBe('aaa/bbb');

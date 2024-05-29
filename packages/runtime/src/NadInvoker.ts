@@ -5,13 +5,7 @@ import { joinPath } from './utils/joinPath';
 import { insensitiveGet } from './utils/insensitiveGet';
 import { isSupportingPayload, isForm, isNonNullObject } from './utils/predicates';
 import { NadRuntime, Settings, MultipartFile } from './NadRuntime';
-
-/**
- * Find all {...} expression in the path, and replace them with values from pathVariables.
- */
-const buildPath = (rawPath: string, pathVariables: Record<string, unknown>) => {
-  return rawPath.replace(/\{(.*?)\}/g, (_, key) => encodeURIComponent(String(pathVariables[key])));
-};
+import { buildPath } from './utils/buildPath';
 
 /**
  * An official implementation of NadRuntime.
