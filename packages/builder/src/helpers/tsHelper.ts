@@ -33,7 +33,7 @@ export const ss = (u: string | number | boolean) => {
 };
 
 export const t2s = (type: Type): string => {
-  if (!type) return 'any';
+  if (!type) return 'unknown';
   const { name, parameters, isGenericVariable, builder } = type;
 
   if (isGenericVariable) return name;
@@ -60,9 +60,11 @@ export const t2s = (type: Type): string => {
   if (isJavaVoid(name)) return 'void';
   if (isJavaMap(name)) {
     const [first, second] = parameters;
-    let keyType = 'any';
+    let keyType;
     if (first && (isJavaString(first.name) || isJavaNumber(first.name) || first.isEnum)) {
       keyType = t2s(first);
+    } else {
+      keyType = 'PropertyKey';
     }
     return `Record<${keyType}, ${t2s(second)}>`;
   }
@@ -72,10 +74,10 @@ export const t2s = (type: Type): string => {
   if (isJavaTuple(name)) {
     return `[ ${parameters.map(t2s).join(', ')} ]`;
   }
-  if (isJavaUnknown(name)) return 'any';
+  if (isJavaUnknown(name)) return 'unknown';
 
   const { clz } = type;
-  if (!clz) return 'any';
+  if (!clz) return 'unknown';
 
   const { simpleName: simpleName } = clz;
   if (clz instanceof Class) {

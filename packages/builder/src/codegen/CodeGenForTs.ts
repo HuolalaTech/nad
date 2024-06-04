@@ -188,7 +188,7 @@ export class CodeGenForTs extends CodeGen {
         let defStr = defName;
         if (c.superclass) {
           const type = t2s(c.superclass);
-          if (type !== 'any') defStr += ` extends ${type}`;
+          if (type !== 'any' && type !== 'unknown') defStr += ` extends ${type}`;
         }
         this.write(`export interface ${defStr} {`);
         this.writeBlock(() => {
