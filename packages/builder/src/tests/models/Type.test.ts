@@ -123,3 +123,13 @@ test('? extends', () => {
   const [ p1 ] = type.parameters;
   expect(p1.name).toBe('test.Foo');
 });
+
+test('bad types', () => {
+  expect(() => {
+    Type.create('java.util.Map<java.lang.Long java.lang.Long>', root);
+  }).toThrow(SyntaxError);
+
+  expect(() => {
+    Type.create('java.util.Map<java.lang.Long?>', root);
+  }).toThrow(SyntaxError);
+});

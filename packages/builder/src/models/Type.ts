@@ -86,8 +86,9 @@ export class Type {
         do {
           parameters.push(next());
         } while (sr.read(','));
+        sr.read(/\s*/g);
         if (!sr.read('>')) {
-          // syntax error
+          throw new SyntaxError(`Cannot parse java type '${typeName}'`);
         }
       }
 
