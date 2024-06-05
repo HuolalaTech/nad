@@ -93,7 +93,6 @@ export class Type {
       }
 
       const cr = () => {
-        if (name === 'java.lang.ThreadLocal' || name === 'java.util.Optional') return parameters[0];
         if (name === '') return new this(owner, JAVA_OBJECT, []);
         return new this(owner, name, parameters);
       };

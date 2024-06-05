@@ -12,6 +12,7 @@ import {
   isJavaTuple,
   isJavaUnknown,
   isJavaVoid,
+  isJavaWrapper,
 } from './javaHelper';
 import { toLowerCamel } from '../utils';
 
@@ -70,6 +71,14 @@ export const t2s = (type: Type): string => {
   }
   if (isJavaList(name)) {
     return `${t2s(parameters[0])}[]`;
+  }
+  if (isJavaWrapper(name)) {
+    const [ first ] = parameters;
+    if (first) {
+      return `(${t2s(first)} | null)`;
+    } else {
+      return 'unknown';
+    }
   }
   if (isJavaTuple(name)) {
     return `[ ${parameters.map(t2s).join(', ')} ]`;

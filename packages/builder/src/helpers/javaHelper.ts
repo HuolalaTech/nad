@@ -104,9 +104,9 @@ const javaUnknownTypePrefixes = [
   'com.fasterxml.jackson.',
 ];
 
-const javaTupleTypePrefixes = [
-  'groovy.lang.Tuple'
-];
+const javaTupleTypePrefixes = ['groovy.lang.Tuple'];
+
+const javaWrapperTypes = ['java.lang.ThreadLocal', 'java.util.Optional'];
 
 export const isJavaBooleanTypes = ['boolean', 'java.lang.Boolean'] as const;
 
@@ -115,6 +115,7 @@ export const isJavaVoidTypes = ['void', 'java.lang.Void'] as const;
 export const isJavaPrimitive = isOneOf(isJavaPrimitiveTypes);
 export const isJavaList = isOneOf(javaListTypes);
 export const isJavaMap = isOneOf(javaMapTypes);
+export const isJavaWrapper = isOneOf(javaWrapperTypes);
 export const isJavaString = isOneOf(isJavaStringTypes);
 export const isJavaFloat = isOneOf(isJavaFloatTypes);
 export const isJavaInteger = isOneOf(isJavaIntegerTypes);
