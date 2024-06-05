@@ -41,6 +41,12 @@ test('java.util.Map<java.lang.Long, java.lang.Long>', () => {
   expect(code).toContain('- (NSNumber*)foo:(NSDictionary*)a;');
 });
 
+test('groovy.lang.Tuple2<java.lang.String, java.lang.Long>', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildOcMethodWithParameters({ name: 'a', type });
+  expect(code).toContain('- (NSNumber*)foo:(NSArray<NSObject*>*)a;');
+});
+
 test('Paginition', () => {
   const code = new Builder({ target: 'oc', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
   expect(code).toContain(`- (MetaPaginition<NSArray<NSNumber*>*>*)foo;`);

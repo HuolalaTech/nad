@@ -41,6 +41,12 @@ test('java.util.Map<java.lang.Long, java.lang.Long>', () => {
   expect(code).toContain('async foo(a?: Record<Long, Long>,');
 });
 
+test('groovy.lang.Tuple2<test.UserType, java.lang.Long>', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildTsMethodWithParameters({ name: 'tuple', type });
+  expect(code).toContain(`tuple?: [ UserType, Long ]`);
+});
+
 test('Paginition', () => {
   const code = new Builder({ target: 'ts', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
   expect(code).toContain('new Runtime<MetaPaginition<Long[]>>');
