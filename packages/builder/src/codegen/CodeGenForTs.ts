@@ -112,7 +112,7 @@ export class CodeGenForTs extends CodeGen {
           this.write(`.addHeader(${ss(key)}, ${ss(value)})`);
         }
         for (const [key, value] of a.requiredParams) {
-          this.write(`.addRequestParam(${ss(key)}, ${ss(value)})`);
+          this.write(`.addStaticParam(${ss(key)}, ${ss(value)})`);
         }
         if (a.customFlags.length) {
           this.write(`.addCustomFlags(${a.customFlags.map(ss).join(', ')})`);
