@@ -36,6 +36,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
    */
   public settings?: Partial<Settings>;
 
+  protected readonly staticParams: Record<string, unknown>;
   protected readonly requestParams: Record<string, unknown>;
   protected readonly pathVariables: Record<string, unknown>;
   protected readonly files: Record<string, MultipartFile>;
@@ -61,6 +62,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
     this.rawPath = '/';
     this.method = 'GET';
     this.pathVariables = Object.create(null);
+    this.staticParams = Object.create(null);
     this.requestParams = Object.create(null);
     this.files = Object.create(null);
     this.headers = Object.create(null);
@@ -133,6 +135,23 @@ export class NadInvoker<T> implements NadRuntime<T> {
       delete this.requestParams[key];
     } else {
       this.requestParams[key] = value;
+    }
+    return this;
+  }
+
+  /**
+   * In Java code, some parameters may be annotated with '@ReqeustMapping(params = "key=value")'.
+   * This method set some key-value pairs, that finally map with Java parameters.
+   *
+   * @param key The key.
+   * @param value The value.
+   * @overload
+   */
+  public addStaticParam(key: string, value: unknown) {
+    if (value === undefined) {
+      delete this.staticParams[key];
+    } else {
+      this.staticParams[key] = value;
     }
     return this;
   }
@@ -243,7 +262,18 @@ export class NadInvoker<T> implements NadRuntime<T> {
   }
 
   private buildInvokeParams = () => {
-    const { method, settings, requestParams, body, files, extensions, constructor, rawPath, pathVariables } = this;
+    const {
+      method,
+      settings,
+      requestParams,
+      staticParams,
+      body,
+      files,
+      extensions,
+      constructor,
+      rawPath,
+      pathVariables,
+    } = this;
     const runtime = constructor as typeof NadInvoker;
 
     // Get the "timeout" value, the priority order is 1-settings, 2-runtime.
@@ -282,9 +312,10 @@ export class NadInvoker<T> implements NadRuntime<T> {
       const hasFile = Object.keys(files).length;
       // If the `files` is not empty, keep the Content-Type header empty, as it will be set by the request library.
       if (!contentType && !hasFile) headers['Content-Type'] = WWW_FORM_URLENCODED;
-      return { method, url: uri, timeout, headers, data, files, ...extensions };
+      const qs = buildQs(staticParams).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
+      return { method, url: uri + qs, timeout, headers, data, files, ...extensions };
     } else {
-      const qs = buildQs(requestParams).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
+      const qs = buildQs({ ...staticParams, ...requestParams }).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
       return { method, url: uri + qs, timeout, headers, data: Object(body), files, ...extensions };
     }
   };
