@@ -6,6 +6,7 @@ import { insensitiveGet } from './utils/insensitiveGet';
 import { isSupportingPayload, isForm, isNonNullObject } from './utils/predicates';
 import { NadRuntime, Settings, MultipartFile } from './NadRuntime';
 import { buildPath } from './utils/buildPath';
+import { setOrDelete } from './utils/setOrDelete';
 
 /**
  * An official implementation of NadRuntime.
@@ -131,11 +132,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
    * @overload
    */
   public addRequestParam(key: string, value: unknown) {
-    if (value === undefined) {
-      delete this.requestParams[key];
-    } else {
-      this.requestParams[key] = value;
-    }
+    setOrDelete(this.requestParams, key, value);
     return this;
   }
 
@@ -148,11 +145,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
    * @overload
    */
   public addStaticParam(key: string, value: unknown) {
-    if (value === undefined) {
-      delete this.staticParams[key];
-    } else {
-      this.staticParams[key] = value;
-    }
+    setOrDelete(this.staticParams, key, value);
     return this;
   }
 

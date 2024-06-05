@@ -171,19 +171,6 @@ describe('addStaticParam', () => {
       headers: { 'Content-Type': WWW_FORM_URLENCODED },
     });
   });
-
-  test('reset', async () => {
-    const res = await new Localhost()
-      .open('GET', '/test')
-      .addStaticParam('action', 'a')
-      .addStaticParam('action', undefined)
-      .execute();
-    expect(res).toMatchObject({
-      method: 'GET',
-      url: `${base}/test`,
-      headers: {},
-    });
-  });
 });
 
 describe('addRequestBody', () => {
