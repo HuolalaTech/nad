@@ -73,9 +73,10 @@ export const t2s = (type: Type): string => {
     return `${t2s(parameters[0])}[]`;
   }
   if (isJavaWrapper(name)) {
-    const [ first ] = parameters;
+    const [first] = parameters;
     if (first) {
-      return `(${t2s(first)} | null)`;
+      builder.commonDefs['Optional<T>'] = 'T | null';
+      return `Optional<${t2s(first)}>`;
     } else {
       return 'unknown';
     }
