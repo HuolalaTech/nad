@@ -77,8 +77,8 @@ export class Route extends Annotated<RouteRaw> {
 
     {
       const { builder, module, name, parameters } = this;
-      const { fixApiName, uniqueNameSeparator } = builder;
-      let uniqName = fixApiName(toLowerCamel(name));
+      const { options, uniqueNameSeparator } = builder;
+      let uniqName = options.fixApiName(toLowerCamel(name));
       // If a java method is overrided, concat all parameter type names to the name prefix.
       if (UniqueName.lookupFor(module, uniqName) && parameters.length) {
         uniqName += 'By' + parameters.map((p) => getPureClassName(p.type.name)).join('And');

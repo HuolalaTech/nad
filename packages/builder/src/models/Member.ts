@@ -19,7 +19,7 @@ export class Member {
   ) {
     const { name, type, annotations } = raw;
     this.annotations = Annotations.create(u2a(annotations).filter(notEmpty).map(u2o).flat());
-    this.name = owner.builder.fixPropertyName(u2s(this.annotations.json.alias || name) || '');
+    this.name = owner.options.fixPropertyName(u2s(this.annotations.json.alias || name) || '');
     this.type = Type.create(u2s(type), owner);
     const amp = this.annotations.swagger.getApiModelProperty();
     this.description = amp?.value;

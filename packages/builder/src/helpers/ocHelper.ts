@@ -1,5 +1,4 @@
 import { neverReachHere } from '../utils';
-import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';
 import {
@@ -12,6 +11,7 @@ import {
   isJavaUnknown,
   isJavaVoid,
 } from './javaHelper';
+import { RootOptions } from 'src/models/RootOptions';
 
 // Convert value to safe string in code
 export const ss = (s: string | number) => {
@@ -77,7 +77,7 @@ export const t2s = (type: Type): string => {
 };
 
 const preservedKeywords = new Set(['default', 'signed']);
-export const ocBuilderOptions: Partial<BuilderOptions> = {
+export const ocBuilderOptions: Partial<RootOptions> = {
   uniqueNameSeparator: '_',
   fixPropertyName: (name: string) => {
     const n = name.replace(/\$.*/, '');

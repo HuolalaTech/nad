@@ -1,5 +1,4 @@
 import { neverReachHere } from '../utils/neverReachHere';
-import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';
 import {
@@ -15,6 +14,7 @@ import {
   isJavaWrapper,
 } from './javaHelper';
 import { toLowerCamel } from '../utils';
+import { RootOptions } from 'src/models/RootOptions';
 
 // Convert value to safe string in code
 export const ss = (u: string | number | boolean) => {
@@ -99,7 +99,7 @@ export const t2s = (type: Type): string => {
   return simpleName;
 };
 
-export const tsBuilderOptions: Partial<BuilderOptions> = {
+export const tsBuilderOptions: Partial<RootOptions> = {
   uniqueNameSeparator: '$',
   fixModuleName: (s) => toLowerCamel(s) || 'unknownModule',
 };

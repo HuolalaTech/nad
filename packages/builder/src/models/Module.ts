@@ -18,7 +18,7 @@ export class Module extends Annotated<ModuleRaw> {
     this.builder = builder;
     const defs = u2o(raw);
     this.name = u2s(defs.name) ?? '';
-    this.moduleName = builder.takeUniqueName(this.name, builder.fixModuleName);
+    this.moduleName = builder.takeUniqueName(this.name, builder.options.fixModuleName);
 
     // Move the overloaded zero-parameter method forward.
     //

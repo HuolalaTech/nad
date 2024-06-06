@@ -5,15 +5,7 @@ import { u2o, u2a, u2s } from 'u2x';
 import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
 import { RouteRaw } from './Route';
-
-export interface BuilderOptions {
-  uniqueNameSeparator?: string;
-  apis?: string[];
-  fixClassName?: (s: string) => string;
-  fixModuleName?: (s: string) => string;
-  fixApiName?: (s: string) => string;
-  fixPropertyName?: (s: string) => string;
-}
+import { RootOptions } from './RootOptions';
 
 export type RawDefs = Dubious<NadResult>;
 
@@ -24,18 +16,17 @@ export class Root {
   private readonly classes: Record<string, Class>;
   private readonly enums: Record<string, Enum>;
 
+  public readonly options;
+
   public readonly commonDefs: Record<string, string>;
   public readonly unknownTypes;
   public readonly modules;
 
   public readonly uniqueNameSeparator;
 
-  public readonly fixClassName;
-  public readonly fixModuleName;
-  public readonly fixApiName;
-  public readonly fixPropertyName;
+  constructor(raw: RawDefs, options: Partial<RootOptions> = {}) {
+    this.options = new RootOptions(options);
 
-  constructor(raw: RawDefs, options: BuilderOptions = {}) {
     this.rawClasses = new Map(u2a(raw.classes, (i) => [u2s(u2o(i).name), i]));
     this.rawEnums = new Map(u2a(raw.enums, (i) => [u2s(u2o(i).name), i]));
     this.rawModules = new Map(u2a(raw.modules, (i) => [u2s(u2o(i).name), i]));
@@ -45,11 +36,6 @@ export class Root {
 
     this.commonDefs = Object.create(null);
     this.uniqueNameSeparator = options.uniqueNameSeparator;
-
-    this.fixClassName = options.fixClassName || ((s: string) => s || 'UnknownClass');
-    this.fixModuleName = options.fixModuleName || ((s: string) => s || 'unknownModule');
-    this.fixApiName = options.fixApiName || ((s: string) => s || 'unknownApi');
-    this.fixPropertyName = options.fixPropertyName || ((s: string) => s);
 
     this.unknownTypes = new Set<string>();
 
