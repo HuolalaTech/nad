@@ -20,7 +20,7 @@ test('void', () => {
 test('java.util.List', () => {
   const { currentTestName: type = '' } = expect.getState();
   const code = buildTsMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('async foo(a?: any[],');
+  expect(code).toContain('async foo(a?: unknown[],');
 });
 
 test('java.util.List<java.lang.Long>', () => {
@@ -47,6 +47,26 @@ test('groovy.lang.Tuple2<test.UserType, java.lang.Long>', () => {
   expect(code).toContain(`tuple?: [ UserType, Long ]`);
 });
 
+test('java.util.List<java.util.Optional<java.lang.Long>>', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildTsMethodWithParameters({ name: 'value', type });
+  expect(code).toContain(`type Optional<T> = T | null;`);
+  expect(code).toContain(`value?: Optional<Long>[]`);
+});
+
+test('java.util.List<java.lang.ThreadLocal<java.lang.Long>>', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildTsMethodWithParameters({ name: 'value', type });
+  expect(code).toContain(`type Optional<T> = T | null;`);
+  expect(code).toContain(`value?: Optional<Long>[]`);
+});
+
+test('java.util.List<java.lang.ThreadLocal>', () => {
+  const { currentTestName: type = '' } = expect.getState();
+  const code = buildTsMethodWithParameters({ name: 'value', type });
+  expect(code).toContain(`value?: unknown[]`);
+});
+
 test('Paginition', () => {
   const code = new Builder({ target: 'ts', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
   expect(code).toContain('new Runtime<MetaPaginition<Long[]>>');
@@ -59,7 +79,7 @@ test('Paginition', () => {
   `);
   expect(code).toContain(mg`
     export interface MetaPaginition<T> extends Paginition<T> {
-      meta?: any;
+      meta?: unknown;
     }
   `);
 });

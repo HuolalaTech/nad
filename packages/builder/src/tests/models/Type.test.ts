@@ -42,18 +42,6 @@ test('int[]', () => {
   expect(type).toMatchObject({ name: 'java.util.List', parameters: [{ name: 'int', parameters: [] }] });
 });
 
-test('java.lang.ThreadLocal<java.lang.String>', () => {
-  const type = Type.create('java.lang.ThreadLocal<java.lang.String>', root);
-  expect(type).toBeInstanceOf(Type);
-  expect(type).toMatchObject({ name: 'java.lang.String', parameters: [] });
-});
-
-test('java.util.Optional<java.lang.String>', () => {
-  const type = Type.create('java.util.Optional<java.lang.String>', root);
-  expect(type).toBeInstanceOf(Type);
-  expect(type).toMatchObject({ name: 'java.lang.String', parameters: [] });
-});
-
 test('test.MyClass$$WTF__233', () => {
   const type = Type.create('test.MyClass$$WTF__233', root);
   expect(type).toBeInstanceOf(Type);
