@@ -10,6 +10,7 @@ import {
   isJavaTuple,
   isJavaUnknown,
   isJavaVoid,
+  isJavaWrapper,
 } from './javaHelper';
 import { RootOptions } from 'src/models/RootOptions';
 
@@ -35,7 +36,7 @@ export const checkSuper = (sub: Class, sup: Class): boolean => {
 };
 
 export const t2s = (type: Type): string => {
-  const { name, isGenericVariable } = type;
+  const { name, isGenericVariable, parameters } = type;
 
   if (isGenericVariable) return name;
 
@@ -50,11 +51,19 @@ export const t2s = (type: Type): string => {
     if (!first.isGenericVariable) t = `${t}*`;
     return `NSArray<${t}>`;
   }
+  if (isJavaWrapper(name)) {
+    const [first] = parameters;
+    if (first) {
+      return t2s(first);
+    } else {
+      return 'NSObject';
+    }
+  }
   if (isJavaMap(name)) return `NSDictionary`;
   if (isJavaTuple(name)) return 'NSArray<NSObject*>';
   if (isJavaUnknown(name)) return 'NSObject';
 
-  const { clz, parameters } = type;
+  const { clz } = type;
   if (!clz) return 'NSObject';
 
   const { simpleName } = clz;

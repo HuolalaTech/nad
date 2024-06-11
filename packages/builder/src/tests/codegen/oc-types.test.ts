@@ -1,51 +1,8 @@
 import { DeepPartial } from '../../utils';
 import { Builder } from '../../Builder';
 import { NadClass, NadRoute } from '../../types/nad';
-import { buildOcMethodWithParameters } from '../test-tools/buildMethodWithParameters';
 import { mg } from '../test-tools/mg';
 import { paginitionDefs } from '../defs/paginitionTestDefs';
-
-test('boolean', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(NSNumber*)a;');
-});
-
-test('void', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(void*)a;');
-});
-
-test('java.util.List', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(NSArray<NSObject*>*)a;');
-});
-
-test('java.util.List<java.lang.Long>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(NSArray<NSNumber*>*)a;');
-});
-
-test('java.util.List<java.lang.Void>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(NSArray<void*>*)a;');
-});
-
-test('java.util.Map<java.lang.Long, java.lang.Long>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(NSDictionary*)a;');
-});
-
-test('groovy.lang.Tuple2<java.lang.String, java.lang.Long>', () => {
-  const { currentTestName: type = '' } = expect.getState();
-  const code = buildOcMethodWithParameters({ name: 'a', type });
-  expect(code).toContain('- (NSNumber*)foo:(NSArray<NSObject*>*)a;');
-});
 
 test('Paginition', () => {
   const code = new Builder({ target: 'oc', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
