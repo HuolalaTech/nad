@@ -14,14 +14,19 @@ export class CodeGen {
     for (const i of liens) {
       if (i == undefined || i == null) continue;
       if (typeof i === 'string') {
-        let line = this.indent;
-        // Comment block cannot be nested
-        if (this.indent.indexOf('*') === -1) {
-          line += i;
-        } else {
-          line += i.replace(/\*\//g, '');
+        const ia = i.split(/\r\n|\r|\n/g);
+        // For multiple lines content.
+        if (ia.length > 1) this.write(...ia);
+        else {
+          let line = this.indent;
+          // Comment block cannot be nested
+          if (this.indent.indexOf('*') === -1) {
+            line += i;
+          } else {
+            line += i.replace(/\*\//g, '');
+          }
+          this.lines.push(line);
         }
-        this.lines.push(line);
       } else if (isIterable(i)) {
         this.write(...i);
       } else {
