@@ -4,7 +4,7 @@ test('write with a number', () => {
   const gen = new CodeGen();
   expect(() => {
     gen.write(1 as unknown as string);
-  }).toThrowError(TypeError);
+  }).toThrow(TypeError);
 });
 
 test('write with empty', () => {

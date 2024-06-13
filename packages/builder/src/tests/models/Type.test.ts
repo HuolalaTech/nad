@@ -70,7 +70,7 @@ test('toString', () => {
   const type = Type.create('?', root);
   expect(() => {
     type.toString();
-  }).toThrowError();
+  }).toThrow();
 });
 
 test('replace', () => {

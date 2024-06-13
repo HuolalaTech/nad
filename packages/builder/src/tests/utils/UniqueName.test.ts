@@ -34,9 +34,9 @@ test('overflow', () => {
   const o = {};
   expect(() => {
     for (let i = 0; i < 100; i++) UniqueName.createFor(o, 'a');
-  }).not.toThrowError();
+  }).not.toThrow();
   expect(() => {
     for (let i = 0; i < 100; i++) UniqueName.createFor(o, 'b');
     UniqueName.createFor(o, 'b');
-  }).toThrowError();
+  }).toThrow();
 });
