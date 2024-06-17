@@ -79,3 +79,20 @@ test('defs', () => {
 
   expect(root.getDefBySimpleName('')).toBe(null);
 });
+
+test('typeMapping', () => {
+  const root = new Root(
+    { routes: [{ name: 'getFoo', bean: 'test.Test', returnType: 'test.Foo' }] },
+    { typeMapping: { 'test.Foo': 'java.util.Map<java.lang.Long, java.lang.String>' } },
+  );
+
+  const [module] = root.modules;
+  expect(module).toBeDefined();
+  const [getFoo] = module.routes;
+  expect(getFoo).toBeDefined();
+  expect(getFoo.returnType).toMatchObject({
+    name: 'java.util.Map',
+    parameters: [{ name: 'java.lang.Long' }, { name: 'java.lang.String' }],
+  });
+  expect(root.declarationList).toHaveLength(0);
+});

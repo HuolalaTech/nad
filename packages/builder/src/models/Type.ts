@@ -68,8 +68,9 @@ export class Type {
     );
   }
 
-  public static create(typeName: string, owner: TypeOwner) {
-    const sr = new SyntaxReader(typeName || JAVA_OBJECT);
+  public static create(rawTypeName: string, owner: TypeOwner) {
+    const { typeMapping } = owner.options;
+    const sr = new SyntaxReader(typeMapping[rawTypeName] || rawTypeName || JAVA_OBJECT);
     const next = () => {
       sr.read(/\s*/g);
 
@@ -88,7 +89,7 @@ export class Type {
         } while (sr.read(','));
         sr.read(/\s*/g);
         if (!sr.read('>')) {
-          throw new SyntaxError(`Cannot parse java type '${typeName}'`);
+          throw new SyntaxError(`Cannot parse java type '${rawTypeName}'`);
         }
       }
 
