@@ -27,7 +27,8 @@
     "@huolala-tech/nad-builder": "^1.0.11",
     "@huolala-tech/nad-runtime": "^1.0.7",
     "axios": "^1.4.0",
-    "capacitance": "^1.0.2"
+    "capacitance": "^1.0.2",
+    "u2x": "^1.1.0"
   },
   "repository": {
     "type": "git",

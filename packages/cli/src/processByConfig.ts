@@ -96,9 +96,9 @@ const createWriteStream = (path: string) =>
   });
 
 export const processByConfig = async (config: Config, io: IO = process) => {
-  const { url, output, apis, target } = config;
+  const { url, output, target, apis, typeMapping } = config;
   const defs = await getDefs(url);
-  const { root, code } = new Builder({ defs, target, base: url, apis });
+  const { root, code } = new Builder({ defs, target, base: url, apis, typeMapping });
   const out = output ? await createWriteStream(output) : io.stdout;
   out.write(code);
   printBuilderInfo(root, io);
