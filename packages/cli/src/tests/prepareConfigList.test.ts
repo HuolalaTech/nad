@@ -18,52 +18,66 @@ afterEach(() => {
 });
 
 test('empty', async () => {
-  expect(prepareConfigList([])).rejects.toThrowError(FileNotFound);
+  expect(prepareConfigList([])).rejects.toThrow(FileNotFound);
 });
 
 test('FileNotFound', async () => {
-  expect(prepareConfigList(['', '', '-c', './notfound'])).rejects.toThrowError(FileNotFound);
+  expect(prepareConfigList(['', '', '-c', './notfound'])).rejects.toThrow(FileNotFound);
 });
 
 test('FileIsNotJson', async () => {
-  expect(prepareConfigList(['', '', '-c', './README.md'])).rejects.toThrowError(FileIsNotJson);
+  expect(prepareConfigList(['', '', '-c', './README.md'])).rejects.toThrow(FileIsNotJson);
 });
 
 test('--config', async () => {
-  expect(prepareConfigList(['', '', '--config', './README.md'])).rejects.toThrowError(FileIsNotJson);
+  expect(prepareConfigList(['', '', '--config', './README.md'])).rejects.toThrow(FileIsNotJson);
 });
 
 test('MissingField', async () => {
-  expect(prepareConfigList(['', '', '-c', './package.json'])).rejects.toThrowError(MissingField);
+  expect(prepareConfigList(['', '', '-c', './package.json'])).rejects.toThrow(MissingField);
 });
 
 test('MissingField', async () => {
-  expect(prepareConfigList(['', '', '-c'])).rejects.toThrowError(FileNotFound);
+  expect(prepareConfigList(['', '', '-c'])).rejects.toThrow(FileNotFound);
 });
 
 test('UnknownOption', async () => {
-  expect(prepareConfigList(['', '', '--hehe'])).rejects.toThrowError(UnknownOption);
+  expect(prepareConfigList(['', '', '--hehe'])).rejects.toThrow(UnknownOption);
 });
 
 test('no-url', async () => {
-  expect(prepareConfigList(['', '', '-c', './src/tests/json/no-url.json'])).rejects.toThrowError(MissingField);
+  expect(prepareConfigList(['', '', '-c', './src/tests/json/no-url.json'])).rejects.toThrow(MissingField);
 });
 
 test('no-target', async () => {
-  expect(prepareConfigList(['', '', '-c', './src/tests/json/no-target.json'])).rejects.toThrowError(MissingField);
+  expect(prepareConfigList(['', '', '-c', './src/tests/json/no-target.json'])).rejects.toThrow(MissingField);
 });
 
 test('invalid-url', async () => {
-  expect(prepareConfigList(['', '', '-c', './src/tests/json/invalid-url.json'])).rejects.toThrowError(InvalidURI);
+  expect(prepareConfigList(['', '', '-c', './src/tests/json/invalid-url.json'])).rejects.toThrow(InvalidURI);
 });
 
 test('invalid-target', async () => {
-  expect(prepareConfigList(['', '', '-c', './src/tests/json/invalid-target.json'])).rejects.toThrowError(InvalidTarget);
+  expect(prepareConfigList(['', '', '-c', './src/tests/json/invalid-target.json'])).rejects.toThrow(InvalidTarget);
 });
 
 test('minimal', async () => {
   expect(prepareConfigList(['', '', '-c', './src/tests/json/minimal.json'])).resolves.toMatchObject([
     { target: 'ts', url: BASE, output: undefined, apis: undefined },
+  ]);
+});
+
+test('type-mapping', async () => {
+  expect(prepareConfigList(['', '', '-c', './src/tests/json/type-mapping.json'])).resolves.toMatchObject([
+    {
+      target: 'ts',
+      url: BASE,
+      output: undefined,
+      apis: undefined,
+      typeMapping: {
+        'test.Foo': 'java.util.List<java.lang.Long>',
+      },
+    },
   ]);
 });
 
@@ -102,7 +116,7 @@ test('nad <URL> --target raw', async () => {
 });
 
 test('nad <URL> -t hh', async () => {
-  expect(prepareConfigList(['', '', BASE, '-t', 'hh'])).rejects.toThrowError(InvalidTarget);
+  expect(prepareConfigList(['', '', BASE, '-t', 'hh'])).rejects.toThrow(InvalidTarget);
 });
 
 test('nad -h', async () => {
@@ -113,12 +127,12 @@ test('nad -h', async () => {
   expect(err).toContain(' nad ');
 });
 
-test('nad hehe', async () => {
-  expect(prepareConfigList(['', '', 'hehe'])).rejects.toThrowError(InvalidURI);
+test('nad empty url', async () => {
+  expect(prepareConfigList(['', '', ''])).rejects.toThrow(InvalidURI);
 });
 
 test('nad -c .', async () => {
-  expect(prepareConfigList(['', '', '-c', '.'])).rejects.toThrowError(DirIsNotFile);
+  expect(prepareConfigList(['', '', '-c', '.'])).rejects.toThrow(DirIsNotFile);
 });
 
 test('warn', async () => {

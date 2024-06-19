@@ -9,6 +9,7 @@
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c --watch",
+    "test": "jest src --coverage",
     "fix": "yarn lint && yarn format",
     "lint": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,ts,md,json}\""
