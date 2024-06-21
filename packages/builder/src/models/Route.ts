@@ -24,6 +24,7 @@ export class Route extends Annotated<RouteRaw> {
   public readonly customFlags;
   public readonly requiredHeaders: [string, string][];
   public readonly requiredParams: [string, string][];
+  public readonly deprecated;
 
   constructor(raw: RouteRaw | undefined, module: Module) {
     super(raw);
@@ -55,6 +56,7 @@ export class Route extends Annotated<RouteRaw> {
 
     this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this)).filter(notEmpty);
     this.description = this.annotations.swagger.getApiOperation()?.description || '';
+    this.deprecated = this.annotations.hasDeprecated();
 
     this.requiredHeaders = [];
     this.requiredParams = [];

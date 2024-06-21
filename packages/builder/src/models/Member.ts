@@ -13,6 +13,7 @@ export class Member {
   public readonly description;
   public readonly visible: boolean;
   public readonly optional: '' | '?';
+  public readonly deprecated;
   constructor(
     raw: Dubious<NadMember>,
     public readonly owner: Class,
@@ -42,5 +43,7 @@ export class Member {
     // It is optinoal by default unless set to @NotNull or @ApiModelProperty(required = true) or JavaPrimitive types.
     this.optional =
       amp?.required === true || this.annotations.hasNonNull() || isJavaPrimitive(this.type.name) ? '' : '?';
+
+    this.deprecated = this.annotations.hasDeprecated();
   }
 }
