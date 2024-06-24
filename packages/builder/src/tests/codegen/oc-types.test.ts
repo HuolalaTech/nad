@@ -1,20 +1,19 @@
 import { DeepPartial } from '../../utils';
 import { Builder } from '../../Builder';
 import { NadClass, NadRoute } from '../../types/nad';
-import { mg } from '../test-tools/mg';
 import { paginitionDefs } from '../defs/paginitionTestDefs';
 
 test('Paginition', () => {
-  const code = new Builder({ target: 'oc', base: '', defs: paginitionDefs }).code.replace(/\s+/g, ' ');
+  const code = new Builder({ target: 'oc', base: '', defs: paginitionDefs }).code;
   expect(code).toContain(`- (MetaPaginition<NSArray<NSNumber*>*>*)foo;`);
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     @interface Paginition<T> : NSObject
     @property (nonatomic, assign) T data;
     @property (nonatomic, assign) NSNumber *limit;
     @property (nonatomic, assign) NSNumber *offset;
     @end
   `);
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     @interface MetaPaginition<T> : Paginition<T>
     @property (nonatomic, assign) NSObject *meta;
     @end
@@ -23,7 +22,7 @@ test('Paginition', () => {
 
 test('return void', () => {
   const routes: Partial<NadRoute>[] = [{ bean: 'test.FooModule', name: 'foo', returnType: 'void' }];
-  const code = new Builder({ target: 'oc', base: '', defs: { routes } }).code.replace(/\s+/g, ' ');
+  const code = new Builder({ target: 'oc', base: '', defs: { routes } }).code;
   expect(code).toContain('- (void)foo;');
 });
 
@@ -32,7 +31,7 @@ test('void as the generic parameter', () => {
   const classes: DeepPartial<NadClass>[] = [
     { name: 'test.A', typeParameters: ['T'], members: [{ name: 'data', type: 'T' }] },
   ];
-  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
+  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code;
   expect(code).toContain('- (A<NSObject*>*)foo;');
 });
 
@@ -55,9 +54,9 @@ test('extending order', () => {
     { name: 'test.C' },
     { name: 'test.D' },
   ];
-  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
+  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code;
 
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * D
      * @JavaClass test.D
@@ -91,9 +90,9 @@ test('extending order', () => {
 test('preserved keyword property name', () => {
   const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.Foo', name: 'foo', returnType: 'test.A' }];
   const classes: DeepPartial<NadClass>[] = [{ name: 'test.A', members: [{ name: 'default' }] }];
-  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code.replace(/\s+/g, ' ');
+  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code;
 
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     @interface A : NSObject
     @property (nonatomic, assign) NSObject *_default;
     @end

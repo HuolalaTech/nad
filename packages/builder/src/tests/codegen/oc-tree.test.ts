@@ -1,6 +1,5 @@
 import { NadClass, NadRoute } from '../../types/nad';
 import { Builder } from '../../Builder';
-import { mg } from '../test-tools/mg';
 import { DeepPartial } from '../../utils';
 
 const config = { base: 'test', target: 'oc' } as const;
@@ -23,9 +22,9 @@ test('Tree', () => {
   const code = new Builder({
     ...config,
     defs: { routes: [getTree], classes: [Node] },
-  }).code.replace(/\s+/g, ' ');
+  }).code;
 
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     @interface Node : NSObject
     @property (nonatomic, assign) Node *parent;
     @property (nonatomic, assign) NSArray<Node*> *children;

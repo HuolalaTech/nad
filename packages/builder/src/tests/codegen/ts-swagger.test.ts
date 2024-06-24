@@ -1,11 +1,10 @@
 import { Builder } from '../../Builder';
-import { mg } from '../test-tools/mg';
 import { swaggerTestDefs } from '../defs/swaggerTestDefs';
 
-const code = new Builder({ target: 'ts', base: '', defs: swaggerTestDefs }).code.replace(/\s+/g, ' ');
+const code = new Builder({ target: 'ts', base: '', defs: swaggerTestDefs }).code;
 
 test('module', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Module
      * @iface test.Demo
@@ -15,19 +14,19 @@ test('module', () => {
 });
 
 test('route', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Route
      * @param a My A
      * @param b My B
      * @param c My C
      */
-    async foo(a?: Long, b?: Long, c?: Long, settings?: Partial<Settings>)
+    async foo(a?: Long, b?: Long, c?: Long, settings?: Partial<Settings>) {
   `);
 });
 
 test('class', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Model
      * @iface test.FooModel
@@ -42,7 +41,7 @@ test('class', () => {
 });
 
 test('enum', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Enum
      */

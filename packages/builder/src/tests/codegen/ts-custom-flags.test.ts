@@ -1,5 +1,4 @@
 import { Builder } from '../../Builder';
-import { mg } from '../test-tools/mg';
 
 const code = new Builder({
   target: 'ts',
@@ -23,12 +22,12 @@ const code = new Builder({
       },
     ],
   },
-}).code.replace(/\s+/g, ' ');
+}).code;
 
 test('f1', () => {
-  expect(code).toContain(mg`.addCustomFlags('soa')`);
+  expect(code).toMatchCode(`.addCustomFlags('soa')`);
 });
 
 test('f2', () => {
-  expect(code).toContain(mg`.addCustomFlags('soa', 'hehe')`);
+  expect(code).toMatchCode(`.addCustomFlags('soa', 'hehe')`);
 });

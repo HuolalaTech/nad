@@ -1,6 +1,5 @@
 import { NadClass, NadRoute } from '../../types/nad';
 import { Builder } from '../../Builder';
-import { mg } from '../test-tools/mg';
 import { DeepPartial } from '../../utils';
 
 const config = { base: 'test', target: 'ts' } as const;
@@ -23,10 +22,10 @@ test('Tree', () => {
   const code = new Builder({
     ...config,
     defs: { routes: [getTree], classes: [Node] },
-  }).code.replace(/\s+/g, ' ');
+  }).code;
 
-  expect(code).toContain(`new Runtime<Node>`);
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`return new Runtime<Node>()`);
+  expect(code).toMatchCode(`
     export interface Node {
       parent?: Node;
       children?: Node[];

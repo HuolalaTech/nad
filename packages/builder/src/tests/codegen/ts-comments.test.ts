@@ -1,5 +1,4 @@
 import { Builder } from '../../Builder';
-import { mg } from '../test-tools/mg';
 
 test('@deprecated', () => {
   const Deprecated = { type: 'java.lang.Deprecated' };
@@ -12,24 +11,23 @@ test('@deprecated', () => {
       modules: [{ name: 'test.FooController', annotations: [Deprecated] }],
     },
   });
-  const code = builder.code.replace(/\s+/g, ' ');
 
-  expect(code).toContain(mg`
+  expect(builder.code).toMatchCode(`
+    /**
+     * fooController
+     * @iface test.FooController
+     * @deprecated
+     */
+    export const fooController = {
       /**
-       * fooController
-       * @iface test.FooController
+       * getFoo
        * @deprecated
        */
-      export const fooController = {
-        /**
-         * getFoo
-         * @deprecated
-         */
-        async getFoo(settings?: Partial<Settings>) {
-          return new Runtime<Foo>()
-            .open('POST', '', settings)
-            .execute();
-        },
-      };
+      async getFoo(settings?: Partial<Settings>) {
+        return new Runtime<Foo>()
+          .open('POST', '', settings)
+          .execute();
+      },
+    };
   `);
 });
