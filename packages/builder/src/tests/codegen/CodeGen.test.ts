@@ -4,7 +4,7 @@ test('write with a number', () => {
   const gen = new CodeGen();
   expect(() => {
     gen.write(1 as unknown as string);
-  }).toThrowError(TypeError);
+  }).toThrow(TypeError);
 });
 
 test('write with empty', () => {
@@ -23,5 +23,12 @@ test('writeComment with a number', () => {
   const gen = new CodeGen();
   expect(() => {
     gen.writeComment(1 as unknown as () => void);
-  }).toThrowError(TypeError);
+  }).toThrow(TypeError);
+});
+
+test('write with multiple lines', () => {
+  const gen = new CodeGen();
+  gen.write('line 1\nline 2\r\nline 3\rline 4');
+  const answer = ['line 1', 'line 2', 'line 3', 'line 4'].join('\n');
+  expect(gen.toString()).toBe(answer);
 });

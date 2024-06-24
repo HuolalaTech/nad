@@ -2,6 +2,7 @@ import { CodeGen } from './CodeGen';
 import { ss, t2s } from '../helpers/tsHelper';
 import type { Root } from '../models/Root';
 import type { Route } from '../models/Route';
+import { EnumConstant } from 'src/models';
 
 interface Options {
   /**
@@ -112,7 +113,7 @@ export class CodeGenForTs extends CodeGen {
           this.write(`.addHeader(${ss(key)}, ${ss(value)})`);
         }
         for (const [key, value] of a.requiredParams) {
-          this.write(`.addRequestParam(${ss(key)}, ${ss(value)})`);
+          this.write(`.addStaticParam(${ss(key)}, ${ss(value)})`);
         }
         if (a.customFlags.length) {
           this.write(`.addCustomFlags(${a.customFlags.map(ss).join(', ')})`);
@@ -162,14 +163,23 @@ export class CodeGenForTs extends CodeGen {
       }
       this.write(`export enum ${e.simpleName} {`);
       this.writeBlock(() => {
+        let p: EnumConstant | null = null;
         for (const v of e.constants) {
           if (v.description) {
             this.writeComment(() => {
               this.write(v.description);
             });
           }
-          this.write(`${v.name} = ${ss(v.value)},`);
+          // TypeScript Enum type supports the iota style.
+          // The item value can be omitted if it is equal to the previous item plus 1.
+          // Additionally, the first item value can also be omitted if it is zero.
+          if ((!p && v.value === 0) || (p && typeof p.value === 'number' && v.value === p.value + 1)) {
+            this.write(`${v.name},`);
+          } else {
+            this.write(`${v.name} = ${ss(v.value)},`);
+          }
           if (v.memo) this.amend((s) => `${s} // ${v.memo}`);
+          p = v;
         }
       });
       this.write('}');
@@ -188,7 +198,7 @@ export class CodeGenForTs extends CodeGen {
         let defStr = defName;
         if (c.superclass) {
           const type = t2s(c.superclass);
-          if (type !== 'any') defStr += ` extends ${type}`;
+          if (type !== 'any' && type !== 'unknown') defStr += ` extends ${type}`;
         }
         this.write(`export interface ${defStr} {`);
         this.writeBlock(() => {

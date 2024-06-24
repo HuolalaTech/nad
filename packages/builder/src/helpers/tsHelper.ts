@@ -1,5 +1,4 @@
 import { neverReachHere } from '../utils/neverReachHere';
-import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';
 import {
@@ -9,9 +8,13 @@ import {
   isJavaMap,
   isJavaNumber,
   isJavaString,
+  isJavaTuple,
   isJavaUnknown,
   isJavaVoid,
+  isJavaWrapper,
 } from './javaHelper';
+import { toLowerCamel } from '../utils';
+import { RootOptions } from 'src/models/RootOptions';
 
 // Convert value to safe string in code
 export const ss = (u: string | number | boolean) => {
@@ -31,7 +34,7 @@ export const ss = (u: string | number | boolean) => {
 };
 
 export const t2s = (type: Type): string => {
-  if (!type) return 'any';
+  if (!type) return 'unknown';
   const { name, parameters, isGenericVariable, builder } = type;
 
   if (isGenericVariable) return name;
@@ -58,19 +61,33 @@ export const t2s = (type: Type): string => {
   if (isJavaVoid(name)) return 'void';
   if (isJavaMap(name)) {
     const [first, second] = parameters;
-    let keyType = 'any';
+    let keyType;
     if (first && (isJavaString(first.name) || isJavaNumber(first.name) || first.isEnum)) {
       keyType = t2s(first);
+    } else {
+      keyType = 'PropertyKey';
     }
     return `Record<${keyType}, ${t2s(second)}>`;
   }
   if (isJavaList(name)) {
     return `${t2s(parameters[0])}[]`;
   }
-  if (isJavaUnknown(name)) return 'any';
+  if (isJavaWrapper(name)) {
+    const [first] = parameters;
+    if (first) {
+      builder.commonDefs['Optional<T>'] = 'T | null';
+      return `Optional<${t2s(first)}>`;
+    } else {
+      return 'unknown';
+    }
+  }
+  if (isJavaTuple(name)) {
+    return `[ ${parameters.map(t2s).join(', ')} ]`;
+  }
+  if (isJavaUnknown(name)) return 'unknown';
 
   const { clz } = type;
-  if (!clz) return 'any';
+  if (!clz) return 'unknown';
 
   const { simpleName: simpleName } = clz;
   if (clz instanceof Class) {
@@ -83,7 +100,7 @@ export const t2s = (type: Type): string => {
   return simpleName;
 };
 
-export const tsBuilderOptions: Partial<BuilderOptions> = {
+export const tsBuilderOptions: Partial<RootOptions> = {
   uniqueNameSeparator: '$',
-  fixModuleName: (name: string) => name[0].toLowerCase() + name.slice(1),
+  fixModuleName: (s) => toLowerCamel(s) || 'unknownModule',
 };

@@ -46,8 +46,7 @@ export function fixUrl(url: string) {
 }
 
 const isRemoteURL = (s: unknown): s is string => {
-  if (typeof s !== 'string') return false;
-  return /^(https?:)?\/\//.test(s);
+  return typeof s === 'string' && /^(https?:)?\/\//.test(s);
 };
 
 const getDefsFromRemote = async (url: string) => {
@@ -68,9 +67,8 @@ const getDefsFromRemote = async (url: string) => {
   }
 };
 
-const getDefs = async (url: string) => {
+export const getJsonResource = async (url: string) => {
   if (isRemoteURL(url)) return getDefsFromRemote(url);
-
   const input: Readable = url === '-' ? process.stdin : fs.createReadStream(url);
   return new Promise<RawDefs>((resolve, reject) => {
     const buffers: Buffer[] = [];
@@ -96,9 +94,9 @@ const createWriteStream = (path: string) =>
   });
 
 export const processByConfig = async (config: Config, io: IO = process) => {
-  const { url, output, apis, target } = config;
-  const defs = await getDefs(url);
-  const { root, code } = new Builder({ defs, target, base: url, apis });
+  const { url, output, target, apis, typeMapping } = config;
+  const defs = await getJsonResource(url);
+  const { root, code } = new Builder({ defs, target, base: url, apis, typeMapping });
   const out = output ? await createWriteStream(output) : io.stdout;
   out.write(code);
   printBuilderInfo(root, io);

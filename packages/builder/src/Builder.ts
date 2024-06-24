@@ -12,6 +12,7 @@ export interface BuilderParams {
   target: SupportedTarget;
   base?: string;
   apis?: string[];
+  typeMapping?: Record<string, string>;
 
   /**
    * TS Only
@@ -29,14 +30,24 @@ export class Builder {
   public readonly defs;
   public readonly base;
   public readonly apis;
+  public readonly typeMapping;
   public readonly runtimePkgName;
   public readonly properties;
 
-  constructor({ target, defs, base, apis, runtimePkgName = '@huolala-tech/nad-runtime', properties }: BuilderParams) {
+  constructor({
+    target,
+    defs,
+    base,
+    apis,
+    typeMapping,
+    runtimePkgName = '@huolala-tech/nad-runtime',
+    properties,
+  }: BuilderParams) {
     this.target = target;
     this.defs = defs;
     this.base = base;
     this.apis = apis;
+    this.typeMapping = typeMapping;
     this.runtimePkgName = runtimePkgName;
     this.properties = properties;
   }
@@ -46,14 +57,14 @@ export class Builder {
    * It's generated lazily, only when it is actually used.
    */
   get root() {
-    const { target, defs, apis } = this;
+    const { target, defs, apis, typeMapping } = this;
     let value;
     if (target === 'oc') {
-      value = new Root(defs, { ...ocBuilderOptions, apis });
+      value = new Root(defs, { ...ocBuilderOptions, apis, typeMapping });
     } else if (target === 'ts') {
-      value = new Root(defs, { ...tsBuilderOptions, apis });
+      value = new Root(defs, { ...tsBuilderOptions, apis, typeMapping });
     } else if (target === 'raw') {
-      value = new Root(defs, { apis: undefined });
+      value = new Root(defs, { apis: undefined, typeMapping });
     } else throw neverReachHere(target, `Invalid target "${target}"`);
     Object.defineProperty(this, 'root', { configurable: true, value });
     return value;

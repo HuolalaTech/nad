@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-cli",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "The CLI Tools of Nad Project",
   "license": "MIT",
   "author": "YanagiEiichi <576398868@qq.com>",
@@ -9,6 +9,7 @@
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c --watch",
+    "test": "jest src --coverage",
     "fix": "yarn lint && yarn format",
     "lint": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,ts,md,json}\""
@@ -24,10 +25,11 @@
   ],
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
-    "@huolala-tech/nad-builder": "^1.0.5",
-    "@huolala-tech/nad-runtime": "^1.0.5",
+    "@huolala-tech/nad-builder": "^1.1.0",
+    "@huolala-tech/nad-runtime": "^1.0.7",
     "axios": "^1.4.0",
-    "capacitance": "^1.0.2"
+    "capacitance": "^1.0.2",
+    "u2x": "^1.1.0"
   },
   "repository": {
     "type": "git",

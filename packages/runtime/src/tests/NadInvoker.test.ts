@@ -144,6 +144,35 @@ describe('addRequestParam', () => {
   });
 });
 
+describe('addStaticParam', () => {
+  test('GET', async () => {
+    const res = await new Localhost()
+      .open('GET', '/test')
+      .addStaticParam('action', 'wtf')
+      .addRequestParam('name', 'hehe')
+      .execute();
+    expect(res).toMatchObject({
+      method: 'GET',
+      url: `${base}/test?action=wtf&name=hehe`,
+      headers: {},
+    });
+  });
+
+  test('POST', async () => {
+    const res = await new Localhost()
+      .open('POST', '/test')
+      .addStaticParam('action', 'wtf')
+      .addRequestParam('name', 'hehe')
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test?action=wtf`,
+      data: 'name=hehe',
+      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+    });
+  });
+});
+
 describe('addRequestBody', () => {
   test('json object in body', async () => {
     const res = await new Localhost().open('POST', '/test').addRequestBody({ a: 1 }).execute();

@@ -5,6 +5,7 @@ import { yellow } from './ansi';
 import { FileNotFound } from './errors/FileNotFound';
 import { InvalidTarget, FileIsNotJson, MissingField, InvalidURI, DirIsNotFile } from './errors';
 import { IO } from './utils';
+import { u2o, u2s } from 'u2x';
 
 const supportedTarget = ['ts', 'oc', 'raw'] as const;
 export type ConfigTarget = (typeof supportedTarget)[number];
@@ -37,6 +38,7 @@ export interface Config {
   url: string;
   output?: string;
   apis?: string[];
+  typeMapping?: Record<string, string>;
 }
 
 const isURI = (s: unknown): s is string => {
@@ -46,17 +48,17 @@ const isURI = (s: unknown): s is string => {
 };
 
 const parseConfig = (config: unknown) => {
-  const { target, url, output, apis } = Object(config) as Record<string, unknown>;
+  const { target, url, output, apis, typeMapping } = u2o(config);
   if (url === undefined) throw new MissingField('url');
   if (target === undefined) throw new MissingField('target');
   if (!isConfigTarget(target)) throw new InvalidTarget(target);
   if (!isURI(url)) throw new InvalidURI(url);
-  const u2s = (u: unknown) => (typeof u === 'string' ? u : undefined);
   return {
     target,
     url,
     output: u2s(output),
-    apis: apis instanceof Array ? apis.map(u2s).filter((i): i is string => !!i) : undefined,
+    apis: apis instanceof Array ? apis.map((i) => u2s(i)).filter((i): i is string => !!i) : undefined,
+    typeMapping: typeMapping ? Object.assign(Object.create(null), typeMapping) : undefined,
   };
 };
 
@@ -67,15 +69,15 @@ const loadConfigFile = (path: string, io: IO): Config[] => {
   try {
     fs.accessSync(path);
     const rawConfig = fs.readFileSync(path);
-    obj = JSON.parse(String(rawConfig));
+    obj = JSON.parse(rawConfig.toString());
   } catch (error) {
     if (error && typeof error === 'object') {
-      const { code, name, message } = Object(error);
+      const { code, name } = u2o(error);
       if (code === 'ENOENT') throw new FileNotFound(path);
       if (code === 'EISDIR') throw new DirIsNotFile(path);
       if (name === 'SyntaxError') throw new FileIsNotJson(path);
       /* istanbul ignore next */
-      throw new Error(message);
+      throw error;
     }
     /* istanbul ignore next */
     throw new Error('Unknown exception ' + error);

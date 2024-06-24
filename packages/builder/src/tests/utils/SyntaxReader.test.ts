@@ -28,12 +28,12 @@ test('global flag', () => {
   const sr = new SyntaxReader('abc');
   expect(() => {
     sr.read(/a/);
-  }).toThrowError(TypeError);
+  }).toThrow(TypeError);
 });
 
 test('never', () => {
   const sr = new SyntaxReader('abc');
   expect(() => {
     sr.read(1 as unknown as string);
-  }).toThrowError();
+  }).toThrow();
 });

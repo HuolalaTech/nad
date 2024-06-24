@@ -24,12 +24,22 @@ const buildEnum = (...constants: DeepPartial<NadEnumConstant>[]) => {
   }).code.replace(/\s+/g, ' ');
 };
 
-test('number enum', () => {
+test('iota enum from zero', () => {
+  const code = buildEnum({ name: 'WATER', value: 0 }, { name: 'FIRE', value: 1 });
+  expect(code).toContain(mg`
+    export enum MyType {
+      WATER,
+      FIRE,
+    }
+  `);
+});
+
+test('iota enum from 1', () => {
   const code = buildEnum({ name: 'WATER', value: 1 }, { name: 'FIRE', value: 2 });
   expect(code).toContain(mg`
     export enum MyType {
       WATER = 1,
-      FIRE = 2,
+      FIRE,
     }
   `);
 });

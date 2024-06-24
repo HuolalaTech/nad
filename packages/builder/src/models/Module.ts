@@ -1,7 +1,7 @@
 import { Route, RouteRaw } from './Route';
-import { Dubious, UniqueName } from '../utils';
+import { Dubious } from '../utils';
 import { u2a, u2o, u2s } from 'u2x';
-import type { Root } from './Root';
+import { Root } from './Root';
 import { Annotated } from './Annotated';
 import { NadModule } from '../types/nad';
 
@@ -18,13 +18,38 @@ export class Module extends Annotated<ModuleRaw> {
     this.builder = builder;
     const defs = u2o(raw);
     this.name = u2s(defs.name) ?? '';
-    this.moduleName = UniqueName.createFor(
-      this.builder,
-      // For example, convert "cn.xxx.xxx.People$$wtf23333" to "People"
-      this.builder.fixModuleName(this.name.match(/[^.]+$/)?.[0].replace(/\$\$.*/, '') || '$'),
-      this.builder.uniqueNameSeparator,
-    );
-    this.routes = u2a(list, (i) => new Route(i, this));
+    this.moduleName = builder.takeUniqueName(this.name, builder.options.fixModuleName);
+
+    // Move the overloaded zero-parameter method forward.
+    //
+    // For example:
+    // INPUT: class Foo { void foo(int a); void foo(long b); void foo(); }
+    // OUTPUT: class Foo { void foo(); void foo(int a); void foo(long b); }
+    //
+    // This reason is that avoiding the best method name being used by other parametered methods.
+    //
+    const sList: RouteRaw[] = [];
+    const sMap: Record<string, number> = Object.create(null);
+    for (let i = 0; i < list.length; i++) {
+      const current = list[i];
+      const name = String(current.name);
+      if (name in sMap) {
+        // If the current is a zero-parameter method.
+        if (!current.parameters?.length) {
+          const index = sMap[name];
+          // Move forward to the previous element of first occurred in same name.
+          sList.splice(index, 0, current);
+          continue;
+        }
+      } else {
+        // It's the first occurrence, mark the index for later use.
+        sMap[name] = i;
+      }
+      sList.push(current);
+    }
+
+    this.routes = sList.map((o) => new Route(o, this));
+
     this.description = this.annotations.swagger.getApi()?.value || '';
   }
 }

@@ -42,18 +42,6 @@ test('int[]', () => {
   expect(type).toMatchObject({ name: 'java.util.List', parameters: [{ name: 'int', parameters: [] }] });
 });
 
-test('java.lang.ThreadLocal<java.lang.String>', () => {
-  const type = Type.create('java.lang.ThreadLocal<java.lang.String>', root);
-  expect(type).toBeInstanceOf(Type);
-  expect(type).toMatchObject({ name: 'java.lang.String', parameters: [] });
-});
-
-test('java.util.Optional<java.lang.String>', () => {
-  const type = Type.create('java.util.Optional<java.lang.String>', root);
-  expect(type).toBeInstanceOf(Type);
-  expect(type).toMatchObject({ name: 'java.lang.String', parameters: [] });
-});
-
 test('test.MyClass$$WTF__233', () => {
   const type = Type.create('test.MyClass$$WTF__233', root);
   expect(type).toBeInstanceOf(Type);
@@ -82,7 +70,7 @@ test('toString', () => {
   const type = Type.create('?', root);
   expect(() => {
     type.toString();
-  }).toThrowError();
+  }).toThrow();
 });
 
 test('replace', () => {
@@ -113,4 +101,23 @@ test('replace', () => {
 test('get clz', () => {
   const type = Type.create('java.util.Map<K, V>', root);
   expect(type.clz).toBeNull();
+});
+
+
+test('? extends', () => {
+  const type = Type.create('java.util.List<? extends test.Foo>', root);
+  expect(type.name).toBe('java.util.List');
+  expect(type.parameters).toHaveLength(1);
+  const [ p1 ] = type.parameters;
+  expect(p1.name).toBe('test.Foo');
+});
+
+test('bad types', () => {
+  expect(() => {
+    Type.create('java.util.Map<java.lang.Long java.lang.Long>', root);
+  }).toThrow(SyntaxError);
+
+  expect(() => {
+    Type.create('java.util.Map<java.lang.Long?>', root);
+  }).toThrow(SyntaxError);
 });

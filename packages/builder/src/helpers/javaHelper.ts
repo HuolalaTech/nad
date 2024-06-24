@@ -58,6 +58,9 @@ export const isJavaStringTypes = [
   'java.lang.StringBuffer',
   'java.time.LocalDateTime',
   'java.time.LocalDate',
+  'java.time.OffsetDateTime',
+  'java.time.OffsetTime',
+  'java.time.ZonedDateTime',
   'java.time.LocalTime',
   'java.lang.Class',
   'java.net.URL',
@@ -101,6 +104,10 @@ const javaUnknownTypePrefixes = [
   'com.fasterxml.jackson.',
 ];
 
+const javaTupleTypePrefixes = ['groovy.lang.Tuple'];
+
+const javaWrapperTypes = ['java.lang.ThreadLocal', 'java.util.Optional'];
+
 export const isJavaBooleanTypes = ['boolean', 'java.lang.Boolean'] as const;
 
 export const isJavaVoidTypes = ['void', 'java.lang.Void'] as const;
@@ -108,6 +115,7 @@ export const isJavaVoidTypes = ['void', 'java.lang.Void'] as const;
 export const isJavaPrimitive = isOneOf(isJavaPrimitiveTypes);
 export const isJavaList = isOneOf(javaListTypes);
 export const isJavaMap = isOneOf(javaMapTypes);
+export const isJavaWrapper = isOneOf(javaWrapperTypes);
 export const isJavaString = isOneOf(isJavaStringTypes);
 export const isJavaFloat = isOneOf(isJavaFloatTypes);
 export const isJavaInteger = isOneOf(isJavaIntegerTypes);
@@ -117,6 +125,7 @@ export const isJavaVoid = isOneOf(isJavaVoidTypes);
 export const isJavaNumber = (v: string) => isJavaInteger(v) || isJavaLong(v) || isJavaFloat(v);
 
 export const isJavaUnknown = (v: string) => javaUnknownTypePrefixes.some((preifx) => v.startsWith(preifx));
+export const isJavaTuple = (v: string) => javaTupleTypePrefixes.some((preifx) => v.startsWith(preifx));
 
 export const isJavaNonClass = (v: string) =>
   isJavaString(v) ||
@@ -125,4 +134,5 @@ export const isJavaNonClass = (v: string) =>
   isJavaList(v) ||
   isJavaMap(v) ||
   isJavaVoid(v) ||
-  isJavaUnknown(v);
+  isJavaUnknown(v) ||
+  isJavaTuple(v);

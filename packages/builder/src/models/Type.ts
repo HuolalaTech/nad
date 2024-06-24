@@ -1,4 +1,4 @@
-import { isJavaNonClass } from '../helpers/javaHelper';
+import { isJavaNonClass, isJavaUnknown } from '../helpers/javaHelper';
 import { neverReachHere, SyntaxReader } from '../utils';
 import type { Class } from './Class';
 import type { Root } from './Root';
@@ -68,29 +68,43 @@ export class Type {
     );
   }
 
-  public static create(typeName: string, owner: TypeOwner) {
-    const sr = new SyntaxReader(typeName || JAVA_OBJECT);
+  public static create(rawTypeName: string, owner: TypeOwner) {
+    const { typeMapping } = owner.options;
+    const sr = new SyntaxReader(typeMapping[rawTypeName] || rawTypeName || JAVA_OBJECT);
     const next = () => {
       sr.read(/\s*/g);
-      const name = sr.read(/[\w$.?]*/g);
+
+      // "?" should be Object
+      // "? extends Foo" should be Foo
+      if (sr.read('?')) {
+        sr.read(/\s+extends\s+/g);
+      }
+
+      const name = sr.read(/[\w$.]*/g);
       const parameters: Type[] = [];
+
       if (sr.read('<')) {
         do {
           parameters.push(next());
         } while (sr.read(','));
-        sr.read('>'); // need assert
+        sr.read(/\s*/g);
+        if (!sr.read('>')) {
+          throw new SyntaxError(`Cannot parse java type '${rawTypeName}'`);
+        }
       }
+
       const cr = () => {
-        if (name === 'java.lang.ThreadLocal' || name === 'java.util.Optional') return parameters[0];
-        if (name === '?' || name === '') return new this(owner, JAVA_OBJECT, []);
+        if (name === '') return new this(owner, JAVA_OBJECT, []);
         return new this(owner, name, parameters);
       };
+
       if (sr.read('[]')) {
         if (name == 'char' || name === 'byte') {
           return new this(owner, 'java.lang.String', []);
         }
         return new this(owner, 'java.util.List', [cr()]);
       }
+
       return cr();
     };
     return next();

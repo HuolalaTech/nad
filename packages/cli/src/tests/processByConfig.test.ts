@@ -5,6 +5,7 @@ import { Dubious } from '@huolala-tech/nad-builder/dist/cjs/utils';
 import { NadResult } from '@huolala-tech/nad-builder/dist/cjs/types/nad';
 import { fixUrl, processByConfig } from '../processByConfig';
 import { FailedToWrite } from '../errors';
+import { u2o } from 'u2x';
 
 const ast: Dubious<NadResult> = {
   classes: [],
@@ -34,8 +35,10 @@ const server = http
     }
   })
   .listen();
-server.unref();
-const { port } = Object(server.address());
+
+const { port } = u2o(server.address());
+
+afterAll(() => server.close());
 
 test('basic', async () => {
   const stdout = new Capacitance();
@@ -56,27 +59,21 @@ test('basic', async () => {
 });
 
 test('404', async () => {
-  try {
+  expect(async () => {
     await processByConfig({
       target: 'ts',
       url: `http://127.0.0.1:${port}/404`,
     });
-    throw new Error('never');
-  } catch (error) {
-    expect(error).toBeInstanceOf(AxiosError);
-  }
+  }).rejects.toThrow(AxiosError);
 });
 
 test('500', async () => {
-  try {
+  expect(async () => {
     await processByConfig({
       target: 'ts',
       url: `http://127.0.0.1:${port}/500`,
     });
-    throw new Error('never');
-  } catch (error) {
-    expect(error).toBeInstanceOf(AxiosError);
-  }
+  }).rejects.toThrow(AxiosError);
 });
 
 test('Write file', async () => {
@@ -101,7 +98,7 @@ test('Write file', async () => {
 test('Failed to write file', async () => {
   const stdout = new Capacitance();
   const stderr = new Capacitance();
-  try {
+  expect(async () => {
     await processByConfig(
       {
         target: 'ts',
@@ -110,9 +107,7 @@ test('Failed to write file', async () => {
       },
       { stdout, stderr },
     );
-  } catch (error) {
-    expect(error).toBeInstanceOf(FailedToWrite);
-  }
+  }).rejects.toThrow(FailedToWrite);
 });
 
 test('301', async () => {

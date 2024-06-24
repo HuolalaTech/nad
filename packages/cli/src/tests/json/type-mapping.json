@@ -1,0 +1,7 @@
+{
+  "target": "ts",
+  "url": "http://localhost",
+  "typeMapping": {
+    "test.Foo": "java.util.List<java.lang.Long>"
+  }
+}

@@ -9,7 +9,7 @@ test('java.util.Map<test.UserType, java.lang.Long>', () => {
 test('java.util.Map<test.User, java.lang.Long>', () => {
   const { currentTestName: type = '' } = expect.getState();
   const code = buildTsMethodWithParameters({ name: 'map', type });
-  expect(code).toContain(`map?: Record<any, Long>`);
+  expect(code).toContain(`map?: Record<PropertyKey, Long>`);
 });
 
 test('java.util.Map<java.lang.Long, java.lang.Long>', () => {

@@ -34,6 +34,7 @@ export class CodeGenForOc extends CodeGen {
     this.write('- (void)addHeader: (NSString*)name value:(NSString*)value;');
     this.write('- (void)addPathVariable:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addRequestParam:(NSString*)name value:(NSObject*)value;');
+    this.write('- (void)addStaticParam:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addMultipartFile:(NSString*)name value:(NSObject*)value;');
     this.write('- (void)addRequestBody:(NSObject*)body;');
     this.write('- (void)addModelAttribute:(NSObject*)params;');
@@ -102,7 +103,7 @@ export class CodeGenForOc extends CodeGen {
         gen.write(`[req addHeader:${ss(key)} value:${ss(value)}];`);
       }
       for (const [key, value] of a.requiredParams) {
-        gen.write(`[req addRequestParam:${ss(key)} value:${ss(value)}];`);
+        gen.write(`[req addStaticParam:${ss(key)} value:${ss(value)}];`);
       }
       for (const p of a.parameters) {
         for (const [m, ...args] of p.actions) {

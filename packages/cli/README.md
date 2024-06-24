@@ -31,3 +31,40 @@ Options:
   -c, --config <path>       Path to configuration file. If specified, all other arguments will be ignored.
   -h, --help                Display this help message.
 ```
+
+## Config File
+
+```ts
+type Target = 'ts' | 'oc' | 'raw';
+
+export interface ConfigFile {
+  /**
+   * Specify the output file format.
+   * @default ts
+   */
+  target?: Target;
+
+  /**
+   * Specify the API definition file URL.
+   * @required
+   */
+  url: string;
+
+  /**
+   * Specify the output file path.
+   * @default stdout
+   */
+  output?: string;
+
+  /**
+   * Specify which APIs should be generated.
+   * @default All
+   */
+  apis?: string[];
+
+  /**
+   * Define some special types to map to other types.
+   */
+  typeMapping?: Record<string, string>;
+}
+```

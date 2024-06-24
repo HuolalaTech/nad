@@ -1,5 +1,4 @@
 import { neverReachHere } from '../utils';
-import type { BuilderOptions } from '../models/Root';
 import { Class } from '../models/Class';
 import type { Type } from '../models/Type';
 import {
@@ -8,9 +7,12 @@ import {
   isJavaMap,
   isJavaNumber,
   isJavaString,
+  isJavaTuple,
   isJavaUnknown,
   isJavaVoid,
+  isJavaWrapper,
 } from './javaHelper';
+import { RootOptions } from 'src/models/RootOptions';
 
 // Convert value to safe string in code
 export const ss = (s: string | number) => {
@@ -34,7 +36,7 @@ export const checkSuper = (sub: Class, sup: Class): boolean => {
 };
 
 export const t2s = (type: Type): string => {
-  const { name, isGenericVariable } = type;
+  const { name, isGenericVariable, parameters } = type;
 
   if (isGenericVariable) return name;
 
@@ -49,10 +51,19 @@ export const t2s = (type: Type): string => {
     if (!first.isGenericVariable) t = `${t}*`;
     return `NSArray<${t}>`;
   }
+  if (isJavaWrapper(name)) {
+    const [first] = parameters;
+    if (first) {
+      return t2s(first);
+    } else {
+      return 'NSObject';
+    }
+  }
   if (isJavaMap(name)) return `NSDictionary`;
+  if (isJavaTuple(name)) return 'NSArray<NSObject*>';
   if (isJavaUnknown(name)) return 'NSObject';
 
-  const { clz, parameters } = type;
+  const { clz } = type;
   if (!clz) return 'NSObject';
 
   const { simpleName } = clz;
@@ -75,11 +86,12 @@ export const t2s = (type: Type): string => {
 };
 
 const preservedKeywords = new Set(['default', 'signed']);
-export const ocBuilderOptions: Partial<BuilderOptions> = {
+export const ocBuilderOptions: Partial<RootOptions> = {
   uniqueNameSeparator: '_',
   fixPropertyName: (name: string) => {
     const n = name.replace(/\$.*/, '');
     if (preservedKeywords.has(n)) return `_${n}`;
+
     return n;
   },
 };

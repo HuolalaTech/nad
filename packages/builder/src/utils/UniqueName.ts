@@ -13,6 +13,10 @@ export class UniqueName {
     return true;
   }
 
+  public lookup(str: string) {
+    return this.set.has(str);
+  }
+
   /**
    * Create a unique name based on a prefix.
    */
@@ -35,11 +39,14 @@ export class UniqueName {
    * NOTE: Same names are allowed between different scopes.
    */
   public static createFor(scope: object, prefix: string, sep?: string) {
-    let unm = heap.get(scope);
-    if (!unm) {
-      unm = new UniqueName();
-      heap.set(scope, unm);
-    }
-    return unm.create(prefix, sep);
+    return computeIfAbsent(heap, scope, UniqueName.newInstance).create(prefix, sep);
+  }
+
+  public static lookupFor(scope: object, str: string) {
+    return computeIfAbsent(heap, scope, UniqueName.newInstance).lookup(str);
+  }
+
+  public static newInstance() {
+    return new UniqueName();
   }
 }

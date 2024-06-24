@@ -4,9 +4,9 @@ import { ocHelper, tsHelper } from '../../helpers';
 const root = new Root({});
 
 test.each([
-  ['', 'any', 'NSObject'],
-  ['java.lang.Object', 'any', 'NSObject'],
-  ['MyUnknownClass', 'any', 'NSObject'],
+  ['', 'unknown', 'NSObject'],
+  ['java.lang.Object', 'unknown', 'NSObject'],
+  ['MyUnknownClass', 'unknown', 'NSObject'],
   ['java.lang.String', 'string', 'NSString'],
   ['java.lang.Long', 'Long', 'NSNumber'],
   ['long', 'Long', 'NSNumber'],

@@ -210,7 +210,7 @@ describe.each([
           headers: ['b=2', 'd!=4', 'wtf'],
         },
       });
-      assertConst(code, 'addRequestParam', ['a', '1']);
+      assertConst(code, 'addStaticParam', ['a', '1']);
       assertConst(code, 'addHeader', ['b', '2']);
     });
   });

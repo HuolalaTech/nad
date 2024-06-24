@@ -2,7 +2,9 @@ import { UniqueName } from '../../utils';
 
 test('basic', () => {
   const o = {};
+  expect(UniqueName.lookupFor(o, 'a')).toBeFalsy();
   expect(UniqueName.createFor(o, 'a')).toBe('a');
+  expect(UniqueName.lookupFor(o, 'a')).toBeTruthy();
   expect(UniqueName.createFor(o, 'a')).toBe('a$1');
   expect(UniqueName.createFor(o, 'a')).toBe('a$2');
   expect(UniqueName.createFor(o, 'b')).toBe('b');
@@ -32,9 +34,9 @@ test('overflow', () => {
   const o = {};
   expect(() => {
     for (let i = 0; i < 100; i++) UniqueName.createFor(o, 'a');
-  }).not.toThrowError();
+  }).not.toThrow();
   expect(() => {
     for (let i = 0; i < 100; i++) UniqueName.createFor(o, 'b');
     UniqueName.createFor(o, 'b');
-  }).toThrowError();
+  }).toThrow();
 });

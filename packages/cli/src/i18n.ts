@@ -144,3 +144,8 @@ export const I132 = i18n<1>({
   zh: `尝试写入 '$1' 失败，没有写权限`,
   en: `Failed to write '$1', permission denied`,
 });
+
+export const I133 = i18n<1>({
+  zh: `尝试写入 '$1' 失败，文件已存在`,
+  en: `Failed to write '$1', file already exists`,
+});
