@@ -10,7 +10,9 @@ const compareIgnoreIndent = (a: string, b: string) => {
 };
 
 expect.extend({
-  toMatchCode: function (input, expected) {
+  toMatchCode: function (this, input, expected) {
+    if (typeof expected !== 'string') throw TypeError('`toMatchConde` method accepts string arguments');
+    if (typeof input !== 'string') return { pass: false, message: () => 'code must be string' };
     const a = buildArray(input);
     const b = buildArray(expected);
     let maxMatchers: [string, string][] = [];

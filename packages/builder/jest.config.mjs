@@ -1,5 +1,5 @@
 export default {
   preset: 'ts-jest',
   testRegex: '\\.test\\.ts$',
-  setupFilesAfterEnv: ['./jest.setup.ts'],
+  setupFilesAfterEnv: ['./src/tests/jest.setup.ts'],
 };
