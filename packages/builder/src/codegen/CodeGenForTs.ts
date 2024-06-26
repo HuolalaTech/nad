@@ -83,7 +83,7 @@ export class CodeGenForTs extends CodeGen {
       .map((p) => {
         // If a parameter is optional and has any required parameters in the right,
         // then change its type to `T | null` and make it requreid.
-        if (hasRequired && p.required === '?') return `${p.name}: ${t2s(p.type)} | null`;
+        if (hasRequired && p.required === '?') return `${p.name}: ${t2s(p.type)} | undefined`;
         // If current parameter is required, update `hasRequired` flag to `true`.
         hasRequired = hasRequired || p.required === '';
         // Otherwise, the current parameter is requreid, or there are no required parameters to its right,
