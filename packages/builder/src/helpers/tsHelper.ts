@@ -41,10 +41,10 @@ export const t2s = (type: Type): string => {
 
   switch (name) {
     case 'java.math.BigDecimal':
-      builder.commonDefs.BigDecimal = 'string | number';
+      builder.commonDefs.BigDecimal = '`${number}` | number';
       return 'BigDecimal';
     case 'java.math.BigInteger':
-      builder.commonDefs.BigInteger = 'string | number';
+      builder.commonDefs.BigInteger = '`${number}` | number';
       return 'BigInteger';
     case 'org.springframework.web.multipart.MultipartFile':
       builder.commonDefs.MultipartFile = 'Blob | File | string';
@@ -52,7 +52,7 @@ export const t2s = (type: Type): string => {
     default:
   }
   if (isJavaLong(name)) {
-    builder.commonDefs.Long = 'string | number';
+    builder.commonDefs.Long = '`${number}` | number';
     return 'Long';
   }
   if (isJavaNumber(name)) return 'number';
