@@ -3,7 +3,7 @@ import { u2a, u2o, u2s } from 'u2x';
 import { Annotations } from './annotations';
 import type { Class } from './Class';
 import { Type } from './Type';
-import { Dubious, notEmpty, toLowerCamel } from '../utils';
+import { Dubious, notEmpty, toSnake } from '../utils';
 import { NadMember } from '../types/nad';
 
 export class Member {
@@ -18,10 +18,21 @@ export class Member {
     raw: Dubious<NadMember>,
     public readonly owner: Class,
   ) {
-    const { name, type, annotations } = raw;
-    this.annotations = Annotations.create(u2a(annotations).filter(notEmpty).map(u2o).flat());
-    this.name = owner.options.fixPropertyName(u2s(this.annotations.json.alias || name) || '');
-    this.type = Type.create(u2s(type), owner);
+    this.annotations = Annotations.create(u2a(raw.annotations).filter(notEmpty).map(u2o).flat());
+
+    const { fixPropertyName } = owner.options;
+    if (this.annotations.json.alias) {
+      this.name = fixPropertyName(this.annotations.json.alias);
+    } else {
+      const rawName = u2s(raw.name) ?? '';
+      if (owner.annotations.json.needToSnake) {
+        this.name = fixPropertyName(toSnake(rawName));
+      } else {
+        this.name = fixPropertyName(rawName);
+      }
+    }
+
+    this.type = Type.create(u2s(raw.type), owner);
     const amp = this.annotations.swagger.getApiModelProperty();
     this.description = amp?.value;
 

@@ -13,13 +13,29 @@ export const isOneOf =
   (u: string): u is T =>
     a.indexOf(u as T) !== -1;
 
+/**
+ * Convert snake to upper camel.
+ */
 export const toUpperCamel = (n: string) =>
   n
     .replace(/(?:[\W_]+|^)([a-z]?)/g, (_, z) => z.toUpperCase())
     // A variable name cannot start with numbers, so add a prefix "The".
     .replace(/^\d+/, 'The$&');
 
+/**
+ * Convert snake to lower camel.
+ */
 export const toLowerCamel = (n: string) => toUpperCamel(n).replace(/^[A-Z]/, (s) => s.toLowerCase());
+
+/**
+ * Convert camel to snake.
+ */
+export const toSnake = (n: string) =>
+  n
+    .split(/(?=[^a-z])/)
+    .join('_')
+    .replace(/[\W_]+/g, '_')
+    .toLowerCase();
 
 // Remove dynamic suffixes from proxy class names, such as $$EnhancerByCGLIB*, $$FastClassByCGLIB*, and so on.
 export const removeDynamicSuffix = (name: string) => name.replace(/\$\$.*/, '');

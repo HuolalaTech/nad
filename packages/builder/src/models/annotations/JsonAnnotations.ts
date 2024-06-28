@@ -15,6 +15,10 @@ export interface JSONField {
   serialize: boolean;
 }
 
+export interface JsonNaming {
+  value: string;
+}
+
 export class JsonAnnotations {
   private annotations;
   constructor(annotations: Annotations) {
@@ -29,6 +33,10 @@ export class JsonAnnotations {
     return this.getJsonIgnore()?.value === true || this.getJSONField()?.serialize === false;
   }
 
+  public get needToSnake() {
+    return this.getJsonNaming()?.value === 'com.fasterxml.jackson.databind.PropertyNamingStrategy$SnakeCaseStrategy';
+  }
+
   private getJsonProperty() {
     return this.annotations.find<JsonProperty>('com.fasterxml.jackson.annotation.JsonProperty');
   }
@@ -39,5 +47,9 @@ export class JsonAnnotations {
 
   private getJSONField() {
     return this.annotations.find<JSONField>('com.alibaba.fastjson.annotation.JSONField');
+  }
+
+  private getJsonNaming() {
+    return this.annotations.find<JsonNaming>('com.fasterxml.jackson.databind.annotation.JsonNaming');
   }
 }
