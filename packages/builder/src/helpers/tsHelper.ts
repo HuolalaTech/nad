@@ -67,7 +67,7 @@ export const t2s = (type: Type): string => {
     } else {
       keyType = 'PropertyKey';
     }
-    return `Record<${keyType}, ${t2s(second)}>`;
+    return `Record<${keyType}, ${t2s(second)} | undefined>`;
   }
   if (isJavaList(name)) {
     return `${t2s(parameters[0])}[]`;
