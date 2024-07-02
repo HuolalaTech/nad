@@ -286,6 +286,11 @@ export class NadInvoker<T> implements NadRuntime<T> {
 
     const uri = joinPath(base, buildPath(rawPath, pathVariables));
 
+    // Use "in" operator to check it.
+    // If a parameter is annotated with @RequestBody,
+    // the body slot will still be occupied even when the actual value is undefined.
+    const hasBody = 'body' in this;
+
     /**
      * PRINCIPLE: Make the HTTP header as light as possible.
      *
@@ -300,7 +305,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
      * 2. No custom body can be provided as it may conflict with other parameters.
      * 3. The request's Content-Type must be empty or Form. If it's empty, it can be changed to FormData.
      */
-    if (isSupportingPayload(method) && !body && isForm(contentType)) {
+    if (isSupportingPayload(method) && !hasBody && isForm(contentType)) {
       const data = requestParams;
       const hasFile = Object.keys(files).length;
       // If the `files` is not empty, keep the Content-Type header empty, as it will be set by the request library.
@@ -309,7 +314,8 @@ export class NadInvoker<T> implements NadRuntime<T> {
       return { method, url: uri + qs, timeout, headers, data, files, ...extensions };
     } else {
       const qs = buildQs({ ...staticParams, ...requestParams }).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
-      return { method, url: uri + qs, timeout, headers, data: Object(body), files, ...extensions };
+      const data = body === undefined ? undefined : Object(body);
+      return { method, url: uri + qs, timeout, headers, data, files, ...extensions };
     }
   };
 
