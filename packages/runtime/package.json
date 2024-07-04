@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-runtime",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "The runtime lib of the Nad project",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
