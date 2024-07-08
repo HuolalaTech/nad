@@ -140,7 +140,7 @@ describe('addRequestParam', () => {
       method: 'POST',
       url: `${base}/test`,
       data: 'id=123&name=hehe',
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
     });
   });
 
@@ -182,7 +182,7 @@ describe('addStaticParam', () => {
       method: 'POST',
       url: `${base}/test?action=wtf`,
       data: 'name=hehe',
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
     });
   });
 });
@@ -199,7 +199,7 @@ describe('addRequestBody', () => {
 
   test('qs data object in body', async () => {
     const res = await new Localhost()
-      .open('POST', '/test', { headers: { 'Content-Type': WWW_FORM_URLENCODED } })
+      .open('POST', '/test', { headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED } })
       .addRequestBody({ a: 1 })
       .execute();
     expect(res).toMatchObject({
@@ -211,7 +211,7 @@ describe('addRequestBody', () => {
 
   test('form data object in body', async () => {
     const res = await new Localhost()
-      .open('POST', '/test', { headers: { 'Content-Type': MULTIPART_FORM_DATA } })
+      .open('POST', '/test', { headers: { [CONTENT_TYPE]: MULTIPART_FORM_DATA } })
       .addRequestBody({ a: 1 })
       .execute();
     expect(res).toMatchObject({
@@ -250,7 +250,7 @@ describe('addModelAttribute', () => {
   test('with json', async () => {
     const res = await new Localhost()
       .open('POST', '/test')
-      .addHeader('Content-Type', APPLICATION_JSON)
+      .addHeader(CONTENT_TYPE, APPLICATION_JSON)
       .addModelAttribute({ a: 1, b: { c: 2 } })
       .execute();
     expect(res).toMatchObject({
@@ -307,7 +307,7 @@ describe('addModelAttribute', () => {
       method: 'POST',
       url: `${base}/test`,
       data: 'user.name=hehe&user.age=18&user.v=1&user.v=2',
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
     });
   });
 

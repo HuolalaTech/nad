@@ -1,5 +1,5 @@
 import {
-  APPLICATION_JSON,
+  CONTENT_TYPE,
   InvokeParams,
   InvokeResult,
   WWW_FORM_URLENCODED,
@@ -294,7 +294,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
     //
     const headers = { ...runtime.headers, ...this.headers, ...settings?.headers };
 
-    const contentType = insensitiveGet(headers, 'Content-Type');
+    const contentType = insensitiveGet(headers, CONTENT_TYPE);
 
     const uri = joinPath(base, buildPath(rawPath, pathVariables));
 
@@ -332,7 +332,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
     // In this case, the data can be passed using payload.
     const tIsWwwFormUrlEncoded = contentType && isWwwFormUrlEncoded(contentType);
     if (canTakePayload && (!contentType || tIsWwwFormUrlEncoded || tIsMultipartFormData)) {
-      if (!contentType) headers['Content-Type'] = WWW_FORM_URLENCODED;
+      if (!contentType) headers[CONTENT_TYPE] = WWW_FORM_URLENCODED;
       const data = requestParams;
       const qs = prependQuestionMarkIfNotEmpty(buildQs(staticParams));
       return { method, url: uri + qs, timeout, headers, data, ...extensions };

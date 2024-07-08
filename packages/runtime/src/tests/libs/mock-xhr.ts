@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
-import { APPLICATION_JSON, MULTIPART_FORM_DATA } from '@huolala-tech/request';
+import { APPLICATION_JSON, CONTENT_TYPE, MULTIPART_FORM_DATA } from '@huolala-tech/request';
 
 export const MULTIPART_FORM_DATA_WITH_BOUNDARY = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
 
@@ -63,7 +63,7 @@ global.XMLHttpRequest = class {
       }
     } else if (body instanceof FormData) {
       if (!Object.keys(this.headers).some((s) => /^Content-Type$/i.test(s))) {
-        this.headers['Content-Type'] = MULTIPART_FORM_DATA_WITH_BOUNDARY;
+        this.headers[CONTENT_TYPE] = MULTIPART_FORM_DATA_WITH_BOUNDARY;
       }
       const temp: Record<string, unknown> = {};
       const tasks = Array.from(body, async ([k, v]) => {
@@ -96,7 +96,7 @@ global.XMLHttpRequest = class {
     this.headers[key] = value;
   }
   getResponseHeader(key: string) {
-    if (key === 'Content-Type') return APPLICATION_JSON;
+    if (key === CONTENT_TYPE) return APPLICATION_JSON;
     return null;
   }
   getAllResponseHeaders() {
