@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
-    "@huolala-tech/request": "^1.1.2"
+    "@huolala-tech/request": "^1.1.4"
   },
   "repository": {
     "type": "git",

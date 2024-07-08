@@ -2,6 +2,8 @@ import { EventEmitter } from 'events';
 import { readAsDataURL } from './readAsDataURL';
 import { APPLICATION_JSON, MULTIPART_FORM_DATA } from '@huolala-tech/request';
 
+export const MULTIPART_FORM_DATA_WITH_BOUNDARY = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
+
 /**
  * Get a value by a case-insensitive key
  */
@@ -61,7 +63,7 @@ global.XMLHttpRequest = class {
       }
     } else if (body instanceof FormData) {
       if (!Object.keys(this.headers).some((s) => /^Content-Type$/i.test(s))) {
-        this.headers['Content-Type'] = `${MULTIPART_FORM_DATA}; boundary=----WebKitFormBoundaryHehehehe`;
+        this.headers['Content-Type'] = MULTIPART_FORM_DATA_WITH_BOUNDARY;
       }
       const temp: Record<string, unknown> = {};
       const tasks = Array.from(body, async ([k, v]) => {

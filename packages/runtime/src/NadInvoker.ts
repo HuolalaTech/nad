@@ -1,12 +1,24 @@
-import { InvokeParams, InvokeResult, WWW_FORM_URLENCODED, buildQs, request } from '@huolala-tech/request';
+import {
+  APPLICATION_JSON,
+  InvokeParams,
+  InvokeResult,
+  WWW_FORM_URLENCODED,
+  buildQs,
+  isApplicationJson,
+  isMultipartFormData,
+  isWwwFormUrlEncoded,
+  request,
+} from '@huolala-tech/request';
 import { HttpError } from './errors/HttpError';
 import { ObjectNestingTooDeepError } from './errors';
 import { joinPath } from './utils/joinPath';
 import { insensitiveGet } from './utils/insensitiveGet';
-import { isSupportingPayload, isForm, isNonNullObject } from './utils/predicates';
+import { isSupportingPayload as canThisMethodTakePayload, isNonNullObject } from './utils/predicates';
 import { NadRuntime, Settings, MultipartFile } from './NadRuntime';
 import { buildPath } from './utils/buildPath';
 import { setOrDelete } from './utils/setOrDelete';
+
+const prependQuestionMarkIfNotEmpty = (s: string) => (s ? '?' + s : s);
 
 /**
  * An official implementation of NadRuntime.
@@ -222,7 +234,7 @@ export class NadInvoker<T> implements NadRuntime<T> {
   /**
    * Actually execute this request.
    */
-  public execute() {
+  public async execute() {
     const { constructor } = this;
     const runtime = constructor as typeof NadInvoker;
     // Get the static methods from the current constructor that may be overridden by the derived class.
@@ -291,32 +303,45 @@ export class NadInvoker<T> implements NadRuntime<T> {
     // the body slot will still be occupied even when the actual value is undefined.
     const hasBody = 'body' in this;
 
-    /**
-     * PRINCIPLE: Make the HTTP header as light as possible.
-     *
-     * Spring Web supports reading certain parameters from either QueryString or Form.
-     *
-     * Note: The Form includes only MULTIPART_FORM_DATA and WWW_FORM_URLENCODED.
-     *
-     * Whenever possible, we should send our parameters with FormData.
-     * The following are the POSSIBLE conditions:
-     *
-     * 1. The HTTP method used must support sending payloads (POST, and PUT, and PATCH methods).
-     * 2. No custom body can be provided as it may conflict with other parameters.
-     * 3. The request's Content-Type must be empty or Form. If it's empty, it can be changed to FormData.
-     */
-    if (isSupportingPayload(method) && !hasBody && isForm(contentType)) {
+    const hasFile = Object.keys(files).length;
+    const canTakePayload = canThisMethodTakePayload(method);
+
+    // Case 1: Must to use payload.
+
+    // Case 1.1: The backend expects to receive files using MULTIPART_FORM_DATA.
+    // In this case, the data will be put as other fields of FormData, this is the low layer request library logic.
+    const tIsMultipartFormData = contentType && isMultipartFormData(contentType);
+    if (hasFile) {
+      if (tIsMultipartFormData === false) throw new TypeError(`Cannot send file using "${contentType}"`);
+      if (!canTakePayload) throw new TypeError(`Cannot send file using "${method}" method`);
       const data = requestParams;
-      const hasFile = Object.keys(files).length;
-      // If the `files` is not empty, keep the Content-Type header empty, as it will be set by the request library.
-      if (!contentType && !hasFile) headers['Content-Type'] = WWW_FORM_URLENCODED;
-      const qs = buildQs(staticParams).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
-      return { method, url: uri + qs, timeout, headers, data, files, ...extensions };
-    } else {
-      const qs = buildQs({ ...staticParams, ...requestParams }).replace(/^(?=.)/, '?'); // Prepend a "?" if not empty.
-      const data = body === undefined ? undefined : Object(body);
+      const qs = prependQuestionMarkIfNotEmpty(buildQs(staticParams));
       return { method, url: uri + qs, timeout, headers, data, files, ...extensions };
     }
+
+    // Case 1.2: The backend expects to receive a payload such as JSON using APPLICATION_JSON.
+    // In this case, the data occupies the payload, forcing other parameters must be passed using QueryString.
+    const tIsApplicationJson = contentType && isApplicationJson(contentType);
+    if (hasBody || tIsApplicationJson) {
+      if (!canTakePayload) throw new TypeError(`Cannot send payload using "${method}" method`);
+      const qs = prependQuestionMarkIfNotEmpty(buildQs({ ...staticParams, ...requestParams }));
+      return { method, url: uri + qs, timeout, headers, data: body, ...extensions };
+    }
+
+    // Case 2: Nice to use payload.
+    // In this case, the data can be passed using payload.
+    const tIsWwwFormUrlEncoded = contentType && isWwwFormUrlEncoded(contentType);
+    if (canTakePayload && (!contentType || tIsWwwFormUrlEncoded || tIsMultipartFormData)) {
+      if (!contentType) headers['Content-Type'] = WWW_FORM_URLENCODED;
+      const data = requestParams;
+      const qs = prependQuestionMarkIfNotEmpty(buildQs(staticParams));
+      return { method, url: uri + qs, timeout, headers, data, ...extensions };
+    }
+
+    // Case 3: Otherwise
+    // In this case, the data can only be passed using QueryString.
+    const qs = prependQuestionMarkIfNotEmpty(buildQs({ ...staticParams, ...requestParams }));
+    return { method, url: uri + qs, timeout, headers, ...extensions };
   };
 
   /**

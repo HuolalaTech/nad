@@ -13,7 +13,7 @@ test('join boolean', () => {
 });
 
 test('join string', () => {
-  expect(buildPath('/aaa/{a}', { a: "hehe" })).toBe('/aaa/hehe');
+  expect(buildPath('/aaa/{a}', { a: 'hehe' })).toBe('/aaa/hehe');
 });
 
 test('with pattern', () => {
