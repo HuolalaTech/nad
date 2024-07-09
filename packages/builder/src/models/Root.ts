@@ -99,14 +99,6 @@ export class Root {
     return null;
   }
 
-  public getDefBySimpleName(name: string): Enum | Class | null {
-    return (
-      this.declarationList.find((def) => def.simpleName === name) ||
-      this.enumList.find((def) => def.simpleName === name) ||
-      null
-    );
-  }
-
   public isEnum(name: string) {
     return this.rawEnums.has(name);
   }

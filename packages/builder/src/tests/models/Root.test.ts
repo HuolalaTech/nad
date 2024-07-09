@@ -66,18 +66,26 @@ test('filter full name', () => {
 
 test('defs', () => {
   const root = new Root({ classes: [User], enums: [UserType] });
+  
+  const getDefBySimpleName = (root: Root, name: string): Enum | Class | null => {
+    return (
+      root.declarationList.find((def) => def.simpleName === name) ||
+      root.enumList.find((def) => def.simpleName === name) ||
+      null
+    );
+  }
 
   const user = root.getDefByName('test.User');
   expect(root.getDefByName('test.User')).toBe(user); // from cache
   expect(user).toBeInstanceOf(Class);
-  if (user) expect(root.getDefBySimpleName(user.simpleName)).toBe(user);
+  if (user) expect(getDefBySimpleName(root, user.simpleName)).toBe(user);
 
   const userType = root.getDefByName('test.UserType');
   expect(root.getDefByName('test.UserType')).toBe(userType); // from cache
   expect(userType).toBeInstanceOf(Enum);
-  if (userType) expect(root.getDefBySimpleName(userType.simpleName)).toBe(userType);
+  if (userType) expect(getDefBySimpleName(root, userType.simpleName)).toBe(userType);
 
-  expect(root.getDefBySimpleName('')).toBe(null);
+  expect(getDefBySimpleName(root, '')).toBe(null);
 });
 
 test('typeMapping', () => {
