@@ -54,7 +54,7 @@ test('bad class name', () => {
 test('bad member name', () => {
   const clz = new Class(
     {
-      members: [{ name: '' }],
+      members: [{ name: '' }, { name: undefined }],
     },
     root,
   );
@@ -94,4 +94,29 @@ test('hidden members', () => {
   );
 
   expect(clz.members).toHaveLength(0);
+});
+
+test('JsonNaming SnakeCaseStrategy', () => {
+  const clz = new Class(
+    {
+      annotations: [
+        {
+          type: 'com.fasterxml.jackson.databind.annotation.JsonNaming',
+          attributes: { value: 'com.fasterxml.jackson.databind.PropertyNamingStrategy$SnakeCaseStrategy' },
+        },
+      ],
+      members: [
+        { name: 'getUserInfo' },
+        { name: 'getUserInfo2' },
+        { name: 'legacy_get_user_info' },
+        { name: 'mockXMLHttpRequest' },
+      ],
+    },
+    root,
+  );
+
+  expect(clz.members[0].name).toBe('get_user_info');
+  expect(clz.members[1].name).toBe('get_user_info_2');
+  expect(clz.members[2].name).toBe('legacy_get_user_info');
+  expect(clz.members[3].name).toBe('mock_x_m_l_http_request');
 });

@@ -56,12 +56,14 @@ export const isJavaPrimitiveTypes = [
 export const isJavaStringTypes = [
   'java.lang.String',
   'java.lang.StringBuffer',
+
   'java.time.LocalDateTime',
   'java.time.LocalDate',
   'java.time.OffsetDateTime',
   'java.time.OffsetTime',
   'java.time.ZonedDateTime',
   'java.time.LocalTime',
+
   'java.lang.Class',
   'java.net.URL',
   'java.net.URI',

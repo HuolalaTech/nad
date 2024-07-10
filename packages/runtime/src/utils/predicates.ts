@@ -1,11 +1,3 @@
-import { isMultipartFormData, isWwwFormUrlEncoded } from '@huolala-tech/request';
-
-/**
- * Detects a form (WWW_FORM_URLENCODED or MULTIPART_FORM_DATA)
- */
-export const isForm = (mediaType: string | null) =>
-  !mediaType || isMultipartFormData(mediaType) || isWwwFormUrlEncoded(mediaType);
-
 /**
  * Detects a non-null object.
  */

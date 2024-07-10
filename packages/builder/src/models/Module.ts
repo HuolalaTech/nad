@@ -13,6 +13,7 @@ export class Module extends Annotated<ModuleRaw> {
   public readonly moduleName;
   public readonly routes;
   public readonly description;
+  public readonly deprecated;
   constructor(raw: ModuleRaw, builder: Root, list: RouteRaw[]) {
     super(raw);
     this.builder = builder;
@@ -51,5 +52,6 @@ export class Module extends Annotated<ModuleRaw> {
     this.routes = sList.map((o) => new Route(o, this));
 
     this.description = this.annotations.swagger.getApi()?.value || '';
+    this.deprecated = this.annotations.hasDeprecated();
   }
 }

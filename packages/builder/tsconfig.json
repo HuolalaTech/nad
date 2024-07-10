@@ -13,5 +13,6 @@
     "declaration": true,
     "useDefineForClassFields": false
   },
+  "files": ["src/tests/jest.d.ts"],
   "include": ["src"]
 }

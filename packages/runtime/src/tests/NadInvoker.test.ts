@@ -1,13 +1,27 @@
 import { NadInvoker, HttpError } from '..';
-import { APPLICATION_JSON, MULTIPART_FORM_DATA, OCTET_STREAM, WWW_FORM_URLENCODED } from '@huolala-tech/request';
+import {
+  APPLICATION_JSON,
+  CONTENT_TYPE,
+  MULTIPART_FORM_DATA,
+  OCTET_STREAM,
+  WWW_FORM_URLENCODED,
+} from '@huolala-tech/request';
 import { ObjectNestingTooDeepError } from '../errors';
 import './libs/mock-xhr';
+import { MULTIPART_FORM_DATA_WITH_BOUNDARY } from './libs/mock-xhr';
 
 const base = 'http://localhost';
 
-class Localhost<T> extends NadInvoker<T> {
+class Localhost extends NadInvoker<{
+  method?: string;
+  url?: string;
+  headers?: Record<string, string | undefined>;
+  files: unknown;
+}> {
   public readonly base = base;
 }
+
+const helloTxt = new File(['Hello'], 'xx.txt');
 
 describe('basic', () => {
   test('get', async () => {
@@ -126,7 +140,7 @@ describe('addRequestParam', () => {
       method: 'POST',
       url: `${base}/test`,
       data: 'id=123&name=hehe',
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
     });
   });
 
@@ -168,7 +182,7 @@ describe('addStaticParam', () => {
       method: 'POST',
       url: `${base}/test?action=wtf`,
       data: 'name=hehe',
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
     });
   });
 });
@@ -185,7 +199,7 @@ describe('addRequestBody', () => {
 
   test('qs data object in body', async () => {
     const res = await new Localhost()
-      .open('POST', '/test', { headers: { 'Content-Type': WWW_FORM_URLENCODED } })
+      .open('POST', '/test', { headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED } })
       .addRequestBody({ a: 1 })
       .execute();
     expect(res).toMatchObject({
@@ -197,7 +211,7 @@ describe('addRequestBody', () => {
 
   test('form data object in body', async () => {
     const res = await new Localhost()
-      .open('POST', '/test', { headers: { 'Content-Type': MULTIPART_FORM_DATA } })
+      .open('POST', '/test', { headers: { [CONTENT_TYPE]: MULTIPART_FORM_DATA } })
       .addRequestBody({ a: 1 })
       .execute();
     expect(res).toMatchObject({
@@ -236,15 +250,14 @@ describe('addModelAttribute', () => {
   test('with json', async () => {
     const res = await new Localhost()
       .open('POST', '/test')
-      .addHeader('Content-Type', APPLICATION_JSON)
+      .addHeader(CONTENT_TYPE, APPLICATION_JSON)
       .addModelAttribute({ a: 1, b: { c: 2 } })
       .execute();
     expect(res).toMatchObject({
       method: 'POST',
       url: `${base}/test?a=1&b.c=2`,
-      data: {},
-      headers: { 'Content-Type': APPLICATION_JSON },
     });
+    expect(res).not.toHaveProperty('data');
   });
 
   test('add two objects', async () => {
@@ -294,7 +307,7 @@ describe('addModelAttribute', () => {
       method: 'POST',
       url: `${base}/test`,
       data: 'user.name=hehe&user.age=18&user.v=1&user.v=2',
-      headers: { 'Content-Type': WWW_FORM_URLENCODED },
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
     });
   });
 
@@ -334,7 +347,7 @@ describe('addMultipartFile', () => {
 });
 
 test('addCustomFlags', async () => {
-  class Runtime<T> extends Localhost<T> {
+  class Runtime extends Localhost {
     get flags() {
       return this.customFlags;
     }
@@ -377,5 +390,64 @@ describe('static config', () => {
       timeout: 8000,
       headers: { ...A.headers, b: '2' },
     });
+  });
+});
+
+describe('Nice to use payload', () => {
+  test('Explicitly use WWW_FORM_URLENCODED', async () => {
+    const res = new Localhost()
+      .open('POST', '/test')
+      .addRequestParam('a', 1)
+      .addHeader(CONTENT_TYPE, WWW_FORM_URLENCODED)
+      .execute();
+    expect(res).resolves.toMatchObject({
+      method: 'POST',
+      url: `${base}/test`,
+      data: 'a=1',
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
+    });
+  });
+  test('Explicitly use MULTIPART_FORM_DATA', async () => {
+    const res = await new Localhost()
+      .open('POST', '/test')
+      .addRequestParam('a', 1)
+      .addHeader(CONTENT_TYPE, MULTIPART_FORM_DATA)
+      .execute();
+    expect(res).toMatchObject({
+      method: 'POST',
+      url: `${base}/test`,
+      data: { a: '1' },
+      headers: { [CONTENT_TYPE]: MULTIPART_FORM_DATA_WITH_BOUNDARY },
+    });
+  });
+  test('By default, the WWW_FORM_URLENCODED should be used', async () => {
+    const res = new Localhost().open('POST', '/test').addRequestParam('a', 1).execute();
+    expect(res).resolves.toMatchObject({
+      method: 'POST',
+      url: `${base}/test`,
+      data: 'a=1',
+      headers: { [CONTENT_TYPE]: WWW_FORM_URLENCODED },
+    });
+  });
+});
+
+describe('Assertion', () => {
+  test('Attempt to upload file with GET', async () => {
+    const res = new Localhost().open('GET', '/test').addMultipartFile('f1', helloTxt).execute();
+    expect(res).rejects.toThrow(TypeError);
+  });
+
+  test('Attempt to upload file with not multipart/form-data', async () => {
+    const res = new Localhost()
+      .open('POST', '/test')
+      .addHeader(CONTENT_TYPE, APPLICATION_JSON)
+      .addMultipartFile('f1', helloTxt)
+      .execute();
+    expect(res).rejects.toThrow(TypeError);
+  });
+
+  test('Attempt to send JSON with GET', async () => {
+    const res = new Localhost().open('GET', '/test').addHeader(CONTENT_TYPE, APPLICATION_JSON).execute();
+    expect(res).rejects.toThrow(TypeError);
   });
 });

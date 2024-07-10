@@ -45,13 +45,15 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     // 2. This parameter has any "NotNull" annotations (contains @NotNull, @NonNull, and @Nonnull).
     // 3. The type of this parameter is a java primitive type.
     this.required =
-      ap?.required ||
-      rp?.required ||
-      pv?.required ||
-      rb?.required ||
-      rh?.required ||
-      this.annotations.hasNonNull() ||
-      isJavaPrimitive(this.type.name)
+      (ap?.required ||
+        rp?.required ||
+        pv?.required ||
+        rb?.required ||
+        rh?.required ||
+        this.annotations.hasNonNull() ||
+        isJavaPrimitive(this.type.name)) &&
+      // In fact, a parameter can be optional if a default value is provided.
+      rp?.defaultValue === undefined
         ? ('' as const)
         : ('?' as const);
 

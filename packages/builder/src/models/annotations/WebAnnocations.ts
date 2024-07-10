@@ -14,7 +14,13 @@ export abstract class ValueAliasName extends AnnotationBase<string> {
  * @see https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestParam.html
  */
 export class RequestParam extends ValueAliasName {
-  public static iface = 'org.springframework.web.bind.annotation.RequestParam';
+  public static readonly iface = 'org.springframework.web.bind.annotation.RequestParam';
+  public static readonly DEFAULT_VALUE = '\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n';
+  get defaultValue() {
+    const value = u2s(this.raw.defaultValue);
+    if (value === RequestParam.DEFAULT_VALUE) return undefined;
+    return value;
+  }
   get required() {
     return u2b(this.raw.required) ?? true;
   }

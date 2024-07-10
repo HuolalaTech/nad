@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-runtime",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "The runtime lib of the Nad project",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
-    "@huolala-tech/request": "^1.1.2"
+    "@huolala-tech/request": "^1.1.4"
   },
   "repository": {
     "type": "git",

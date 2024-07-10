@@ -60,6 +60,11 @@ export class Annotations {
     return false;
   }
 
+  hasDeprecated() {
+    if (this.find<NotNull>('java.lang.Deprecated')) return true;
+    return false;
+  }
+
   find<T = Record<string, unknown>>(name: string, endsWith = false): T | null {
     if (!endsWith) return (this.map.get(name) as T) || null;
     for (const [key, value] of this.map) {

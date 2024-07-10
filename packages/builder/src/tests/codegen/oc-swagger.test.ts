@@ -1,11 +1,10 @@
 import { Builder } from '../../Builder';
-import { mg } from '../test-tools/mg';
 import { swaggerTestDefs } from '../defs/swaggerTestDefs';
 
-const code = new Builder({ target: 'oc', base: '', defs: swaggerTestDefs }).code.replace(/\s+/g, ' ');
+const code = new Builder({ target: 'oc', base: '', defs: swaggerTestDefs }).code;
 
 test('module', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Module
      * @JavaClass test.Demo
@@ -15,7 +14,7 @@ test('module', () => {
 });
 
 test('route', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Route
      * @param a My A
@@ -27,20 +26,22 @@ test('route', () => {
 });
 
 test('class', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Model
      * @JavaClass test.FooModel
      */
     @interface FooModel : NSObject
-    /** * My Field */
+    /**
+     * My Field
+     */
     @property (nonatomic, assign) FooEnum *type;
     @end
   `);
 });
 
 test('enum', () => {
-  expect(code).toContain(mg`
+  expect(code).toMatchCode(`
     /**
      * My Enum
      * @JavaClass test.FooEnum

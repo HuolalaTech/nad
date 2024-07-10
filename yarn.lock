@@ -1452,10 +1452,10 @@
   resolved "https://registry.yarnpkg.com/@huolala-tech/hooks/-/hooks-1.0.0.tgz#c6f6508177a7ceb4ee6d9a22fcff84c2833df96c"
   integrity sha512-KABHqyFtw7iBYABFOKeYowCyNsIjbnsQIGibhgUVy6sx6t6+IAmZ9rxY+m5VbyKqQmjxvmcGjn2T3kOovWAqaA==
 
-"@huolala-tech/request@^1.1.2", "@huolala-tech/request@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@huolala-tech/request/-/request-1.1.3.tgz#96cfdfe4e0df78589c0de07b77a4e0f777bfe628"
-  integrity sha512-WQ38KqxgwqSDKa7XAl7VHEkkMf/GpM7PkOfOevYt6DXbz2p3zt7jS/B38IxsJ6+W32fI+JubM8zuruxtScXrUg==
+"@huolala-tech/request@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@huolala-tech/request/-/request-1.1.4.tgz#f979dcccbe5bbbd12239ce45487366d09ca4cf5a"
+  integrity sha512-zgp4gMg63+Cchc0Y87k/NUj7jlxtRofbCwCiX8lJYQ/RomyUVKHzz9JI/u/MdZpWldLMobVVbqzL/fjyE+5auQ==
   dependencies:
     "@huolala-tech/custom-error" "^1.0.0"
 

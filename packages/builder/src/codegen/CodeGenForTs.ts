@@ -83,7 +83,7 @@ export class CodeGenForTs extends CodeGen {
       .map((p) => {
         // If a parameter is optional and has any required parameters in the right,
         // then change its type to `T | null` and make it requreid.
-        if (hasRequired && p.required === '?') return `${p.name}: ${t2s(p.type)} | null`;
+        if (hasRequired && p.required === '?') return `${p.name}: ${t2s(p.type)} | undefined`;
         // If current parameter is required, update `hasRequired` flag to `true`.
         hasRequired = hasRequired || p.required === '';
         // Otherwise, the current parameter is requreid, or there are no required parameters to its right,
@@ -103,6 +103,7 @@ export class CodeGenForTs extends CodeGen {
       for (const p of a.parameters) {
         if (p.description) this.write(`@param ${p.name} ${p.description}`);
       }
+      if (a.deprecated) this.write('@deprecated');
     });
     this.write(`async ${a.uniqName}(${pars.join(', ')}) {`);
     this.writeBlock(() => {
@@ -138,6 +139,7 @@ export class CodeGenForTs extends CodeGen {
       this.writeComment(() => {
         this.write(m.description || m.moduleName);
         this.write(`@iface ${m.name}`);
+        if (m.deprecated) this.write(`@deprecated`);
       });
       this.write(`export const ${m.moduleName} = {`);
       this.writeBlock(() => {
@@ -203,9 +205,10 @@ export class CodeGenForTs extends CodeGen {
         this.write(`export interface ${defStr} {`);
         this.writeBlock(() => {
           for (const m of c.members) {
-            if (m.description) {
+            if (m.description || m.deprecated) {
               this.writeComment(() => {
                 this.write(m.description);
+                if (m.deprecated) this.write('@deprecated');
               });
             }
             this.write(`${m.name}${m.optional}: ${t2s(m.type)};`);

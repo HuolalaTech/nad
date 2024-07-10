@@ -26,7 +26,7 @@ export const buildMethodWithParameters = (target: 'oc' | 'ts', ...parameters: De
   };
   const defs = { routes: [foo], classes: [User], enums: [UserType] };
   const { code } = new Builder({ target, base: '', defs });
-  return code.replace(/\s+/g, ' ');
+  return code;
 };
 
 export const buildTsMethodWithParameters = (...parameters: DeepPartial<NadParameter>[]) =>

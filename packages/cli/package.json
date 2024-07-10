@@ -1,6 +1,6 @@
 {
   "name": "@huolala-tech/nad-cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The CLI Tools of Nad Project",
   "license": "MIT",
   "author": "YanagiEiichi <576398868@qq.com>",
@@ -25,8 +25,8 @@
   ],
   "dependencies": {
     "@huolala-tech/custom-error": "^1.0.0",
-    "@huolala-tech/nad-builder": "^1.1.0",
-    "@huolala-tech/nad-runtime": "^1.0.7",
+    "@huolala-tech/nad-builder": "^1.1.1",
+    "@huolala-tech/nad-runtime": "^1.0.8",
     "axios": "^1.4.0",
     "capacitance": "^1.0.2",
     "u2x": "^1.1.0"
