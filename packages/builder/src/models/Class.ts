@@ -1,5 +1,5 @@
 import { Member } from './Member';
-import { Type } from './Type';
+import { Type, TypeUsage } from './Type';
 import { Dubious } from '../utils';
 import { u2a, u2s } from 'u2x';
 import type { Root } from './Root';
@@ -35,7 +35,7 @@ export class Class extends DefBase<ClassRaw> {
   }
 
   get superclass() {
-    const value = Type.create(u2s(this.raw.superclass), this);
+    const value = Type.create(u2s(this.raw.superclass), this, TypeUsage.superType);
     Object.defineProperty(this, 'superclass', { configurable: true, value });
     return value;
   }

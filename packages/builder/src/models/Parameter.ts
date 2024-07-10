@@ -1,6 +1,6 @@
 import { Dubious } from '../utils';
 import { Annotated } from './Annotated';
-import { Type } from './Type';
+import { Type, TypeUsage } from './Type';
 import { isJavaNonClass, isJavaPrimitive } from '../helpers/javaHelper';
 import { Route } from './Route';
 import { NadParameter } from '../types/nad';
@@ -28,7 +28,7 @@ export class Parameter extends Annotated<Dubious<NadParameter>> {
     super(raw);
     this.owner = owner;
     this.builder = owner.builder;
-    this.type = Type.create(u2s(this.raw.type), this.builder);
+    this.type = Type.create(u2s(this.raw.type), this.builder, TypeUsage.parameterType);
 
     const ap = this.annotations.swagger.getApiParam();
     const pv = this.annotations.web.getPathVariable();

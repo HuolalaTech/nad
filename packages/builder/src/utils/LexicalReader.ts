@@ -1,6 +1,6 @@
 import { neverReachHere } from './neverReachHere';
 
-export class SyntaxReader {
+export class LexicalReader {
   private index = 0;
   private readonly input;
   constructor(input: string) {

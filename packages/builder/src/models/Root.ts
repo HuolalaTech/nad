@@ -1,18 +1,21 @@
 import { Module } from './Module';
 import { Class } from './Class';
-import { computeIfAbsent, Dubious, toUpperCamel, parseDsv, UniqueName, removeDynamicSuffix } from '../utils';
+import { computeIfAbsent, Dubious, toUpperCamel, parseDsv, UniqueName, removeDynamicSuffix, notEmpty } from '../utils';
 import { u2o, u2a, u2s } from 'u2x';
 import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
 import { RouteRaw } from './Route';
 import { RootOptions } from './RootOptions';
+import { Type } from './Type';
 
 export type RawDefs = Dubious<NadResult>;
 
 export class Root {
-  private readonly rawClasses;
-  private readonly rawEnums;
-  private readonly rawModules;
+  private readonly rawClassMap;
+  private readonly derivationMap;
+  private readonly rawEnumMap;
+  private readonly rawModuleMap;
+
   private readonly classes: Record<string, Class>;
   private readonly enums: Record<string, Enum>;
 
@@ -27,13 +30,27 @@ export class Root {
   constructor(raw: RawDefs, options: Partial<RootOptions> = {}) {
     this.options = new RootOptions(options);
 
-    this.rawClasses = new Map(u2a(raw.classes, (i) => [u2s(u2o(i).name), i]));
-    this.rawEnums = new Map(u2a(raw.enums, (i) => [u2s(u2o(i).name), i]));
-    this.rawModules = new Map(u2a(raw.modules, (i) => [u2s(u2o(i).name), i]));
+    const rawClasses = u2a(raw.classes, u2o);
+    this.rawClassMap = new Map(rawClasses.map((i) => [u2s(u2o(i).name), i]));
+
+    this.derivationMap = rawClasses.reduce((map, clz) => {
+      const { superclass, interfaces, name } = clz;
+      if (typeof name !== 'string') return map;
+      [superclass]
+        .concat(interfaces)
+        .map((s) => u2s(s))
+        .filter(notEmpty)
+        .map(n => n.replace(/\<.*/, ''))
+        .filter(n => this.rawClassMap.has(n))
+        .forEach((n) => computeIfAbsent(map, n, () => []).push(name));
+      return map;
+    }, new Map<string, string[]>());
+
+    this.rawEnumMap = new Map(u2a(raw.enums, (i) => [u2s(u2o(i).name), i]));
+    this.rawModuleMap = new Map(u2a(raw.modules, (i) => [u2s(u2o(i).name), i]));
 
     this.classes = Object.create(null);
     this.enums = Object.create(null);
-
     this.commonDefs = Object.create(null);
     this.uniqueNameSeparator = options.uniqueNameSeparator;
 
@@ -56,7 +73,7 @@ export class Root {
 
     this.modules = Array.from(
       groups.entries(),
-      ([name, list]) => new Module(this.rawModules.get(name) || { name }, this, list),
+      ([name, list]) => new Module(this.rawModuleMap.get(name) || { name }, this, list),
     );
   }
 
@@ -79,7 +96,7 @@ export class Root {
   }
 
   public getDefByName(name: string): Enum | Class | null {
-    const { classes, rawClasses, enums, rawEnums } = this;
+    const { classes, rawClassMap: rawClasses, enums, rawEnumMap: rawEnums } = this;
     if (name in classes) return classes[name];
     if (name in enums) return enums[name];
     let raw = rawClasses.get(name);
@@ -100,7 +117,7 @@ export class Root {
   }
 
   public isEnum(name: string) {
-    return this.rawEnums.has(name);
+    return this.rawEnumMap.has(name);
   }
 
   public takeUniqueName(javaClassPath: string, fixFunction: (s: string) => string) {
@@ -113,5 +130,13 @@ export class Root {
       if (name && !UniqueName.lookupFor(this, fixFunction(name))) break;
     }
     return UniqueName.createFor(this, fixFunction(name), uniqueNameSeparator);
+  }
+
+  public findDerivativedTypes(rawTypeName: unknown) {
+    if (typeof rawTypeName !== 'string') return [];
+    // TODO: Support generic type matching.
+    const list = this.derivationMap.get(rawTypeName);
+    if (!list) return [];
+    return list.map((rtn) => Type.create(rtn, this));
   }
 }

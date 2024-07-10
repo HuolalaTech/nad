@@ -2,7 +2,7 @@ import { isJavaPrimitive } from '../helpers/javaHelper';
 import { u2a, u2o, u2s } from 'u2x';
 import { Annotations } from './annotations';
 import type { Class } from './Class';
-import { Type } from './Type';
+import { Type, TypeUsage } from './Type';
 import { Dubious, notEmpty, toSnake } from '../utils';
 import { NadMember } from '../types/nad';
 
@@ -32,7 +32,7 @@ export class Member {
       }
     }
 
-    this.type = Type.create(u2s(raw.type), owner);
+    this.type = Type.create(u2s(raw.type), owner, TypeUsage.memberType);
     const amp = this.annotations.swagger.getApiModelProperty();
     this.description = amp?.value;
 

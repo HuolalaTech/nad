@@ -1,6 +1,6 @@
 import { Annotated } from './Annotated';
 import type { Module } from './Module';
-import { Type } from './Type';
+import { Type, TypeUsage } from './Type';
 import { Dubious, getPureClassName, notEmpty, toLowerCamel, UniqueName } from '../utils';
 import { u2a, u2s } from 'u2x';
 import { Parameter } from './Parameter';
@@ -49,9 +49,9 @@ export class Route extends Annotated<RouteRaw> {
       this.raw.returnType === 'void' &&
       u2a(this.raw.parameters, (u) => u2s(u.type)).some((n) => n && HTTP_SERVLET_RESPONSE_SET.has(n))
     ) {
-      this.returnType = Type.create('?', this.builder);
+      this.returnType = Type.create('?', this.builder, TypeUsage.returnType);
     } else {
-      this.returnType = Type.create(u2s(this.raw.returnType), this.builder);
+      this.returnType = Type.create(u2s(this.raw.returnType), this.builder, TypeUsage.returnType);
     }
 
     this.parameters = u2a(this.raw.parameters, (i) => Parameter.create(i, this)).filter(notEmpty);

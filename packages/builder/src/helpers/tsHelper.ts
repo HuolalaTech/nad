@@ -14,7 +14,8 @@ import {
   isJavaWrapper,
 } from './javaHelper';
 import { toLowerCamel } from '../utils';
-import { RootOptions } from 'src/models/RootOptions';
+import { RootOptions } from '../models/RootOptions';
+import { Enum, TypeUsage } from '../models';
 
 // Convert value to safe string in code
 export const ss = (u: string | number | boolean) => {
@@ -33,8 +34,10 @@ export const ss = (u: string | number | boolean) => {
   throw neverReachHere(u);
 };
 
-export const t2s = (type: Type): string => {
-  if (!type) return 'unknown';
+const TS_UNKNOWN = 'unknown';
+
+export const t2s = (type: Type | undefined): string => {
+  if (!type) return TS_UNKNOWN;
   const { name, parameters, isGenericVariable, builder } = type;
 
   if (isGenericVariable) return name;
@@ -78,26 +81,37 @@ export const t2s = (type: Type): string => {
       builder.commonDefs['Optional<T>'] = 'T | null';
       return `Optional<${t2s(first)}>`;
     } else {
-      return 'unknown';
+      return TS_UNKNOWN;
     }
   }
   if (isJavaTuple(name)) {
     return `[ ${parameters.map(t2s).join(', ')} ]`;
   }
-  if (isJavaUnknown(name)) return 'unknown';
+  if (isJavaUnknown(name)) return TS_UNKNOWN;
 
   const { clz } = type;
-  if (!clz) return 'unknown';
+  if (!clz) return TS_UNKNOWN;
 
-  const { simpleName: simpleName } = clz;
   if (clz instanceof Class) {
-    const { typeParameters } = clz;
+    const { typeParameters, simpleName } = clz;
+    let t = simpleName;
     if (typeParameters.length > 0) {
       const pars = typeParameters.map((_, i) => t2s(parameters[i])).join(', ');
-      return `${simpleName}<${pars}>`;
+      t += `<${pars}>`;
     }
+
+    if (type.usage === TypeUsage.superType || !type.isExtending) return t;
+
+    const derivativedTypes = builder.findDerivativedTypes(name).map(t2s);
+    if (derivativedTypes.length === 0) return t;
+    return [t, ...derivativedTypes].join(' | ');
   }
-  return simpleName;
+
+  if (clz instanceof Enum) {
+    return clz.simpleName;
+  }
+
+  throw neverReachHere();
 };
 
 export const tsBuilderOptions: Partial<RootOptions> = {

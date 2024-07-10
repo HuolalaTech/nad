@@ -1,6 +1,4 @@
-import { parseDsv } from './parseDsv';
-
-export * from './SyntaxReader';
+export * from './LexicalReader';
 export * from './UniqueName';
 export * from './computeIfAbsent';
 export * from './neverReachHere';
