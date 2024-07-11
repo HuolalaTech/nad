@@ -8,9 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -120,6 +118,21 @@ public class NadContext {
      * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      */
     protected static void collectType(@Nullable Type what) {
+        // For WildcardType such as `List<? extends Foo>`, or `List<? super Foo>`, we need to collect all bound types.
+        if (what instanceof WildcardType) {
+            WildcardType wt = (WildcardType) what;
+            Arrays.stream(wt.getLowerBounds()).forEach(NadContext::collectType);
+            Arrays.stream(wt.getUpperBounds()).forEach(NadContext::collectType);
+            return;
+        }
+
+        // For TypeVariable such as `class Demo<T extends Foo>`, we need to collect all bound types.
+        if (what instanceof TypeVariable) {
+            TypeVariable<?> tv = (TypeVariable<?>) what;
+            Arrays.stream(tv.getBounds()).forEach(NadContext::collectType);
+            return;
+        }
+
         // For ParameterizedType such as Map<String, Integer>, we need to collect all raw types and type arguments.
         // For example, collect(A<B, C>) is equals to collect(A), and collect(B), and collect(C).
         if (what instanceof ParameterizedType) {
