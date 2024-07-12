@@ -6,6 +6,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class NadEnumConstantImpl implements NadEnumConstant {
@@ -25,13 +26,17 @@ public class NadEnumConstantImpl implements NadEnumConstant {
     @NonNull
     private final List<NadAnnotation> annotations;
 
-    public NadEnumConstantImpl(@NonNull Enum<?> value, @NonNull List<Field> fields) {
-        annotations = initAnnotations(value);
-        name = value.name();
-        this.value = value;
+    public NadEnumConstantImpl(@NonNull Enum<?> enumValue, @NonNull List<Field> fields) {
+        annotations = initAnnotations(enumValue);
+        name = enumValue.name();
+        this.value = enumValue;
         properties = new TreeMap<>(String::compareTo);
         // Collectors.toMap cannot support null values, so use forEach instead.
-        fields.forEach(field -> properties.put(field.getName(), ReflectionUtils.getField(field, value)));
+        fields.forEach(field -> {
+            Object fieldValue = ReflectionUtils.getField(field, enumValue);
+            if (fieldValue instanceof Type) NadContext.collectType((Type) fieldValue);
+            properties.put(field.getName(), fieldValue);
+        });
     }
 
     private static List<NadAnnotation> initAnnotations(@NonNull Enum<?> value) {
