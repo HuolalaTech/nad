@@ -36,6 +36,14 @@ export const ss = (u: string | number | boolean) => {
 
 const TS_UNKNOWN = 'unknown';
 
+const uTypeCache: Record<string, true | undefined> = Object.create(null);
+const isUnionType = (type: string) => type in uTypeCache;
+const buildUnionType = (...types: string[]) => {
+  const uType = types.join(' | ');
+  if (types.length > 1) uTypeCache[uType] = true;
+  return uType;
+};
+
 export const t2s = (type: Type | undefined): string => {
   if (!type) return TS_UNKNOWN;
   const { name, parameters, isGenericVariable, builder } = type;
@@ -73,7 +81,12 @@ export const t2s = (type: Type | undefined): string => {
     return `Record<${keyType}, ${t2s(second)} | undefined>`;
   }
   if (isJavaList(name)) {
-    return `${t2s(parameters[0])}[]`;
+    const t = t2s(parameters[0]);
+    if (isUnionType(t)) {
+      return `Array<${t}>`;
+    } else {
+      return `${t}[]`;
+    }
   }
   if (isJavaWrapper(name)) {
     const [first] = parameters;
@@ -100,11 +113,10 @@ export const t2s = (type: Type | undefined): string => {
       t += `<${pars}>`;
     }
 
-    if (type.usage === TypeUsage.superType || !type.isExtending) return t;
-
-    const derivativedTypes = builder.findDerivativedTypes(name).map(t2s);
+    if (type.usage === TypeUsage.superType) return t;
+    const { derivativedTypes } = type;
     if (derivativedTypes.length === 0) return t;
-    return [t, ...derivativedTypes].join(' | ');
+    return buildUnionType(t, ...derivativedTypes.map(t2s));
   }
 
   if (clz instanceof Enum) {

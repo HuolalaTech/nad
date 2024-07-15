@@ -1,9 +1,14 @@
 import { isJavaNonClass } from '../helpers/javaHelper';
-import { neverReachHere, LexicalReader } from '../utils';
+import { neverReachHere, LexicalReader, computeIfAbsent } from '../utils';
 import type { Class } from './Class';
 import type { Root } from './Root';
 
 export type TypeOwner = Class | Root;
+
+const getBuilderFromOwner = (owner: TypeOwner) => {
+  if ('builder' in owner) return owner.builder;
+  return owner;
+};
 
 const JAVA_OBJECT = 'java.lang.Object';
 const JAVA_STRING = 'java.lang.String';
@@ -20,18 +25,18 @@ export enum TypeUsage {
 }
 
 export class Type {
-  public readonly isExtending;
   public readonly name;
   public readonly parameters;
+  public readonly derivativedTypes;
   public readonly usage;
   public readonly clz;
 
   private constructor(
     owner: TypeOwner,
     usage: TypeUsage,
-    isExtending: boolean,
     name: string,
     parameters: readonly Type[],
+    derivativedTypes: Type[],
   ) {
     if (name === '') {
       name = JAVA_OBJECT;
@@ -40,7 +45,7 @@ export class Type {
 
     wm.set(this, owner);
     this.usage = usage;
-    this.isExtending = isExtending;
+    this.derivativedTypes = derivativedTypes;
     this.name = name;
     this.parameters = parameters;
     if (isJavaNonClass(name) || this.isGenericVariable) {
@@ -58,9 +63,7 @@ export class Type {
   }
 
   get builder() {
-    const { owner } = this;
-    if ('builder' in owner) return owner.builder;
-    return owner;
+    return getBuilderFromOwner(this.owner);
   }
 
   get isGenericVariable() {
@@ -83,15 +86,15 @@ export class Type {
    * For example, Map<K, V> replace with { K: String, V: Number } returns Map<String, Number>.
    */
   replace(map: Map<string, Type>): Type {
-    const { owner, name: type, parameters, isExtending, usage } = this;
-    const nType = map.get(type);
+    const { name } = this;
+    const nType = map.get(name);
     if (nType) return nType;
     return new Type(
-      owner,
-      usage,
-      isExtending,
-      type,
-      parameters.map((n) => n.replace(map)),
+      this.owner,
+      this.usage,
+      this.name,
+      this.parameters.map((n) => n.replace(map)),
+      this.derivativedTypes,
     );
   }
 
@@ -118,11 +121,19 @@ export class Type {
           parameters = [];
           name = JAVA_STRING;
         } else {
-          parameters = [new Type(owner, usage, false, name, parameters)];
+          parameters = [new Type(owner, usage, name, parameters, [])];
           name = JAVA_LIST;
         }
       }
-      return new this(owner, usage, isExtending, name, parameters);
+      let derivativedTypes;
+      if (isExtending) {
+        derivativedTypes = getBuilderFromOwner(owner)
+          .findDerivativedTypes(name)
+          .map((n) => Type.create(n, owner));
+      } else {
+        derivativedTypes = [] satisfies [];
+      }
+      return new this(owner, usage, name, parameters, derivativedTypes);
     };
 
     const nextParam = (): Type => {
@@ -134,7 +145,7 @@ export class Type {
           case !!sr.read(/\s+super\s+/g):
             nextParam(); // read next but never use
           default:
-            return new this(owner, usage, false, JAVA_OBJECT, []);
+            return new this(owner, usage, JAVA_OBJECT, [], []);
         }
       } else {
         return nextNormal({ isExtending: false });

@@ -6,7 +6,6 @@ import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
 import { RouteRaw } from './Route';
 import { RootOptions } from './RootOptions';
-import { Type } from './Type';
 
 export type RawDefs = Dubious<NadResult>;
 
@@ -137,6 +136,6 @@ export class Root {
     // TODO: Support generic type matching.
     const list = this.derivationMap.get(rawTypeName);
     if (!list) return [];
-    return list.map((rtn) => Type.create(rtn, this));
+    return list;
   }
 }
