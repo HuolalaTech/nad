@@ -1,6 +1,7 @@
 import { isJavaNonClass } from '../helpers/javaHelper';
 import { neverReachHere, LexicalReader, computeIfAbsent } from '../utils';
 import type { Class } from './Class';
+import { Enum } from './Enum';
 import type { Root } from './Root';
 
 export type TypeOwner = Class | Root;
@@ -74,7 +75,7 @@ export class Type {
   }
 
   get isEnum() {
-    return this.builder.isEnum(this.name);
+    return this.clz instanceof Enum;
   }
 
   toString() {

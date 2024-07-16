@@ -1,10 +1,11 @@
-import { isJavaPrimitive } from '../helpers/javaHelper';
+import { isJavaNumber, isJavaPrimitive, isJavaString } from '../helpers/javaHelper';
 import { u2a, u2o, u2s } from 'u2x';
 import { Annotations } from './annotations';
 import type { Class } from './Class';
 import { Type, TypeUsage } from './Type';
 import { Dubious, notEmpty, toSnake } from '../utils';
 import { NadMember } from '../types/nad';
+import { Enum } from './Enum';
 
 export class Member {
   public readonly type;
@@ -14,6 +15,7 @@ export class Member {
   public readonly visible: boolean;
   public readonly optional: '' | '?';
   public readonly deprecated;
+  public readonly narrowValues?: string[];
   constructor(
     raw: Dubious<NadMember>,
     public readonly owner: Class,
@@ -31,9 +33,14 @@ export class Member {
         this.name = fixPropertyName(rawName);
       }
     }
-
     this.type = Type.create(u2s(raw.type), owner, TypeUsage.memberType);
+
     const amp = this.annotations.swagger.getApiModelProperty();
+
+    if (amp?.allowableValues && amp.allowableValues.length) {
+      this.narrowValues = amp.allowableValues;
+    }
+
     this.description = amp?.value;
 
     // A member is visible by default unless any following special cases are met:

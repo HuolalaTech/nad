@@ -39,8 +39,8 @@ export class Root {
         .concat(interfaces)
         .map((s) => u2s(s))
         .filter(notEmpty)
-        .map(n => n.replace(/\<.*/, ''))
-        .filter(n => this.rawClassMap.has(n))
+        .map((n) => n.replace(/\<.*/, ''))
+        .filter((n) => this.rawClassMap.has(n))
         .forEach((n) => computeIfAbsent(map, n, () => []).push(name));
       return map;
     }, new Map<string, string[]>());
@@ -113,10 +113,6 @@ export class Root {
     }
     this.unknownTypes.add(name);
     return null;
-  }
-
-  public isEnum(name: string) {
-    return this.rawEnumMap.has(name);
   }
 
   public takeUniqueName(javaClassPath: string, fixFunction: (s: string) => string) {

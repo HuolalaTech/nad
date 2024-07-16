@@ -66,14 +66,14 @@ test('filter full name', () => {
 
 test('defs', () => {
   const root = new Root({ classes: [User], enums: [UserType] });
-  
+
   const getDefBySimpleName = (root: Root, name: string): Enum | Class | null => {
     return (
       root.declarationList.find((def) => def.simpleName === name) ||
       root.enumList.find((def) => def.simpleName === name) ||
       null
     );
-  }
+  };
 
   const user = root.getDefByName('test.User');
   expect(root.getDefByName('test.User')).toBe(user); // from cache

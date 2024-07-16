@@ -38,7 +38,7 @@ const TS_UNKNOWN = 'unknown';
 
 const uTypeCache: Record<string, true | undefined> = Object.create(null);
 const isUnionType = (type: string) => type in uTypeCache;
-const buildUnionType = (...types: string[]) => {
+export const buildUnionType = (...types: string[]) => {
   const uType = types.join(' | ');
   if (types.length > 1) uTypeCache[uType] = true;
   return uType;

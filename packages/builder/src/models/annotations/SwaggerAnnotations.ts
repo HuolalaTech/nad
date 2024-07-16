@@ -34,6 +34,11 @@ export class ApiModel extends AnnotationBase<string> {
  */
 export class ApiModelProperty extends AnnotationBase<string> {
   public static iface = 'io.swagger.annotations.ApiModelProperty';
+  get allowableValues() {
+    const raw = u2s(this.raw.allowableValues);
+    if (raw === '' || raw === undefined) return [];
+    return raw.split(',').map((i) => i.trim());
+  }
   get hidden() {
     return u2b(this.raw.hidden);
   }

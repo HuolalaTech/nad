@@ -11,7 +11,5 @@ test.each([
   ['java.math.BigInteger', 'BigInteger'],
 ])('java.util.Map<%s, java.lang.Long>', (keyType, tsType) => {
   const code = buildTsMethodWithParameters({ name: 'map', type: `java.util.Map<${keyType}, java.lang.Long>` });
-  expect(code).toMatchCode(
-    `async foo(map?: Record<${tsType}, Long | undefined>, settings?: Partial<Settings>) {`,
-  );
+  expect(code).toMatchCode(`async foo(map?: Record<${tsType}, Long | undefined>, settings?: Partial<Settings>) {`);
 });
