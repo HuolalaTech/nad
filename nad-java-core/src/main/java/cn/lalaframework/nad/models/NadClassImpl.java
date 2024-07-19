@@ -5,6 +5,7 @@ import cn.lalaframework.nad.interfaces.NadMember;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,9 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
     @NonNull
     private final List<String> interfaces;
 
+    @NonNull
+    private final List<String> innerClasses;
+
     /**
      * Create a NadClass from a standard java class.
      *
@@ -31,6 +35,7 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
      */
     public NadClassImpl(Class<?> clz) {
         super(clz);
+
         // For each generic type parameter, collect them and convert to type name strings.
         typeParameters = Arrays.stream(clz.getTypeParameters()).map(NadClassImpl::cc).collect(Collectors.toList());
 
@@ -44,6 +49,11 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
 
         // For each interface, collect them and convert to type name strings.
         interfaces = Arrays.stream(clz.getGenericInterfaces()).map(NadClassImpl::cc).collect(Collectors.toList());
+
+        // For each public static subclass, collect those that they may implement some known interfaces.
+        innerClasses = Arrays.stream(clz.getDeclaredClasses())
+                .filter(i -> Modifier.isPublic(i.getModifiers()) && Modifier.isStatic(i.getModifiers()))
+                .map(NadClassImpl::cc).collect(Collectors.toList());
     }
 
     /**
@@ -79,5 +89,10 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
     @NonNull
     public List<String> getInterfaces() {
         return interfaces;
+    }
+
+    @NonNull
+    public List<String> getInnerClasses() {
+        return innerClasses;
     }
 }
