@@ -114,11 +114,14 @@ export const t2s = (type: Type | undefined): string => {
     }
 
     if (type.usage === TypeUsage.superType) return t;
-    const { derivativedTypes } = type;
-    if (derivativedTypes.length === 0) return t;
-    return buildUnionType(t, ...derivativedTypes.map(t2s));
-  }
 
+    const { derivativedTypes } = clz;
+    if (derivativedTypes.length === 0) return t;
+    if (derivativedTypes.length === 1 && clz.isInterface) return t;
+    const ts = derivativedTypes.map(t2s);
+    if (!clz.isInterface) ts.push(t);
+    return buildUnionType(...ts);
+  }
   if (clz instanceof Enum) {
     return clz.simpleName;
   }

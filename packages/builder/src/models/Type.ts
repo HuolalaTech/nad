@@ -1,6 +1,6 @@
 import { isJavaNonClass } from '../helpers/javaHelper';
 import { neverReachHere, LexicalReader, computeIfAbsent } from '../utils';
-import type { Class } from './Class';
+import { Class } from './Class';
 import { Enum } from './Enum';
 import type { Root } from './Root';
 
@@ -28,17 +28,10 @@ export enum TypeUsage {
 export class Type {
   public readonly name;
   public readonly parameters;
-  public readonly derivativedTypes;
   public readonly usage;
   public readonly clz;
 
-  private constructor(
-    owner: TypeOwner,
-    usage: TypeUsage,
-    name: string,
-    parameters: readonly Type[],
-    derivativedTypes: Type[],
-  ) {
+  private constructor(owner: TypeOwner, usage: TypeUsage, name: string, parameters: readonly Type[]) {
     if (name === '') {
       name = JAVA_OBJECT;
       parameters = [];
@@ -46,7 +39,6 @@ export class Type {
 
     wm.set(this, owner);
     this.usage = usage;
-    this.derivativedTypes = derivativedTypes;
     this.name = name;
     this.parameters = parameters;
     if (isJavaNonClass(name) || this.isGenericVariable) {
@@ -95,7 +87,6 @@ export class Type {
       this.usage,
       this.name,
       this.parameters.map((n) => n.replace(map)),
-      this.derivativedTypes,
     );
   }
 
@@ -122,19 +113,11 @@ export class Type {
           parameters = [];
           name = JAVA_STRING;
         } else {
-          parameters = [new Type(owner, usage, name, parameters, [])];
+          parameters = [new Type(owner, usage, name, parameters)];
           name = JAVA_LIST;
         }
       }
-      let derivativedTypes;
-      if (isExtending) {
-        derivativedTypes = getBuilderFromOwner(owner)
-          .findDerivativedTypes(name)
-          .map((n) => Type.create(n, owner));
-      } else {
-        derivativedTypes = [] satisfies [];
-      }
-      return new this(owner, usage, name, parameters, derivativedTypes);
+      return new this(owner, usage, name, parameters);
     };
 
     const nextParam = (): Type => {
@@ -146,7 +129,7 @@ export class Type {
           case !!sr.read(/\s+super\s+/g):
             nextParam(); // read next but never use
           default:
-            return new this(owner, usage, JAVA_OBJECT, [], []);
+            return new this(owner, usage, JAVA_OBJECT, []);
         }
       } else {
         return nextNormal({ isExtending: false });

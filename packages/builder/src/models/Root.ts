@@ -93,7 +93,7 @@ export class Root {
   get apiCount() {
     return this.modules.reduce((s, i) => s + i.routes.length, 0);
   }
-
+  
   public getDefByName(name: string): Enum | Class | null {
     const { classes, rawClassMap: rawClasses, enums, rawEnumMap: rawEnums } = this;
     if (name in classes) return classes[name];
