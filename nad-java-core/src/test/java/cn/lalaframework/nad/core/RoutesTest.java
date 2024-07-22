@@ -48,6 +48,8 @@ class RoutesTest {
         NadParameter secondParameter = pi.next();
         assertEquals("name", firstParameter.getName());
         assertEquals("userType", secondParameter.getName());
+        assertEquals(0, getUser.getModifiers());
+        assertNotNull(getUser.getTypeParameters());
     }
 
     @Test
@@ -66,6 +68,8 @@ class RoutesTest {
         NadRoute setRole = getNadRoute("setRole");
         assertLinesMatch(Collections.singletonList("POST"), setRole.getMethods());
         assertNotNull(setRole);
+        assertEquals(1, setRole.getParameters().size());
+        assertNotNull(setRole.getTypeParameters());
         assertEquals(1, setRole.getHeaders().size());
         NameValuePair header = setRole.getHeaders().get(0);
         assertEquals("id", header.getName());

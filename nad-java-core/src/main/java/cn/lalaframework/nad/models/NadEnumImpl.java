@@ -20,7 +20,11 @@ public class NadEnumImpl extends NadDefImpl implements NadEnum {
         List<Field> fields = Arrays.stream(clz.getDeclaredFields())
                 .filter(i -> !Modifier.isStatic(i.getModifiers()))
                 .collect(Collectors.toList());
-        fields.forEach(ReflectionUtils::makeAccessible);
+        try {
+            fields.forEach(ReflectionUtils::makeAccessible);
+        } catch (Exception ignored) {
+            // An InaccessibleObjectException may be thrown in Java 9+.
+        }
 
         constants = Arrays.stream(clz.getEnumConstants())
                 .map(i -> new NadEnumConstantImpl(i, fields))

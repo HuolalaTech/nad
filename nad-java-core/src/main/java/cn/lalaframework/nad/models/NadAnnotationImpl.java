@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +20,13 @@ public class NadAnnotationImpl implements NadAnnotation {
 
     public NadAnnotationImpl(@NonNull Annotation a) {
         type = a.annotationType().getTypeName();
-        attributes = AnnotationUtils.getAnnotationAttributes(a);
+        Map<String, Object> map;
+        try {
+            map = AnnotationUtils.getAnnotationAttributes(a);
+        } catch (IllegalStateException ignored) {
+            map = new HashMap<>();
+        }
+        attributes = map;
     }
 
     /**

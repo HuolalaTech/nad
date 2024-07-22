@@ -49,6 +49,9 @@ class ClassesTest {
 
         assertEquals(Object.class.getTypeName(), userClass.getSuperclass());
 
+        assertNotNull(userClass.getImportantMethods());
+        assertNotNull(userClass.getInnerClasses());
+
         assertNotNull(userClass.getTypeParameters());
 
         String iface = userClass.getInterfaces().stream()

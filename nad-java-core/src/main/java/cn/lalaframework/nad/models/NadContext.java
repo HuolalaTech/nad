@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class NadContext {
@@ -30,9 +31,15 @@ public class NadContext {
 
     @Nullable
     private final ClassFilter classExcluder;
+    @Nullable
+    private final Predicate<Method> importantMethodMatcher;
 
-    private NadContext(@Nullable ClassFilter excluder) {
-        classExcluder = excluder;
+    @NonNull
+    private final LinkedHashSet<Type> stack;
+
+    private NadContext(@Nullable ClassFilter classExcluder, @Nullable Predicate<Method> importantMethodMatcher) {
+        this.classExcluder = classExcluder;
+        this.importantMethodMatcher = importantMethodMatcher;
         classesMap = new TreeMap<>();
         enumsMap = new TreeMap<>();
         modulesMap = new TreeMap<>();
@@ -40,6 +47,7 @@ public class NadContext {
         // To ensure that uniformity of the results, it is necessary to be sorted.
         // NOTE: The HandlerMethods object is unsorted.
         routes = new TreeSet<>(Comparator.comparing(NadRoute::getSortKey));
+        stack = new LinkedHashSet<>();
     }
 
     /**
@@ -69,8 +77,7 @@ public class NadContext {
 
         // It's an enum type.
         if (clz.isEnum()) {
-            @SuppressWarnings("unchecked")
-            Class<? extends Enum<?>> aEnum = (Class<? extends Enum<?>>) clz;
+            @SuppressWarnings("unchecked") Class<? extends Enum<?>> aEnum = (Class<? extends Enum<?>>) clz;
             collectEnum(aEnum);
             return;
         }
@@ -84,15 +91,9 @@ public class NadContext {
         Map<String, NadClass> map = getContext().classesMap;
 
         // Don't collect it again, if it has been collected.
-        // This is very important to avoid endless recursion, that is the breaking condition for recursion.
         if (map.containsKey(name)) return;
-        // Place a null as a placeholder to mark the current class being collected, to avoid recursively collecting it.
-        // noinspection OverwrittenKey
-        map.put(name, null); // NOSONAR
 
-        // IMPORTANT: new NadClassImpl(...) may potentially call collectClass recursively.
-        // noinspection OverwrittenKey
-        map.put(name, new NadClassImpl(clz)); // NOSONAR
+        map.put(name, new NadClassImpl(clz));
     }
 
     /**
@@ -118,38 +119,46 @@ public class NadContext {
      * NOTE: the matchClass method will be called, if a class is excluded by classExcluder, it will not be collected.
      */
     protected static void collectType(@Nullable Type what) {
-        // For WildcardType such as `List<? extends Foo>`, or `List<? super Foo>`, we need to collect all bound types.
-        if (what instanceof WildcardType) {
-            WildcardType wt = (WildcardType) what;
-            Arrays.stream(wt.getLowerBounds()).forEach(NadContext::collectType);
-            Arrays.stream(wt.getUpperBounds()).forEach(NadContext::collectType);
-            return;
-        }
+        if (getContext().stack.contains(what)) return;
+        getContext().stack.add(what);
+        try {
 
-        // For TypeVariable such as `class Demo<T extends Foo>`, we need to collect all bound types.
-        if (what instanceof TypeVariable) {
-            TypeVariable<?> tv = (TypeVariable<?>) what;
-            Arrays.stream(tv.getBounds()).forEach(NadContext::collectType);
-            return;
-        }
+            // For WildcardType such as `List<? extends Foo>`, or `List<? super Foo>`, we need to collect all bound types.
+            if (what instanceof WildcardType) {
+                WildcardType wt = (WildcardType) what;
+                Arrays.stream(wt.getLowerBounds()).forEach(NadContext::collectType);
+                Arrays.stream(wt.getUpperBounds()).forEach(NadContext::collectType);
+                return;
+            }
 
-        // For ParameterizedType such as Map<String, Integer>, we need to collect all raw types and type arguments.
-        // For example, collect(A<B, C>) is equals to collect(A), and collect(B), and collect(C).
-        if (what instanceof ParameterizedType) {
-            ParameterizedType pt = (ParameterizedType) what;
-            collectType(pt.getRawType());
-            Arrays.stream(pt.getActualTypeArguments()).forEach(NadContext::collectType);
-            return;
-        }
+            // For TypeVariable such as `class Demo<T extends Foo>`, we need to collect all bound types.
+            if (what instanceof TypeVariable) {
+                TypeVariable<?> tv = (TypeVariable<?>) what;
+                Arrays.stream(tv.getBounds()).forEach(NadContext::collectType);
+                return;
+            }
 
-        // Find the type of array items, such as find List<Long> from List<Long>[].
-        if (what instanceof GenericArrayType) {
-            collectType(((GenericArrayType) what).getGenericComponentType());
-            return;
-        }
+            // For ParameterizedType such as Map<String, Integer>, we need to collect all raw types and type arguments.
+            // For example, collect(A<B, C>) is equals to collect(A), and collect(B), and collect(C).
+            if (what instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) what;
+                collectType(pt.getRawType());
+                Arrays.stream(pt.getActualTypeArguments()).forEach(NadContext::collectType);
+                return;
+            }
 
-        if (what instanceof Class) {
-            collectClass((Class<?>) what);
+            // Find the type of array items, such as find List<Long> from List<Long>[].
+            if (what instanceof GenericArrayType) {
+                collectType(((GenericArrayType) what).getGenericComponentType());
+                return;
+            }
+
+            if (what instanceof Class) {
+                collectClass((Class<?>) what);
+            }
+
+        } finally {
+            getContext().stack.remove(what);
         }
     }
 
@@ -163,9 +172,7 @@ public class NadContext {
     public static void collectSpringWeb(@NonNull RequestMappingHandlerMapping mapping) {
         mapping.getHandlerMethods().entrySet().stream()
                 // Ignore some classes who are specified by ClassExcluder
-                .filter(e -> NadContext.matchClass(e.getValue().getBeanType()))
-                .map(e -> new NadRouterSpringWeb(e.getKey(), e.getValue()))
-                .forEach(NadContext::collectRoute);
+                .filter(e -> NadContext.matchClass(e.getValue().getBeanType())).map(e -> new NadRouterSpringWeb(e.getKey(), e.getValue())).forEach(NadContext::collectRoute);
     }
 
     /**
@@ -182,17 +189,33 @@ public class NadContext {
         return !classExcluder.matches(clz);
     }
 
+    public static boolean matchImportantMethod(Method method) {
+        Predicate<Method> matcher = getContext().importantMethodMatcher;
+        if (matcher == null) return false;
+        return matcher.test(method);
+    }
+
     /**
      * Execute a transaction within a NadContext.
      * NOTE: context information is stored in a ThreadLocal, do not call this method recursively.
      */
     public static <R> R run(@NonNull Supplier<R> transaction, @Nullable ClassFilter classExcluder) {
+        return run(transaction, classExcluder, null);
+    }
+
+    /**
+     * Execute a transaction within a NadContext.
+     * NOTE: context information is stored in a ThreadLocal, do not call this method recursively.
+     */
+    public static <R> R run(@NonNull Supplier<R> transaction,
+                            @Nullable ClassFilter classExcluder,
+                            @Nullable Predicate<Method> importantMethodMatcher) {
         R res;
         try {
             if (current.get() != null) {
                 throw new NadContextRecursionException();
             }
-            current.set(new NadContext(classExcluder));
+            current.set(new NadContext(classExcluder, importantMethodMatcher));
             // if this code returns directly, the "finally" block will not be covered by junit coverage.
             res = transaction.get();
         } finally {
@@ -207,11 +230,17 @@ public class NadContext {
     @NonNull
     public static NadResult dump() {
         NadContext context = getContext();
-        return new NadResultImpl(
-                new ArrayList<>(context.modulesMap.values()),
-                new ArrayList<>(context.routes),
-                new ArrayList<>(context.classesMap.values()),
-                new ArrayList<>(context.enumsMap.values())
-        );
+        return new NadResultImpl(new ArrayList<>(context.modulesMap.values()), new ArrayList<>(context.routes), new ArrayList<>(context.classesMap.values()), new ArrayList<>(context.enumsMap.values()));
+    }
+
+    /**
+     * Collect type to NadContext and convert to a type name string.
+     *
+     * @param type A type.
+     * @return Associated type name string.
+     */
+    public static String cc(Type type) {
+        collectType(type);
+        return type.getTypeName();
     }
 }

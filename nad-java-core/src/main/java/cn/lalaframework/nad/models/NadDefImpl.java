@@ -17,6 +17,11 @@ public class NadDefImpl implements NadDef {
         annotations = NadAnnotationImpl.fromAnnotatedElement(clz);
     }
 
+    public NadDefImpl(@NonNull String name, @NonNull List<NadAnnotation> annotations) {
+        this.name = name;
+        this.annotations = annotations;
+    }
+
     @Override
     @NonNull
     public String getName() {

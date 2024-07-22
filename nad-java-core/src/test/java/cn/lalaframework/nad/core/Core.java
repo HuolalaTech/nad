@@ -31,6 +31,6 @@ class Core {
         return NadContext.run(() -> {
             NadContext.collectSpringWeb(rhMapping);
             return NadContext.dump();
-        }, filter);
+        }, filter, m -> true);
     }
 }
