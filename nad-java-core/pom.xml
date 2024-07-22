@@ -7,7 +7,7 @@
 
     <groupId>cn.lalaframework</groupId>
     <artifactId>nad-core</artifactId>
-    <version>1.0.3-RELEASE</version>
+    <version>1.0.4-RELEASE</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
