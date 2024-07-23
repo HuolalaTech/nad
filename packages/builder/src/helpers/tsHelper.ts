@@ -72,13 +72,13 @@ export const t2s = (type: Type | undefined): string => {
   if (isJavaVoid(name)) return 'void';
   if (isJavaMap(name)) {
     const [first, second] = parameters;
-    let keyType;
-    if (first && (isJavaString(first.name) || isJavaNumber(first.name) || first.isEnum)) {
-      keyType = t2s(first);
+    if (first && first.isEnum) {
+      return `Partial<Record<${t2s(first)}, ${t2s(second)} | undefiend | null>>`;
+    } else if (first && (isJavaString(first.name) || isJavaNumber(first.name))) {
+      return `Record<${t2s(first)}, ${t2s(second)} | undefined | null>`;
     } else {
-      keyType = 'PropertyKey';
+      return `Record<PropertyKey, ${t2s(second)} | undefined | null>`;
     }
-    return `Record<${keyType}, ${t2s(second)} | undefined>`;
   }
   if (isJavaList(name)) {
     const t = t2s(parameters[0]);
