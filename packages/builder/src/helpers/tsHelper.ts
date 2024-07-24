@@ -50,21 +50,19 @@ export const t2s = (type: Type | undefined): string => {
 
   if (isGenericVariable) return name;
 
+  const { commonDefs } = builder;
+
   switch (name) {
     case 'java.math.BigDecimal':
-      builder.commonDefs.BigDecimal = '`${number}` | number';
-      return 'BigDecimal';
+      return commonDefs.BigDecimal();
     case 'java.math.BigInteger':
-      builder.commonDefs.BigInteger = '`${number}` | number';
-      return 'BigInteger';
+      return commonDefs.BigInteger();
     case 'org.springframework.web.multipart.MultipartFile':
-      builder.commonDefs.MultipartFile = 'Blob | File | string';
-      return 'MultipartFile';
+      return commonDefs.MultipartFile();
     default:
   }
   if (isJavaLong(name)) {
-    builder.commonDefs.Long = '`${number}` | number';
-    return 'Long';
+    return commonDefs.Long();
   }
   if (isJavaNumber(name)) return 'number';
   if (isJavaString(name)) return 'string';
@@ -72,12 +70,13 @@ export const t2s = (type: Type | undefined): string => {
   if (isJavaVoid(name)) return 'void';
   if (isJavaMap(name)) {
     const [first, second] = parameters;
+    const { Nullable } = commonDefs;
     if (first && first.isEnum) {
-      return `Partial<Record<${t2s(first)}, ${t2s(second)} | undefiend | null>>`;
+      return `Partial<Record<${t2s(first)}, ${Nullable(t2s(second))}>>`;
     } else if (first && (isJavaString(first.name) || isJavaNumber(first.name))) {
-      return `Record<${t2s(first)}, ${t2s(second)} | undefined | null>`;
+      return `Record<${t2s(first)}, ${Nullable(t2s(second))}>`;
     } else {
-      return `Record<PropertyKey, ${t2s(second)} | undefined | null>`;
+      return `Record<PropertyKey, ${Nullable(t2s(second))}>`;
     }
   }
   if (isJavaList(name)) {
@@ -91,8 +90,7 @@ export const t2s = (type: Type | undefined): string => {
   if (isJavaWrapper(name)) {
     const [first] = parameters;
     if (first) {
-      builder.commonDefs['Optional<T>'] = 'T | null';
-      return `Optional<${t2s(first)}>`;
+      return commonDefs.Nullable(t2s(first));
     } else {
       return TS_UNKNOWN;
     }

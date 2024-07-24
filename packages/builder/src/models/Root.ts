@@ -6,6 +6,7 @@ import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
 import { RouteRaw } from './Route';
 import { RootOptions } from './RootOptions';
+import { CommonDefs } from './CommonDefs';
 
 export type RawDefs = Dubious<NadResult>;
 
@@ -20,7 +21,7 @@ export class Root {
 
   public readonly options;
 
-  public readonly commonDefs: Record<string, string>;
+  public readonly commonDefs;
   public readonly unknownTypes;
   public readonly modules;
 
@@ -50,7 +51,7 @@ export class Root {
 
     this.classes = Object.create(null);
     this.enums = Object.create(null);
-    this.commonDefs = Object.create(null);
+    this.commonDefs = new CommonDefs();
     this.uniqueNameSeparator = options.uniqueNameSeparator;
 
     this.unknownTypes = new Set<string>();
@@ -93,7 +94,7 @@ export class Root {
   get apiCount() {
     return this.modules.reduce((s, i) => s + i.routes.length, 0);
   }
-  
+
   public getDefByName(name: string): Enum | Class | null {
     const { classes, rawClassMap: rawClasses, enums, rawEnumMap: rawEnums } = this;
     if (name in classes) return classes[name];

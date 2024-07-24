@@ -151,7 +151,7 @@ export class CodeGenForTs extends CodeGen {
   }
 
   private writeCommonDefs() {
-    for (const [alias, tsType] of Object.entries(this.root.commonDefs)) {
+    for (const [alias, tsType] of this.root.commonDefs) {
       this.write(`export type ${alias} = ${tsType};`);
       this.write('');
     }
