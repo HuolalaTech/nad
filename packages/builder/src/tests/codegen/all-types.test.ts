@@ -9,10 +9,10 @@ const typeVector = describe.each([
   ['java.util.List', 'unknown[]', 'NSArray<NSObject*>*'],
   ['java.util.List<java.lang.Long>', 'Long[]', 'NSArray<NSNumber*>*'],
   ['java.util.List<java.lang.Void>', 'void[]', 'NSArray<void*>*'],
-  ['java.util.Map<java.lang.Long, java.lang.Long>', 'Record<Long, Long | undefined>', 'NSDictionary*'],
+  ['java.util.Map<java.lang.Long, java.lang.Long>', 'Record<Long, Nullable<Long>>', 'NSDictionary*'],
   ['groovy.lang.Tuple2<java.lang.String, java.lang.Long>', '[ string, Long ]', 'NSArray<NSObject*>*'],
-  ['java.util.List<java.lang.ThreadLocal<java.lang.Long>>', 'Optional<Long>[]', 'NSArray<NSNumber*>*'],
-  ['java.util.List<java.util.Optional<java.lang.Long>>', 'Optional<Long>[]', 'NSArray<NSNumber*>*'],
+  ['java.util.List<java.lang.ThreadLocal<java.lang.Long>>', 'Nullable<Long>[]', 'NSArray<NSNumber*>*'],
+  ['java.util.List<java.util.Optional<java.lang.Long>>', 'Nullable<Long>[]', 'NSArray<NSNumber*>*'],
   ['java.util.List<java.util.Optional>', 'unknown[]', 'NSArray<NSObject*>*'],
 ]);
 
