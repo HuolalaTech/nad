@@ -49,3 +49,55 @@ test('empty bean', () => {
   const code = new Builder({ target: 'ts', base: '', defs: { routes } }).code;
   expect(code).toMatchCode(`export const unknownModule = {`);
 });
+
+test('union type', () => {
+  const classes: DeepPartial<NadClass>[] = [
+    { name: 'test.U', members: [], innerClasses: ['test.U$A', 'test.U$B'] },
+    { name: 'test.U$A', superclass: 'java.lang.Object', members: [], interfaces: ['test.U'] },
+    { name: 'test.U$B', superclass: 'java.lang.Object', members: [], interfaces: ['test.U'] },
+
+    { name: 'test.M', members: [], innerClasses: ['test.M$A'] },
+    { name: 'test.M$A', superclass: 'java.lang.Object', members: [], interfaces: ['test.M'] },
+
+    { name: 'test.G', members: [], innerClasses: ['test.G$A'], superclass: 'java.lang.Object' },
+    { name: 'test.G$A', superclass: 'test.G', members: [] },
+
+    { superclass: 'dirty' },
+  ];
+  const routes: DeepPartial<NadRoute>[] = [
+    { bean: 'test.Foo', name: 'foo1', returnType: 'test.U', parameters: [{ name: 'a', type: 'test.U[]' }] },
+    { bean: 'test.Foo', name: 'foo2', returnType: 'test.M', parameters: [{ name: 'a', type: 'test.M[]' }] },
+    { bean: 'test.Foo', name: 'foo3', returnType: 'test.G', parameters: [{ name: 'a', type: 'test.G[]' }] },
+  ];
+  const code = new Builder({ target: 'ts', base: '', defs: { routes, classes } }).code;
+  expect(code).toMatchCode(`
+    export const foo = {
+      /**
+       * foo1
+       */
+      async foo1(a?: Array<UA | UB>, settings?: Partial<Settings>) {
+        return new Runtime<UA | UB>()
+          .open('POST', '', settings)
+          .addRequestParam('a', a)
+          .execute();
+      },
+      /**
+       * foo2
+       */
+      async foo2(a?: M[], settings?: Partial<Settings>) {
+        return new Runtime<M>()
+          .open('POST', '', settings)
+          .addRequestParam('a', a)
+          .execute();
+      },
+      /**
+       * foo3
+       */
+      async foo3(a?: Array<GA | G>, settings?: Partial<Settings>) {
+        return new Runtime<GA | G>()
+          .open('POST', '', settings)
+          .addRequestParam('a', a)
+          .execute();
+      },
+  `);
+});

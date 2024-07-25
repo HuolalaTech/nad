@@ -124,6 +124,7 @@ export const t2s = (type: Type | undefined): string => {
     return clz.simpleName;
   }
 
+  /* istanbul ignore next */
   throw neverReachHere();
 };
 

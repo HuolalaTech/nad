@@ -128,8 +128,7 @@ export class Root {
     return UniqueName.createFor(this, fixFunction(name), uniqueNameSeparator);
   }
 
-  public findDerivativedTypes(rawTypeName: unknown) {
-    if (typeof rawTypeName !== 'string') return [];
+  public findDerivativedTypes(rawTypeName: string) {
     // TODO: Support generic type matching.
     const list = this.derivationMap.get(rawTypeName);
     if (!list) return [];
