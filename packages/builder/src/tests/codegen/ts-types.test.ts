@@ -1,5 +1,5 @@
 import { Builder } from '../../Builder';
-import { NadClass, NadRoute } from '../../types/nad';
+import { NadClass, NadEnum, NadRoute } from '../../types/nad';
 import { paginitionDefs } from '../defs/paginitionTestDefs';
 import { DeepPartial } from '../../utils';
 
@@ -99,5 +99,46 @@ test('union type', () => {
           .addRequestParam('a', a)
           .execute();
       },
+  `);
+});
+
+test('narrow type', () => {
+  const enums: DeepPartial<NadEnum>[] = [
+    {
+      name: 'test.Role',
+      constants: [
+        { name: 'A', value: 0 },
+        { name: 'B', value: 1 },
+        { name: 'C', value: 2 },
+      ],
+    },
+  ];
+  const classes: DeepPartial<NadClass>[] = [
+    {
+      name: 'test.User',
+      members: [
+        {
+          name: 'role',
+          type: 'test.Role',
+          annotations: [
+            [
+              {
+                type: 'io.swagger.annotations.ApiModelProperty',
+                attributes: {
+                  allowableValues: '1,3',
+                },
+              },
+            ],
+          ],
+        },
+      ],
+    },
+  ];
+  const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.FooControlelr', name: 'foo', returnType: 'test.User' }];
+  const code = new Builder({ target: 'ts', base: '', defs: { routes, classes, enums } }).code;
+  expect(code).toMatchCode(`
+    export interface User {
+      role?: Extract<Role, 1 | 3>;
+    }
   `);
 });
