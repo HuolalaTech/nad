@@ -102,7 +102,7 @@ test('union type', () => {
   `);
 });
 
-test('narrow type', () => {
+test('narrow type for enum', () => {
   const enums: DeepPartial<NadEnum>[] = [
     {
       name: 'test.Role',
@@ -110,6 +110,14 @@ test('narrow type', () => {
         { name: 'A', value: 0 },
         { name: 'B', value: 1 },
         { name: 'C', value: 2 },
+      ],
+    },
+    {
+      name: 'test.Type',
+      constants: [
+        { name: 'Unknown', value: 'unknown' },
+        { name: 'Admin', value: 'admin' },
+        { name: 'Normal', value: 'normal' },
       ],
     },
   ];
@@ -120,15 +128,13 @@ test('narrow type', () => {
         {
           name: 'role',
           type: 'test.Role',
+          annotations: [[{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { allowableValues: '1,3' } }]],
+        },
+        {
+          name: 'type',
+          type: 'test.Type',
           annotations: [
-            [
-              {
-                type: 'io.swagger.annotations.ApiModelProperty',
-                attributes: {
-                  allowableValues: '1,3',
-                },
-              },
-            ],
+            [{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { allowableValues: 'admin,normal' } }],
           ],
         },
       ],
@@ -139,6 +145,39 @@ test('narrow type', () => {
   expect(code).toMatchCode(`
     export interface User {
       role?: Extract<Role, 1 | 3>;
+      type?: Extract<Type, 'admin' | 'normal'>;
+    }
+  `);
+});
+
+test('narrow type for string or number', () => {
+  const classes: DeepPartial<NadClass>[] = [
+    {
+      name: 'test.User',
+      members: [
+        {
+          name: 'role',
+          type: 'java.lang.String',
+          annotations: [
+            [{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { allowableValues: 'admin,normal' } }],
+          ],
+        },
+        {
+          name: 'type',
+          type: 'java.lang.Long',
+          annotations: [
+            [{ type: 'io.swagger.annotations.ApiModelProperty', attributes: { allowableValues: '1,2,3' } }],
+          ],
+        },
+      ],
+    },
+  ];
+  const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.FooControlelr', name: 'foo', returnType: 'test.User' }];
+  const code = new Builder({ target: 'ts', base: '', defs: { routes, classes } }).code;
+  expect(code).toMatchCode(`
+    export interface User {
+      role?: 'admin' | 'normal';
+      type?: 1 | 2 | 3;
     }
   `);
 });
