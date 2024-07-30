@@ -96,7 +96,7 @@ export class Type {
     const { typeMapping } = owner.options;
     const sr = new LexicalReader(typeMapping[rawTypeName] || rawTypeName || JAVA_OBJECT);
 
-    const nextNormal = ({ isExtending }: { isExtending: boolean }) => {
+    const nextNormal = () => {
       let name = sr.read(/[\w$.]*/g);
       let parameters: Type[] = [];
       if (sr.read('<')) {
@@ -125,14 +125,16 @@ export class Type {
       if (sr.read('?')) {
         switch (true) {
           case !!sr.read(/\s+extends\s+/g):
-            return nextNormal({ isExtending: true });
+            return nextNormal();
           case !!sr.read(/\s+super\s+/g):
-            nextParam(); // read next but never use
+            // The <? super XXX> can always match java.lang.Object, regardless of what the XXX is.
+            // Therefore, read the next type but never use it.
+            nextNormal();
           default:
             return new this(owner, usage, JAVA_OBJECT, []);
         }
       } else {
-        return nextNormal({ isExtending: false });
+        return nextNormal();
       }
     };
 

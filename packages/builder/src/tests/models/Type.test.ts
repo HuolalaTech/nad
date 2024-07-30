@@ -111,6 +111,14 @@ test('? extends', () => {
   expect(p1.name).toBe('test.Foo');
 });
 
+test('? super', () => {
+  const type = Type.create('java.util.List<? super test.Foo>', root);
+  expect(type.name).toBe('java.util.List');
+  expect(type.parameters).toHaveLength(1);
+  const [p1] = type.parameters;
+  expect(p1.name).toBe('java.lang.Object');
+});
+
 test('bad types', () => {
   expect(() => {
     Type.create('java.util.Map<java.lang.Long java.lang.Long>', root);
