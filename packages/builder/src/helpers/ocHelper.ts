@@ -12,7 +12,7 @@ import {
   isJavaVoid,
   isJavaWrapper,
 } from './javaHelper';
-import { RootOptions } from 'src/models/RootOptions';
+import { RootOptions } from '../models/RootOptions';
 
 // Convert value to safe string in code
 export const ss = (s: string | number) => {

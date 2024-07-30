@@ -1,8 +1,9 @@
 import { CodeGen } from './CodeGen';
-import { ss, t2s } from '../helpers/tsHelper';
+import { buildUnionType, ss, t2s } from '../helpers/tsHelper';
 import type { Root } from '../models/Root';
 import type { Route } from '../models/Route';
-import { EnumConstant } from 'src/models';
+import { Enum, EnumConstant, Member } from '../models';
+import { isJavaNumber } from '../helpers/javaHelper';
 
 interface Options {
   /**
@@ -150,7 +151,7 @@ export class CodeGenForTs extends CodeGen {
   }
 
   private writeCommonDefs() {
-    for (const [alias, tsType] of Object.entries(this.root.commonDefs)) {
+    for (const [alias, tsType] of this.root.commonDefs) {
       this.write(`export type ${alias} = ${tsType};`);
       this.write('');
     }
@@ -211,7 +212,7 @@ export class CodeGenForTs extends CodeGen {
                 if (m.deprecated) this.write('@deprecated');
               });
             }
-            this.write(`${m.name}${m.optional}: ${t2s(m.type)};`);
+            this.write(`${m.name}${m.optional}: ${this.buildMemberType(m)};`);
           }
         });
         this.write('}');
@@ -219,6 +220,19 @@ export class CodeGenForTs extends CodeGen {
         this.write(`export type ${c.defName} = ${t2s(c.superclass)};`);
       }
       this.write('');
+    }
+  }
+
+  private buildMemberType(m: Member) {
+    const { type, narrowValues } = m;
+    if (!narrowValues) return t2s(type);
+    const { clz } = m.type;
+    if (clz instanceof Enum) {
+      const vs = narrowValues.map((i) => (clz.valueType === 'number' ? Number(i) : i)).map(ss);
+      return `Extract<${t2s(type)}, ${buildUnionType(...vs)}>`;
+    } else {
+      const vs = narrowValues.map((i) => (isJavaNumber(type.name) ? Number(i) : i)).map(ss);
+      return buildUnionType(...vs);
     }
   }
 }

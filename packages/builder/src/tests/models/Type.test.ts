@@ -103,13 +103,20 @@ test('get clz', () => {
   expect(type.clz).toBeNull();
 });
 
-
 test('? extends', () => {
   const type = Type.create('java.util.List<? extends test.Foo>', root);
   expect(type.name).toBe('java.util.List');
   expect(type.parameters).toHaveLength(1);
-  const [ p1 ] = type.parameters;
+  const [p1] = type.parameters;
   expect(p1.name).toBe('test.Foo');
+});
+
+test('? super', () => {
+  const type = Type.create('java.util.List<? super test.Foo>', root);
+  expect(type.name).toBe('java.util.List');
+  expect(type.parameters).toHaveLength(1);
+  const [p1] = type.parameters;
+  expect(p1.name).toBe('java.lang.Object');
 });
 
 test('bad types', () => {

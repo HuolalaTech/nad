@@ -13,8 +13,34 @@ export class HttpError extends CustomError implements InvokeResult<unknown> {
     return this.raw.data;
   }
   constructor(ir: InvokeResult<unknown>) {
-    super(`HTTP ${ir.statusCode}`);
+    const { data } = ir;
+    if (isSpringWebException(data)) {
+      super(data.message);
+      this.name = 'HttpError: ' + data.error;
+    } else {
+      super(`HTTP ${ir.statusCode}`);
+      this.name = 'HttpError';
+    }
     this.raw = ir;
-    this.name = 'HttpError';
   }
+}
+
+const isSpringWebException = <T>(what: T): what is T & SpringWebException => {
+  if (typeof what !== 'object' && what === null) return false;
+  const o = Object(what) as Record<PropertyKey, unknown>;
+  return (
+    typeof o.timestamp === 'string' &&
+    typeof o.status === 'number' &&
+    typeof o.error === 'string' &&
+    typeof o.message === 'string' &&
+    typeof o.path === 'string'
+  );
+};
+
+interface SpringWebException {
+  readonly timestamp: string;
+  readonly status: number;
+  readonly error: string;
+  readonly message: string;
+  readonly path: string;
 }

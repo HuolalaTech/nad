@@ -18,6 +18,8 @@ export interface NadClass extends NadDef {
   members: NadMember[];
   superclass?: string;
   typeParameters: string[];
+  innerClasses: string[];
+  importantMethods: NadMethod[];
 }
 
 /**
@@ -77,12 +79,17 @@ export type NadModule = NadDef;
  * NadRouteHandler
  * @iface cn.lalaframework.nad.interfaces.NadRouteHandler
  */
-export interface NadRouteHandler {
-  name: string;
-  bean: string;
+export interface NadMethod extends NadDef {
   parameters: NadParameter[];
-  annotations: NadAnnotation[];
   returnType: string;
+}
+
+/**
+ * NadRouteHandler
+ * @iface cn.lalaframework.nad.interfaces.NadRouteHandler
+ */
+export interface NadRouteHandler extends NadMethod {
+  bean: string;
 }
 
 /**
@@ -117,8 +124,6 @@ export interface NameValuePair {
  * NadParameter
  * @iface cn.lalaframework.nad.interfaces.NadParameter
  */
-export interface NadParameter {
-  annotations: NadAnnotation[];
-  name?: string;
+export interface NadParameter extends NadDef {
   type: string;
 }

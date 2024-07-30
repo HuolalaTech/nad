@@ -17,4 +17,10 @@ public interface NadClass extends NadDef {
 
     @NonNull
     List<String> getInterfaces();
+
+    @NonNull
+    List<String> getInnerClasses();
+
+    @NonNull
+    List<NadMethod> getImportantMethods();
 }

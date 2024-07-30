@@ -6,12 +6,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.*;
 
-public class NadEnumConstantImpl implements NadEnumConstant {
-    @NonNull
-    private final String name;
-
+public class NadEnumConstantImpl extends NadDefImpl implements NadEnumConstant {
     /**
      * An enum value can be serialized to an unknown value and type,
      * this field is used to tall the frontend what the serialized value is.
@@ -22,16 +20,20 @@ public class NadEnumConstantImpl implements NadEnumConstant {
     @NonNull
     private final Map<String, Object> properties;
 
-    @NonNull
-    private final List<NadAnnotation> annotations;
-
-    public NadEnumConstantImpl(@NonNull Enum<?> value, @NonNull List<Field> fields) {
-        annotations = initAnnotations(value);
-        name = value.name();
-        this.value = value;
+    public NadEnumConstantImpl(@NonNull Enum<?> enumValue, @NonNull List<Field> fields) {
+        super(enumValue.name(), initAnnotations(enumValue));
+        this.value = enumValue;
         properties = new TreeMap<>(String::compareTo);
         // Collectors.toMap cannot support null values, so use forEach instead.
-        fields.forEach(field -> properties.put(field.getName(), ReflectionUtils.getField(field, value)));
+        fields.forEach(field -> {
+            try {
+                Object fieldValue = ReflectionUtils.getField(field, enumValue);
+                if (fieldValue instanceof Type) NadContext.collectType((Type) fieldValue);
+                properties.put(field.getName(), fieldValue);
+            } catch (IllegalStateException ignored) {
+                // Some internal properties cannot be read.
+            }
+        });
     }
 
     private static List<NadAnnotation> initAnnotations(@NonNull Enum<?> value) {
@@ -47,12 +49,6 @@ public class NadEnumConstantImpl implements NadEnumConstant {
 
     @Override
     @NonNull
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    @NonNull
     public Map<String, Object> getProperties() {
         return properties;
     }
@@ -63,11 +59,5 @@ public class NadEnumConstantImpl implements NadEnumConstant {
         @SuppressWarnings("unchecked")
         E res = (E) value;
         return res;
-    }
-
-    @Override
-    @NonNull
-    public List<NadAnnotation> getAnnotations() {
-        return annotations;
     }
 }
