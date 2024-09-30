@@ -31,6 +31,8 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
     @NonNull
     private final List<NadMethod> importantMethods;
 
+    private final int modifiers;
+
     /**
      * Create a NadClass from a standard java class.
      *
@@ -38,6 +40,8 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
      */
     public NadClassImpl(Class<?> clz) {
         super(clz);
+
+        modifiers = clz.getModifiers();
 
         // For each generic type parameter, collect them and convert to type name strings.
         typeParameters = Arrays.stream(clz.getTypeParameters()).map(NadContext::cc).collect(Collectors.toList());
@@ -98,5 +102,10 @@ public class NadClassImpl extends NadDefImpl implements NadClass {
     @NonNull
     public List<NadMethod> getImportantMethods() {
         return importantMethods;
+    }
+
+    @Override
+    public int getModifiers() {
+        return modifiers;
     }
 }
