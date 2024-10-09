@@ -44,7 +44,7 @@ export class Type {
     if (isJavaNonClass(name) || this.isGenericVariable) {
       this.clz = null;
     } else {
-      this.clz = this.builder.getDefByName(name);
+      this.clz = this.builder.touchDef(name);
     }
   }
 
@@ -113,7 +113,7 @@ export class Type {
           parameters = [];
           name = JAVA_STRING;
         } else {
-          parameters = [new Type(owner, usage, name, parameters)];
+          parameters = [new this(owner, usage, name, parameters)];
           name = JAVA_LIST;
         }
       }

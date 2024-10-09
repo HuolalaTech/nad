@@ -1,6 +1,6 @@
 import { neverReachHere } from '../utils/neverReachHere';
 import { Class } from '../models/Class';
-import type { Type } from '../models/Type';
+import { Type } from '../models/Type';
 import {
   isJavaBoolean,
   isJavaList,
@@ -13,7 +13,7 @@ import {
   isJavaVoid,
   isJavaWrapper,
 } from './javaHelper';
-import { toLowerCamel } from '../utils';
+import { toLowerCamel, Modifier, notEmpty } from '../utils';
 import { RootOptions } from '../models/RootOptions';
 import { Enum, TypeUsage } from '../models';
 
@@ -32,6 +32,16 @@ export const ss = (u: string | number | boolean) => {
     return String(u);
   }
   throw neverReachHere(u);
+};
+
+const clzToTs = (clz: Class, parameters: readonly Type[]) => {
+  const { typeParameters, simpleName } = clz;
+  let t = simpleName;
+  if (typeParameters.length > 0) {
+    const pars = typeParameters.map((_, i) => t2s(parameters[i])).join(', ');
+    t += `<${pars}>`;
+  }
+  return t;
 };
 
 const TS_UNKNOWN = 'unknown';
@@ -104,22 +114,44 @@ export const t2s = (type: Type | undefined): string => {
   if (!clz) return TS_UNKNOWN;
 
   if (clz instanceof Class) {
-    const { typeParameters, simpleName } = clz;
-    let t = simpleName;
-    if (typeParameters.length > 0) {
-      const pars = typeParameters.map((_, i) => t2s(parameters[i])).join(', ');
-      t += `<${pars}>`;
-    }
+    if (type.usage === TypeUsage.superType) return clzToTs(clz, parameters);
 
-    if (type.usage === TypeUsage.superType) return t;
+    const refs = [
+      // Place the current class and generic parameters.
+      [clz, parameters] as const,
+      // And add more derivatived refs with empty generic parameters.
+      ...[...builder.findDerivativedRefs(name)]
+        .map(([n]) => {
+          const c = builder.getClass(n);
+          if (!c) return null;
+          return [c, []] as const;
+        })
+        .filter(notEmpty),
+    ]
+      // Filter out some pairs which have no constructor.
+      .filter(([n]) => builder.hasConstructor(n.name));
 
-    const { derivativedTypes } = clz;
-    if (derivativedTypes.length === 0) return t;
-    if (derivativedTypes.length === 1 && clz.isInterface) return t;
-    const ts = derivativedTypes.map(t2s);
-    if (!clz.isInterface) ts.push(t);
+    // TODO: Considers the generic parameter matching.
+    //
+    // For example:
+    //
+    // interface Animal<T> {}
+    // class Cat extends Animal<Long> {}
+    // class Dog<G> extends Animal<G> {}
+    //
+    // If a method returns Animal<Long>, it will be extended to Cat and Dog<Long>.
+    // If a method returns Animal<Integer>, it will be extended to Dog<Integer> and cannot match Cat.
+    // If a method returns Animal<Long>, it will be extended to Cat and Dog<unknown>.
+    // 
+    // But this feature is too complex, just mark this as a TODO temporarily.
+    //
+
+    if (refs.length === 0) return clzToTs(clz, parameters);
+
+    const ts = refs.map(([c, p]) => clzToTs(c, p));
     return buildUnionType(...ts);
   }
+
   if (clz instanceof Enum) {
     return clz.simpleName;
   }

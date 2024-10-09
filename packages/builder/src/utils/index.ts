@@ -3,6 +3,7 @@ export * from './UniqueName';
 export * from './computeIfAbsent';
 export * from './neverReachHere';
 export * from './parseDsv';
+export * from './Modifiers';
 
 export const notEmpty = <T>(w: T): w is NonNullable<T> => w !== null && w !== undefined;
 

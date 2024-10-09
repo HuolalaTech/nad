@@ -1,7 +1,16 @@
 import { Module } from './Module';
 import { Class } from './Class';
-import { computeIfAbsent, Dubious, toUpperCamel, parseDsv, UniqueName, removeDynamicSuffix, notEmpty } from '../utils';
-import { u2o, u2a, u2s } from 'u2x';
+import {
+  computeIfAbsent,
+  Dubious,
+  toUpperCamel,
+  parseDsv,
+  UniqueName,
+  removeDynamicSuffix,
+  notEmpty,
+  Modifier,
+} from '../utils';
+import { u2o, u2a, u2s, u2n } from 'u2x';
 import { Enum } from './Enum';
 import { NadResult } from '../types/nad';
 import { RouteRaw } from './Route';
@@ -32,19 +41,7 @@ export class Root {
 
     const rawClasses = u2a(raw.classes, u2o);
     this.rawClassMap = new Map(rawClasses.map((i) => [u2s(u2o(i).name), i]));
-
-    this.derivationMap = rawClasses.reduce((map, clz) => {
-      const { superclass, interfaces, name } = clz;
-      if (typeof name !== 'string') return map;
-      [superclass]
-        .concat(interfaces)
-        .map((s) => u2s(s))
-        .filter(notEmpty)
-        .map((n) => n.replace(/\<.*/, ''))
-        .filter((n) => this.rawClassMap.has(n))
-        .forEach((n) => computeIfAbsent(map, n, () => []).push(name));
-      return map;
-    }, new Map<string, string[]>());
+    this.derivationMap = this.buildDerivationMap();
 
     this.rawEnumMap = new Map(u2a(raw.enums, (i) => [u2s(u2o(i).name), i]));
     this.rawModuleMap = new Map(u2a(raw.modules, (i) => [u2s(u2o(i).name), i]));
@@ -77,6 +74,35 @@ export class Root {
     );
   }
 
+  private buildDerivationMap() {
+    const { rawClassMap } = this;
+
+    // For example:
+    // If the classes defining like follow Java code
+    //
+    // class Animal<T> {}
+    // class Dog extends Animal<String> {}
+    // class Cat extends Animal<Integer> {}
+    //
+    // The map result will be:
+    //
+    // { 'Animal': { 'Dog': 'Animal<String>', 'Cat': 'Animal<Integer>' } }
+    //
+    const map = new Map<string, Map<string, string>>();
+    for (const [, clz] of rawClassMap) {
+      const { superclass, interfaces, name } = clz;
+      if (typeof name !== 'string') continue;
+      for (const n of [superclass, ...u2a(interfaces)]) {
+        if (typeof n !== 'string' || !n) continue;
+        const sn = n.replace(/\<.*/, '');
+        if (!rawClassMap.has(sn)) continue;
+        computeIfAbsent(map, n, () => new Map()).set(name, n);
+      }
+    }
+
+    return map;
+  }
+
   get declarationList() {
     return Object.values(this.classes);
   }
@@ -95,24 +121,39 @@ export class Root {
     return this.modules.reduce((s, i) => s + i.routes.length, 0);
   }
 
-  public getDefByName(name: string): Enum | Class | null {
-    const { classes, rawClassMap: rawClasses, enums, rawEnumMap: rawEnums } = this;
+  public hasConstructor(name: string) {
+    const { rawClassMap } = this;
+    let raw = rawClassMap.get(name);
+    if (!raw) return false;
+    const modifiers = u2n(raw.modifiers);
+    if (modifiers === undefined) return true;
+    return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
+  }
+
+  public touchDef(name: string): Enum | Class | null {
+    const { classes, rawClassMap, enums, rawEnumMap } = this;
     if (name in classes) return classes[name];
     if (name in enums) return enums[name];
-    let raw = rawClasses.get(name);
+    let raw = rawClassMap.get(name);
     if (raw) {
       const clz = new Class(raw, this);
       classes[name] = clz;
       clz.spread();
       return clz;
     }
-    raw = rawEnums.get(name);
+    raw = rawEnumMap.get(name);
     if (raw) {
       const en = new Enum(raw, this);
       enums[name] = en;
       return en;
     }
     this.unknownTypes.add(name);
+    return null;
+  }
+
+  public getClass(name: string) {
+    const { classes } = this;
+    if (name in classes) return classes[name];
     return null;
   }
 
@@ -128,10 +169,11 @@ export class Root {
     return UniqueName.createFor(this, fixFunction(name), uniqueNameSeparator);
   }
 
-  public findDerivativedTypes(rawTypeName: string) {
-    // TODO: Support generic type matching.
-    const list = this.derivationMap.get(rawTypeName);
-    if (!list) return [];
-    return list;
+  public *findDerivativedRefs(name: string, depth = 0): Iterable<[string, string]> {
+    if (depth > 20) throw new Error('Too many nested derivative class: ' + name);
+    for (const [who, usage] of this.derivationMap?.get(name) ?? []) {
+      yield [who, usage];
+      yield* this.findDerivativedRefs(who, depth + 1);
+    }
   }
 }

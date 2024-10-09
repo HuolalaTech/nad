@@ -1,10 +1,11 @@
 import { Member } from './Member';
 import { Type, TypeUsage } from './Type';
 import { Dubious, notEmpty } from '../utils';
-import { u2a, u2s } from 'u2x';
+import { u2a, u2n, u2s } from 'u2x';
 import type { Root } from './Root';
 import { DefBase } from './DefBase';
 import { NadClass } from '../types/nad';
+import { Modifier } from '../utils';
 
 type ClassRaw = Dubious<NadClass>;
 
@@ -16,11 +17,12 @@ export class Class extends DefBase<ClassRaw> {
   public readonly typeParameters;
   public readonly defName;
   public readonly description;
+  public readonly modifiers;
 
   constructor(raw: ClassRaw, builder: Root) {
     super(raw, builder);
     this.typeParameters = u2a(this.raw.typeParameters, u2s);
-
+    this.modifiers = u2n(this.raw.modifiers) ?? 0;
     this.defName = this.simpleName;
 
     this.description = this.annotations.swagger.getApiModel()?.description;
@@ -31,13 +33,10 @@ export class Class extends DefBase<ClassRaw> {
   }
 
   get members() {
+    // TODO: Declare interfaces and remove members which are duplicate with super interfaces.
     const value = u2a(this.raw.members, (i) => new Member(i, this)).filter((m) => m.visible);
     Object.defineProperty(this, 'members', { configurable: true, value });
     return value;
-  }
-
-  get isInterface() {
-    return !this.raw.superclass;
   }
 
   get superclass() {
@@ -46,20 +45,13 @@ export class Class extends DefBase<ClassRaw> {
     return value;
   }
 
-  get derivativedTypes() {
-    const { builder } = this;
-    const innserClassNameSet = new Set(u2a(this.raw.innerClasses, u2s).filter(notEmpty));
-    const value = builder
-      .findDerivativedTypes(this.name)
-      .filter((n) => !this.isInterface || innserClassNameSet.has(n))
-      .map((n) => Type.create(n, this));
-    Object.defineProperty(this, 'derivativedTypes', { configurable: true, value });
-    return value;
-  }
-
   spread() {
-    this.superclass.valueOf();
-    this.members.valueOf();
-    this.derivativedTypes.valueOf();
+    const { superclass, members, name, builder } = this;
+    superclass.valueOf();
+    members.valueOf();
+    // Touch all classes which is extending this class.
+    for (const [n] of builder.findDerivativedRefs(name)) {
+      if (builder.hasConstructor(n)) Type.create(n, this);
+    }
   }
 }
