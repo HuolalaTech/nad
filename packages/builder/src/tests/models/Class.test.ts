@@ -1,10 +1,9 @@
-import { isJavaUnknown } from 'src/helpers/javaHelper';
-import { Class, Member, Root, Type } from '../../models';
+import { Member, Root, Type, RawClass } from '../../models';
 
 const root = new Root({});
 
 test('generic', () => {
-  const clz = new Class(
+  const clz = new RawClass(
     {
       name: 'test.MyClass',
       typeParameters: ['K', 'V'],
@@ -14,7 +13,7 @@ test('generic', () => {
       ],
     },
     root,
-  );
+  ).use();
 
   expect(clz.members[0]).toBeInstanceOf(Member);
   expect(clz.members[0].name).toBe('key');
@@ -47,24 +46,26 @@ test('generic', () => {
 });
 
 test('bad class name', () => {
-  const clz = new Class({ name: '$$..' }, root);
+  const clz = new RawClass({ name: '$$..' }, root).use();
   expect(clz.defName).toBe('UnknownClass');
 });
 
 test('bad member name', () => {
-  const clz = new Class(
+  const clz = new RawClass(
     {
+      name: expect.getState().currentTestName,
       members: [{ name: '' }, { name: undefined }],
     },
     root,
-  );
+  ).use();
 
   expect(clz.members).toHaveLength(0);
 });
 
 test('hidden members', () => {
-  const clz = new Class(
+  const clz = new RawClass(
     {
+      name: expect.getState().currentTestName,
       members: [
         { name: '' },
         { name: '~!@#' },
@@ -91,14 +92,15 @@ test('hidden members', () => {
       ],
     },
     root,
-  );
+  ).use();
 
   expect(clz.members).toHaveLength(0);
 });
 
 test('JsonNaming SnakeCaseStrategy', () => {
-  const clz = new Class(
+  const clz = new RawClass(
     {
+      name: expect.getState().currentTestName,
       annotations: [
         {
           type: 'com.fasterxml.jackson.databind.annotation.JsonNaming',
@@ -113,7 +115,7 @@ test('JsonNaming SnakeCaseStrategy', () => {
       ],
     },
     root,
-  );
+  ).use();
 
   expect(clz.members[0].name).toBe('get_user_info');
   expect(clz.members[1].name).toBe('get_user_info_2');

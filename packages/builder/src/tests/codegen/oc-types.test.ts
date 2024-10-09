@@ -98,3 +98,36 @@ test('preserved keyword property name', () => {
     @end
   `);
 });
+
+test('chaining extending', () => {
+  const routes: DeepPartial<NadRoute>[] = [{ bean: 'test.Foo', name: 'foo', returnType: 'test.A' }];
+  const classes: DeepPartial<NadClass>[] = [
+    { name: 'test.A', superclass: 'test.B' },
+    { name: 'test.C' },
+    { name: 'test.B', superclass: 'test.C' },
+  ];
+  const code = new Builder({ target: 'oc', base: '', defs: { routes, classes } }).code;
+
+  expect(code).toMatchCode(`
+    /**
+     * C
+     * @JavaClass test.C
+     */
+    @interface C : NSObject
+    @end
+
+    /**
+     * B
+     * @JavaClass test.B
+     */
+    @interface B : C
+    @end
+
+    /**
+     * A
+     * @JavaClass test.A
+     */
+    @interface A : B
+    @end
+  `);
+});

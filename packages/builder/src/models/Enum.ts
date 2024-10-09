@@ -1,9 +1,9 @@
 import { Dubious } from '../utils';
 import { u2a } from 'u2x';
-import type { Root } from './Root';
 import { DefBase } from './DefBase';
 import { EnumConstant } from './EnumConstant';
 import { NadEnum } from '../types/nad';
+import { RawEnum } from './RawDef';
 
 type EnumRaw = Dubious<NadEnum>;
 
@@ -11,8 +11,8 @@ export class Enum extends DefBase<EnumRaw> {
   public readonly constants;
   public readonly valueType;
   public readonly description;
-  constructor(raw: EnumRaw, builder: Root) {
-    super(raw, builder);
+  constructor({ raw, root }: RawEnum) {
+    super(raw, root);
     this.constants = u2a(this.raw.constants, (i) => new EnumConstant(i, this));
     this.valueType = this.initValueType();
     this.description = this.annotations.swagger.getApiModel()?.description;

@@ -1,11 +1,10 @@
 import { Member } from './Member';
 import { Type, TypeUsage } from './Type';
-import { Dubious, notEmpty } from '../utils';
-import { u2a, u2n, u2s } from 'u2x';
-import type { Root } from './Root';
+import { Dubious } from '../utils';
+import { u2a, u2s } from 'u2x';
 import { DefBase } from './DefBase';
 import { NadClass } from '../types/nad';
-import { Modifier } from '../utils';
+import { RawClass } from './RawDef';
 
 type ClassRaw = Dubious<NadClass>;
 
@@ -18,11 +17,13 @@ export class Class extends DefBase<ClassRaw> {
   public readonly defName;
   public readonly description;
   public readonly modifiers;
+  private readonly rawClass;
 
-  constructor(raw: ClassRaw, builder: Root) {
-    super(raw, builder);
+  constructor(rawClass: RawClass) {
+    super(rawClass.raw, rawClass.root);
+    this.rawClass = rawClass;
     this.typeParameters = u2a(this.raw.typeParameters, u2s);
-    this.modifiers = u2n(this.raw.modifiers) ?? 0;
+    this.modifiers = rawClass.modifiers;
     this.defName = this.simpleName;
 
     this.description = this.annotations.swagger.getApiModel()?.description;
@@ -45,13 +46,17 @@ export class Class extends DefBase<ClassRaw> {
     return value;
   }
 
-  spread() {
+  public hasConstructor() {
+    return this.rawClass.hasConstructor();
+  }
+
+  public spread() {
     const { superclass, members, name, builder } = this;
     superclass.valueOf();
     members.valueOf();
     // Touch all classes which is extending this class.
-    for (const [n] of builder.findDerivativedRefs(name)) {
-      if (builder.hasConstructor(n)) Type.create(n, this);
+    for (const [rawClz] of builder.findDerivativedRefs(name)) {
+      if (rawClz.hasConstructor()) rawClz.use();
     }
   }
 }

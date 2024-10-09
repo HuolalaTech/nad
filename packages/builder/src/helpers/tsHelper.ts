@@ -122,14 +122,14 @@ export const t2s = (type: Type | undefined): string => {
       // And add more derivatived refs with empty generic parameters.
       ...[...builder.findDerivativedRefs(name)]
         .map(([n]) => {
-          const c = builder.getClass(n);
+          const c = builder.getClass(n.name);
           if (!c) return null;
           return [c, []] as const;
         })
         .filter(notEmpty),
     ]
       // Filter out some pairs which have no constructor.
-      .filter(([n]) => builder.hasConstructor(n.name));
+      .filter(([n]) => n.hasConstructor());
 
     // TODO: Considers the generic parameter matching.
     //
