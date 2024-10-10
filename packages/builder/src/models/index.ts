@@ -10,4 +10,3 @@ export * from './Parameter';
 export * from './Root';
 export * from './Route';
 export * from './Type';
-export * from './RawDef';

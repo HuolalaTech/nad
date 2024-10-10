@@ -13,7 +13,7 @@ import {
   isJavaVoid,
   isJavaWrapper,
 } from './javaHelper';
-import { toLowerCamel, Modifier, notEmpty } from '../utils';
+import { toLowerCamel, notEmpty } from '../utils';
 import { RootOptions } from '../models/RootOptions';
 import { Enum, TypeUsage } from '../models';
 
@@ -116,14 +116,35 @@ export const t2s = (type: Type | undefined): string => {
   if (clz instanceof Class) {
     if (type.usage === TypeUsage.superType) return clzToTs(clz, parameters);
 
-    const refs = [
+    // Merge all derivatived classes as a TypeScript union type.
+    //
+    // For example:
+    //
+    // ```java
+    // abstract class Animal {}
+    // class Cat extends Animal {}
+    // class Dog extends Animal {}
+    // ```
+    //
+    // The `Animal` type will be `Cat | Dog` in TypeScript.
+    // NOTE: Normally, abstract class or interface will not be contained.
+    //
+    // Another example:
+    //
+    // ```java
+    // class BaseUserInfo {}
+    // class UserInfo extends BaseUserInfo {}
+    // ```
+    //
+    // The `BaseUserInfo` type will be `BaseUserInfo | UserInfo`, because BaseUseInfo is not an abstact class.
+    //
+    const union = [
       // Place the current class and generic parameters.
       [clz, parameters] as const,
       // And add more derivatived refs with empty generic parameters.
       ...[...builder.findDerivativedRefs(name)]
-        .map(([n]) => {
-          const c = builder.getClass(n.name);
-          if (!c) return null;
+        .map(([c]) => {
+          if (!builder.isUsing(c)) return null;
           return [c, []] as const;
         })
         .filter(notEmpty),
@@ -135,20 +156,20 @@ export const t2s = (type: Type | undefined): string => {
     //
     // For example:
     //
-    // interface Animal<T> {}
+    // class Animal<T> {}
     // class Cat extends Animal<Long> {}
     // class Dog<G> extends Animal<G> {}
     //
     // If a method returns Animal<Long>, it will be extended to Cat and Dog<Long>.
     // If a method returns Animal<Integer>, it will be extended to Dog<Integer> and cannot match Cat.
     // If a method returns Animal<Long>, it will be extended to Cat and Dog<unknown>.
-    // 
+    //
     // But this feature is too complex, just mark this as a TODO temporarily.
     //
 
-    if (refs.length === 0) return clzToTs(clz, parameters);
+    if (union.length === 0) return clzToTs(clz, parameters);
 
-    const ts = refs.map(([c, p]) => clzToTs(c, p));
+    const ts = union.map(([c, p]) => clzToTs(c, p));
     return buildUnionType(...ts);
   }
 

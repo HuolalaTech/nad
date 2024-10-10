@@ -7,7 +7,7 @@ import type { Root } from './Root';
 export type TypeOwner = Class | Root;
 
 const getBuilderFromOwner = (owner: TypeOwner) => {
-  if ('builder' in owner) return owner.builder;
+  if ('root' in owner) return owner.root;
   return owner;
 };
 
@@ -48,7 +48,7 @@ export class Type {
     }
   }
 
-  get owner() {
+  private get owner() {
     const owner = wm.get(this);
     /* istanbul ignore next */
     if (!owner) throw neverReachHere();

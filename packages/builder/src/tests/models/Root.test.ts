@@ -69,7 +69,7 @@ test('defs', () => {
 
   const getDefBySimpleName = (root: Root, name: string): Enum | Class | null => {
     return (
-      root.declarationList.find((def) => def.simpleName === name) ||
+      root.classList.find((def) => def.simpleName === name) ||
       root.enumList.find((def) => def.simpleName === name) ||
       null
     );
@@ -102,5 +102,5 @@ test('typeMapping', () => {
     name: 'java.util.Map',
     parameters: [{ name: 'java.lang.Long' }, { name: 'java.lang.String' }],
   });
-  expect(root.declarationList).toHaveLength(0);
+  expect(root.classList).toHaveLength(0);
 });

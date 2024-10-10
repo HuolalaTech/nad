@@ -1,9 +1,9 @@
-import { RawEnum, EnumConstant, Root } from '../../models';
+import { Enum, EnumConstant, Root } from '../../models';
 
 const root = new Root({});
 
 test('number value', () => {
-  const obj = new RawEnum(
+  const obj = new Enum(
     {
       name: expect.getState().currentTestName,
       constants: [
@@ -12,7 +12,7 @@ test('number value', () => {
       ],
     },
     root,
-  ).use();
+  );
   expect(obj.constants.length).toBe(2);
   expect(obj.valueType).toBe('number');
   expect(obj.constants[0]).toBeInstanceOf(EnumConstant);
@@ -34,7 +34,7 @@ test('number value', () => {
 });
 
 test('string value', () => {
-  const obj = new RawEnum(
+  const obj = new Enum(
     {
       name: expect.getState().currentTestName,
       constants: [
@@ -43,7 +43,7 @@ test('string value', () => {
       ],
     },
     root,
-  ).use();
+  );
   expect(obj.constants.length).toBe(2);
   expect(obj.valueType).toBe('string');
   expect(obj.constants[0]).toBeInstanceOf(EnumConstant);
@@ -65,7 +65,7 @@ test('string value', () => {
 });
 
 test('mixed value', () => {
-  const obj = new RawEnum(
+  const obj = new Enum(
     {
       name: expect.getState().currentTestName,
       constants: [
@@ -74,7 +74,7 @@ test('mixed value', () => {
       ],
     },
     root,
-  ).use();
+  );
   expect(obj.constants.length).toBe(2);
   expect(obj.valueType).toBe('unknown');
   expect(obj.constants[0]).toBeInstanceOf(EnumConstant);
@@ -96,14 +96,14 @@ test('mixed value', () => {
 });
 
 test('description', () => {
-  const obj = new RawEnum(
+  const obj = new Enum(
     {
       name: expect.getState().currentTestName,
       annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { description: 'hehe' } }],
       constants: [],
     },
     root,
-  ).use();
+  );
   expect(obj).toMatchObject({
     constants: [],
     valueType: 'unknown',

@@ -3,7 +3,7 @@ import { u2a } from 'u2x';
 import { DefBase } from './DefBase';
 import { EnumConstant } from './EnumConstant';
 import { NadEnum } from '../types/nad';
-import { RawEnum } from './RawDef';
+import { Root } from './Root';
 
 type EnumRaw = Dubious<NadEnum>;
 
@@ -11,7 +11,7 @@ export class Enum extends DefBase<EnumRaw> {
   public readonly constants;
   public readonly valueType;
   public readonly description;
-  constructor({ raw, root }: RawEnum) {
+  constructor(raw: EnumRaw, root: Root) {
     super(raw, root);
     this.constants = u2a(this.raw.constants, (i) => new EnumConstant(i, this));
     this.valueType = this.initValueType();
@@ -24,5 +24,9 @@ export class Enum extends DefBase<EnumRaw> {
     let vt = valueTypes.length === 1 ? valueTypes[0] : ('unknown' as const);
     if (vt !== 'string' && vt !== 'number') vt = 'unknown' as const;
     return vt;
+  }
+
+  public spread() {
+    // noop
   }
 }
