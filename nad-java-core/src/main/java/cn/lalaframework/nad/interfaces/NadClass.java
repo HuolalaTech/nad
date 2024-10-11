@@ -23,4 +23,6 @@ public interface NadClass extends NadDef {
 
     @NonNull
     List<NadMethod> getImportantMethods();
+
+    int getModifiers();
 }

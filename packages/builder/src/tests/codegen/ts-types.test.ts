@@ -1,7 +1,7 @@
 import { Builder } from '../../Builder';
 import { NadClass, NadEnum, NadRoute } from '../../types/nad';
 import { paginitionDefs } from '../defs/paginitionTestDefs';
-import { DeepPartial } from '../../utils';
+import { DeepPartial, Modifier } from '../../utils';
 
 test('Paginition', () => {
   const code = new Builder({ target: 'ts', base: '', defs: paginitionDefs }).code;
@@ -52,12 +52,12 @@ test('empty bean', () => {
 
 test('union type', () => {
   const classes: DeepPartial<NadClass>[] = [
-    { name: 'test.U', members: [], innerClasses: ['test.U$A', 'test.U$B'] },
+    { name: 'test.U', members: [], innerClasses: ['test.U$A', 'test.U$B'], modifiers: Modifier.INTERFACE },
     { name: 'test.U$A', superclass: 'java.lang.Object', members: [], interfaces: ['test.U'] },
     { name: 'test.U$B', superclass: 'java.lang.Object', members: [], interfaces: ['test.U'] },
 
-    { name: 'test.M', members: [], innerClasses: ['test.M$A'] },
-    { name: 'test.M$A', superclass: 'java.lang.Object', members: [], interfaces: ['test.M'] },
+    { name: 'test.M', members: [], innerClasses: ['test.M$A'], modifiers: Modifier.INTERFACE },
+    { name: 'test.M$A', members: [], interfaces: ['test.M'], modifiers: Modifier.INTERFACE },
 
     { name: 'test.G', members: [], innerClasses: ['test.G$A'], superclass: 'java.lang.Object' },
     { name: 'test.G$A', superclass: 'test.G', members: [] },
@@ -93,8 +93,8 @@ test('union type', () => {
       /**
        * foo3
        */
-      async foo3(a?: Array<GA | G>, settings?: Partial<Settings>) {
-        return new Runtime<GA | G>()
+      async foo3(a?: Array<G | GA>, settings?: Partial<Settings>) {
+        return new Runtime<G | GA>()
           .open('POST', '', settings)
           .addRequestParam('a', a)
           .execute();

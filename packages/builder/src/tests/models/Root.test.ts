@@ -69,19 +69,19 @@ test('defs', () => {
 
   const getDefBySimpleName = (root: Root, name: string): Enum | Class | null => {
     return (
-      root.declarationList.find((def) => def.simpleName === name) ||
+      root.classList.find((def) => def.simpleName === name) ||
       root.enumList.find((def) => def.simpleName === name) ||
       null
     );
   };
 
-  const user = root.getDefByName('test.User');
-  expect(root.getDefByName('test.User')).toBe(user); // from cache
+  const user = root.touchDef('test.User');
+  expect(root.touchDef('test.User')).toBe(user); // from cache
   expect(user).toBeInstanceOf(Class);
   if (user) expect(getDefBySimpleName(root, user.simpleName)).toBe(user);
 
-  const userType = root.getDefByName('test.UserType');
-  expect(root.getDefByName('test.UserType')).toBe(userType); // from cache
+  const userType = root.touchDef('test.UserType');
+  expect(root.touchDef('test.UserType')).toBe(userType); // from cache
   expect(userType).toBeInstanceOf(Enum);
   if (userType) expect(getDefBySimpleName(root, userType.simpleName)).toBe(userType);
 
@@ -102,5 +102,5 @@ test('typeMapping', () => {
     name: 'java.util.Map',
     parameters: [{ name: 'java.lang.Long' }, { name: 'java.lang.String' }],
   });
-  expect(root.declarationList).toHaveLength(0);
+  expect(root.classList).toHaveLength(0);
 });

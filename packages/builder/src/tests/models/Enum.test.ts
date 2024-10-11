@@ -5,7 +5,7 @@ const root = new Root({});
 test('number value', () => {
   const obj = new Enum(
     {
-      name: 'test.MyEnum',
+      name: expect.getState().currentTestName,
       constants: [
         { name: 'One', value: 1 },
         { name: 'Two', value: 2 },
@@ -36,7 +36,7 @@ test('number value', () => {
 test('string value', () => {
   const obj = new Enum(
     {
-      name: 'test.MyEnum',
+      name: expect.getState().currentTestName,
       constants: [
         { name: 'One', value: '1' },
         { name: 'Two', value: '2' },
@@ -67,7 +67,7 @@ test('string value', () => {
 test('mixed value', () => {
   const obj = new Enum(
     {
-      name: 'test.MyEnum',
+      name: expect.getState().currentTestName,
       constants: [
         { name: 'One', value: '1' },
         { name: 'Two', value: 2 },
@@ -98,7 +98,7 @@ test('mixed value', () => {
 test('description', () => {
   const obj = new Enum(
     {
-      name: 'test.MyEnum',
+      name: expect.getState().currentTestName,
       annotations: [{ type: 'io.swagger.annotations.ApiModel', attributes: { description: 'hehe' } }],
       constants: [],
     },

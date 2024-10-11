@@ -20,6 +20,7 @@ export interface NadClass extends NadDef {
   typeParameters: string[];
   innerClasses: string[];
   importantMethods: NadMethod[];
+  modifiers: number;
 }
 
 /**
@@ -81,7 +82,9 @@ export type NadModule = NadDef;
  */
 export interface NadMethod extends NadDef {
   parameters: NadParameter[];
+  typeParameters: NadParameter[];
   returnType: string;
+  modifiers: number;
 }
 
 /**

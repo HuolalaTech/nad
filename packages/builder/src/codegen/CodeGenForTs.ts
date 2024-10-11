@@ -191,7 +191,7 @@ export class CodeGenForTs extends CodeGen {
   }
 
   private writeClasses() {
-    for (const c of this.root.declarationList) {
+    for (const c of this.root.classList) {
       this.writeComment(() => {
         this.write(c.description || c.simpleName);
         this.write(`@iface ${c.name}`);

@@ -3,6 +3,7 @@ export * from './UniqueName';
 export * from './computeIfAbsent';
 export * from './neverReachHere';
 export * from './parseDsv';
+export * from './Modifiers';
 
 export const notEmpty = <T>(w: T): w is NonNullable<T> => w !== null && w !== undefined;
 
@@ -61,3 +62,18 @@ export type DeepPartial<T> = T extends (infer U)[]
         [P in keyof T]?: DeepPartial<T[P]>;
       }
     : T;
+
+export function assert<T>(
+  value: T,
+  message: string = 'The value must be true here',
+): asserts value is Exclude<T, undefined | null | false | 0 | ''> {
+  /* istanbul ignore next */
+  if (!value) throw new Error(message);
+}
+
+export const hideProperty = (object: object, propertyName: string) => {
+  const desc = Object.getOwnPropertyDescriptor(object, propertyName);
+  assert(desc);
+  desc.enumerable = false;
+  Object.defineProperty(object, propertyName, desc);
+};

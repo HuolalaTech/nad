@@ -1,6 +1,6 @@
 import { buildOcMethodWithParameters, buildTsMethodWithParameters } from '../test-tools/buildMethodWithParameters';
-import { DeepPartial } from 'src/utils';
-import { NadParameter } from 'src/types/nad';
+import { DeepPartial } from '../../utils';
+import { NadParameter } from '../../types/nad';
 
 const typeVector = describe.each([
   ['', 'unknown', 'NSObject*'],

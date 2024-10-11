@@ -1,5 +1,4 @@
-import { isJavaUnknown } from 'src/helpers/javaHelper';
-import { Class, Member, Root, Type } from '../../models';
+import { Member, Root, Type, Class } from '../../models';
 
 const root = new Root({});
 
@@ -54,6 +53,7 @@ test('bad class name', () => {
 test('bad member name', () => {
   const clz = new Class(
     {
+      name: expect.getState().currentTestName,
       members: [{ name: '' }, { name: undefined }],
     },
     root,
@@ -65,6 +65,7 @@ test('bad member name', () => {
 test('hidden members', () => {
   const clz = new Class(
     {
+      name: expect.getState().currentTestName,
       members: [
         { name: '' },
         { name: '~!@#' },
@@ -99,6 +100,7 @@ test('hidden members', () => {
 test('JsonNaming SnakeCaseStrategy', () => {
   const clz = new Class(
     {
+      name: expect.getState().currentTestName,
       annotations: [
         {
           type: 'com.fasterxml.jackson.databind.annotation.JsonNaming',

@@ -7,7 +7,7 @@ import type { Root } from './Root';
 export type TypeOwner = Class | Root;
 
 const getBuilderFromOwner = (owner: TypeOwner) => {
-  if ('builder' in owner) return owner.builder;
+  if ('root' in owner) return owner.root;
   return owner;
 };
 
@@ -44,11 +44,11 @@ export class Type {
     if (isJavaNonClass(name) || this.isGenericVariable) {
       this.clz = null;
     } else {
-      this.clz = this.builder.getDefByName(name);
+      this.clz = this.builder.touchDef(name);
     }
   }
 
-  get owner() {
+  private get owner() {
     const owner = wm.get(this);
     /* istanbul ignore next */
     if (!owner) throw neverReachHere();
@@ -113,7 +113,7 @@ export class Type {
           parameters = [];
           name = JAVA_STRING;
         } else {
-          parameters = [new Type(owner, usage, name, parameters)];
+          parameters = [new this(owner, usage, name, parameters)];
           name = JAVA_LIST;
         }
       }
